@@ -72,3 +72,47 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+## Build results
+bin/
+obj/
+
+## VS Code settings
+.vscode/
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Mono Auto Generated Files
+mono_crash.*
+
+## Build logs
+msbuild.log
+project.lock.json
+project.fragment.lock.json
+
+## Rider
+.idea/
+*.sln.iml
+
+## NuGet packages
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+
+## Temporary files
+*.tmp
+*.bak
+*.log
+
+## OS-specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## Excel temp files
+~$*.xls*
