@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ExcelToXml
 {
@@ -15,54 +17,103 @@ namespace ExcelToXml
         private Dictionary<string, DataTable> currentSheets;
         private string selectedExcelPath;
         private Dictionary<string, string> excelFileMap = new();
+        private string selectedFolderPath = Environment.CurrentDirectory;
+        private string selectedXMLPath = Environment.CurrentDirectory;
+        private const string ConfigFileName = "config.json";
+
+        public class ToolConfig
+        {
+            public string ExcelFolderPath { get; set; } = Environment.CurrentDirectory;   
+            public string XmlFolderPath { get; set; } = Environment.CurrentDirectory;
+        }
 
         public MainWindow()
         {
             InitializeComponent();
+            var configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigFileName);
+            if (!File.Exists(configFile))
+            {
+                var tempconfig = new ToolConfig();
+                SaveConfig(configFile, tempconfig);
+            }
+
+            var config = LoadConfig(configFile);
+
+            selectedFolderPath = config.ExcelFolderPath ?? Environment.CurrentDirectory;
+            selectedXMLPath = config.XmlFolderPath ?? Environment.CurrentDirectory;
+            txtExcelFolderPath.Content = "현재 엑셀 저장 경로 : " + selectedFolderPath;
+            txtXMLFolderPath.Content = "현재 XML 저장 경로 : " + selectedXMLPath;
+
+            this.Closing += MainWindow_Closing;
+            RefreshFileList(selectedFolderPath);
         }
 
+        private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var configFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ConfigFileName);
+            var config = new ToolConfig
+            {
+                ExcelFolderPath = selectedFolderPath,
+                XmlFolderPath = selectedXMLPath
+            };
+            SaveConfig(configFile, config);
+        }
+
+        public static ToolConfig LoadConfig(string path)
+        {
+            if (File.Exists(path))
+            {
+                string json = File.ReadAllText(path);
+                return JsonSerializer.Deserialize<ToolConfig>(json) ?? new ToolConfig();
+            }
+            return new ToolConfig(); // 기본값
+        }
+
+        public static void SaveConfig(string path, ToolConfig config)
+        {
+            string json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(path, json);
+        }
+
+        void RefreshFileList(string folderPath)
+        {
+            selectedFolderPath = folderPath;
+            if (Directory.Exists(folderPath) == false)
+            {
+                System.Windows.MessageBox.Show("경로가 유효하지 않습니다.\n현재 경로 : " + folderPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return;
+            }
+            txtExcelFolderPath.Content = "현재 엑셀 저장 경로 : " + folderPath;
+
+            var xlsxFiles = Directory.GetFiles(folderPath, "*.xlsx", SearchOption.AllDirectories);
+            var xlsFiles = Directory.GetFiles(folderPath, "*.xls", SearchOption.AllDirectories);
+
+            var excelFiles = xlsxFiles.Concat(xlsFiles).ToArray();
+            excelFileMap.Clear();
+            excelFileMap = excelFiles.ToDictionary(f => Path.GetFileName(f), f => f);
+            fileList.ItemsSource = excelFileMap.Keys.ToList();
+
+            // 선택 시 전체 경로 사용
+            fileList.SelectionChanged += (s, e) =>
+            {
+                if (fileList.SelectedItem is string selectedName && excelFileMap.TryGetValue(selectedName, out var fullPath))
+                {
+                    Console.WriteLine("선택한 전체 경로: " + fullPath);
+                }
+            };
+            btnSaveXml.Visibility = Visibility.Visible;
+        }
         private void btnSelectFolder_Click(object sender, RoutedEventArgs e)
         {
-           var dialog = new System.Windows.Forms.OpenFileDialog();
+            var dialog = new System.Windows.Forms.OpenFileDialog();
             dialog.Filter = "Excel Files (*.xlsx;*.xls)|*.xlsx;*.xls";
+            dialog.InitialDirectory = selectedFolderPath;
 
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string filePath = dialog.FileName;
                 string folderPath = Path.GetDirectoryName(filePath);
-                if(Directory.Exists(folderPath) == false)
-                {
-                    System.Windows.MessageBox.Show("경로가 유효하지 않습니다.\n현재 경로 : "+folderPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                    return;
-                }
-                System.Windows.MessageBox.Show("폴더를 선택했습니다.\n현재 경로 : " + folderPath, "Info", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
-                
-                var xlsxFiles = Directory.GetFiles(folderPath, "*.xlsx", SearchOption.AllDirectories);
-                var xlsFiles = Directory.GetFiles(folderPath, "*.xls", SearchOption.AllDirectories);
-
-                // 둘 다 합치기
-                var excelFiles = xlsxFiles.Concat(xlsFiles).ToArray();
-                if(excelFiles.Length == 0)
-                {
-                    System.Windows.MessageBox.Show("선택한 폴더에 엑셀이 없습니다.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                    return;
-                }
-                //fileList.ItemsSource = excelFiles;
-                // 이름만 보여주기
-                excelFileMap.Clear();
-                excelFileMap = excelFiles.ToDictionary(f => Path.GetFileName(f), f => f);
-                fileList.ItemsSource = excelFileMap.Keys.ToList();
-
-                // 선택 시 전체 경로 사용
-                fileList.SelectionChanged += (s, e) =>
-                {
-                    if (fileList.SelectedItem is string selectedName && excelFileMap.TryGetValue(selectedName, out var fullPath))
-                    {
-                        // 여기서 fullPath를 사용해 Excel 열기 등 작업
-                        Console.WriteLine("선택한 전체 경로: " + fullPath);
-                    }
-                };
-                btnSaveXml.Visibility = Visibility.Visible;
+                RefreshFileList(folderPath);
             }
 
             /*  
@@ -89,41 +140,20 @@ namespace ExcelToXml
                 string filePath = fullPath;
                 selectedExcelPath = filePath;
                 var dataSet = ExcelHelper.LoadAllSheets(filePath);
-                currentSheets = dataSet.Tables.Cast<DataTable>().ToDictionary(t => t.TableName, t => t);
-                
+                currentSheets = dataSet.Tables.Cast<DataTable>().ToDictionary(t => t.TableName, t => t);                
                 dataGrid.ItemsSource = currentSheets.First().Value.DefaultView;
-                sheetSelector.ItemsSource = currentSheets.Keys;
-                sheetSelector.SelectedIndex = 0;
-                sheetSelector.Visibility = Visibility.Visible;
-                btnSaveXml.IsEnabled = true;
-                if(currentSheets.Count > 1)
-                {
-                    sheetSelector.IsEnabled = true;
-                }
-                else
-                {
-                    sheetSelector.IsEnabled = false;
-                }
-            }
-        }
-
-        private void sheetSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (sheetSelector.SelectedItem != null && currentSheets != null)
-            {
-                string sheetName = sheetSelector.SelectedItem.ToString();
-                dataGrid.ItemsSource = currentSheets[sheetName].DefaultView;
+                btnSaveXml.IsEnabled = true;  
             }
         }
 
         private void btnSaveXml_Click(object sender, RoutedEventArgs e)
         {
-            if (sheetSelector.SelectedItem == null || currentSheets == null)
+            if (currentSheets == null)
                 return;
 
-            string selectedSheet = sheetSelector.SelectedItem.ToString();
             System.Windows.Forms.SaveFileDialog saveDialog = new System.Windows.Forms.SaveFileDialog { Filter = "XML Files (*.xml)|*.xml" };
-
+            saveDialog.InitialDirectory = selectedXMLPath;
+            saveDialog.FileName = Path.GetFileNameWithoutExtension(selectedExcelPath) + ".xml"; // 기본 파일 이름 설정
             if (saveDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 if (string.IsNullOrEmpty(saveDialog.FileName))
@@ -138,10 +168,26 @@ namespace ExcelToXml
                     if (result != System.Windows.MessageBoxResult.Yes)
                         return;
                 }
+                saveDialog.FileName = Path.GetFullPath(saveDialog.FileName); // 절대 경로로 변환
+                selectedXMLPath = Path.GetDirectoryName(saveDialog.FileName);
+                txtXMLFolderPath.Content = "현재 XML 저장 경로 : " + selectedXMLPath;
 
                 // Save the selected sheet to XML
-                XmlHelper.SaveDataTableToXml(currentSheets[selectedSheet], saveDialog.FileName);
-                System.Windows.MessageBox.Show("XML saved successfully!", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                int saveResult = XmlHelper.SaveDataTableToXml(currentSheets.First().Value, saveDialog.FileName);
+                if (saveResult == -1)
+                {
+                    System.Windows.MessageBox.Show("Invalid data type in the first column. Please check the data.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    return;
+                }
+                else if (saveResult == 0)
+                {
+                    System.Windows.MessageBox.Show("No data to save.", "Info", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                    return;
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("XML saved successfully!", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                }
             }
         }
     }

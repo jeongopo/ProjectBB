@@ -7,31 +7,24 @@
         mc:Ignorable="d"
         Title="Excel to XML Converter" Height="450" Width="800">
     <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <Grid Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
-            <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+            
+            <StackPanel Orientation="Horizontal" Margin="0 0 0 10" Grid.Row="0">
                 <Button Name="btnSelectFolder" Content="폴더 선택" Width="120" Margin="0 0 10 0" Click="btnSelectFolder_Click"/>
-                <ComboBox Name="sheetSelector" Width="200" SelectionChanged="sheetSelector_SelectionChanged" Margin="0 0 10 0" IsEnabled="False"/>
+                <Label Name="txtExcelFolderPath" Width="Auto" Margin="0 0 10 0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0 0 0 10" Grid.Row="1">
                 <Button Name="btnSaveXml" Content="XML 저장하기" Width="120" HorizontalAlignment="Right" IsEnabled="False" Margin="0 0 10 0" Click="btnSaveXml_Click"/>
+                <Label Name="txtXMLFolderPath" Width="Auto" Margin="0 0 10 0"/>
             </StackPanel>
 
-            <ListBox Name="fileList" Grid.Row="1" Height="100" SelectionChanged="fileList_SelectionChanged"/>
+            <ListBox Name="fileList" Grid.Row="2" Height="100" SelectionChanged="fileList_SelectionChanged"/>
 
-            <DataGrid Name="dataGrid" Grid.Row="2" Height="700" AutoGenerateColumns="True" Margin="0 10 0 10"/>
-
-            
-        </Grid>
+            <DataGrid Name="dataGrid" Grid.Row="3" Height="700" AutoGenerateColumns="True" Margin="0 10 0 10"/>
     </Grid>
 </Window>
