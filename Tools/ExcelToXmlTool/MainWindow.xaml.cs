@@ -19,7 +19,7 @@ namespace ExcelToXml
         private Dictionary<string, string> excelFileMap = new();
         private string selectedFolderPath = Environment.CurrentDirectory;
         private string selectedXMLPath = Environment.CurrentDirectory;
-        private const string ConfigFileName = "config.json";
+        private const string ConfigFileName = "XMLConvertConfig.json";
 
         public class ToolConfig
         {

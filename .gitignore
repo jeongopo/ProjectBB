@@ -116,3 +116,6 @@ desktop.ini
 
 ## Excel temp files
 ~$*.xls*
+
+# Ignore private Config files
+/Tools/ExcelToXmlTool/publish/XMLConvertConfig.json
