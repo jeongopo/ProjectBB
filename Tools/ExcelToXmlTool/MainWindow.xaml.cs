@@ -19,12 +19,14 @@ namespace ExcelToXml
         private Dictionary<string, string> excelFileMap = new();
         private string selectedFolderPath = Environment.CurrentDirectory;
         private string selectedXMLPath = Environment.CurrentDirectory;
+        private string selectedCodePath = Environment.CurrentDirectory;
         private const string ConfigFileName = "XMLConvertConfig.json";
 
         public class ToolConfig
         {
-            public string ExcelFolderPath { get; set; } = Environment.CurrentDirectory;   
+            public string ExcelFolderPath { get; set; } = Environment.CurrentDirectory;
             public string XmlFolderPath { get; set; } = Environment.CurrentDirectory;
+            public string CodeFolderPath { get; set; } = Environment.CurrentDirectory;
         }
 
         public MainWindow()
@@ -41,8 +43,10 @@ namespace ExcelToXml
 
             selectedFolderPath = config.ExcelFolderPath ?? Environment.CurrentDirectory;
             selectedXMLPath = config.XmlFolderPath ?? Environment.CurrentDirectory;
+            selectedCodePath = config.CodeFolderPath ?? Environment.CurrentDirectory;
             txtExcelFolderPath.Content = "현재 엑셀 저장 경로 : " + selectedFolderPath;
             txtXMLFolderPath.Content = "현재 XML 저장 경로 : " + selectedXMLPath;
+            txtDataCodePath.Content = "현재 코드 저장 경로 : " + selectedCodePath;
 
             this.Closing += MainWindow_Closing;
             RefreshFileList(selectedFolderPath);
@@ -135,14 +139,14 @@ namespace ExcelToXml
 
         private void fileList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-             if (fileList.SelectedItem is string selectedName && excelFileMap.TryGetValue(selectedName, out var fullPath))
+            if (fileList.SelectedItem is string selectedName && excelFileMap.TryGetValue(selectedName, out var fullPath))
             {
                 string filePath = fullPath;
                 selectedExcelPath = filePath;
                 var dataSet = ExcelHelper.LoadAllSheets(filePath);
-                currentSheets = dataSet.Tables.Cast<DataTable>().ToDictionary(t => t.TableName, t => t);                
+                currentSheets = dataSet.Tables.Cast<DataTable>().ToDictionary(t => t.TableName, t => t);
                 dataGrid.ItemsSource = currentSheets.First().Value.DefaultView;
-                btnSaveXml.IsEnabled = true;  
+                btnSaveXml.IsEnabled = true;
             }
         }
 
@@ -188,6 +192,64 @@ namespace ExcelToXml
                 {
                     System.Windows.MessageBox.Show("XML saved successfully!", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
                 }
+            }
+        }
+        void btnGenerateStruct_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog openFolderDialog = new System.Windows.Forms.FolderBrowserDialog()
+            {
+                Description = "Select a folder containing Save Data files",
+                ShowNewFolderButton = true,
+                SelectedPath = selectedCodePath
+            };
+            if (openFolderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string folderPath = openFolderDialog.SelectedPath;
+                selectedCodePath = folderPath;
+                if (Directory.Exists(folderPath) == false)
+                {
+                    System.Windows.MessageBox.Show("경로가 유효하지 않습니다.\n현재 경로 : " + folderPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    return;
+                }
+                txtDataCodePath.Content = "현재 엑셀 저장 경로 : " + selectedCodePath;
+
+                string structCode = XmlHelper.GenerateStructFromXml(selectedXMLPath);
+                if (string.IsNullOrEmpty(structCode))
+                {
+                    System.Windows.MessageBox.Show("Failed to generate structure code.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    return;
+                }
+
+                string structFileName = "DataDrivenDefines.cs";
+                string structFilePath = Path.Combine(selectedCodePath, structFileName);
+                if (File.Exists(structFilePath))
+                {
+                    var result = System.Windows.MessageBox.Show("Structure file already exists. Do you want to overwrite?", "File Exists", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
+                    if (result != System.Windows.MessageBoxResult.Yes)
+                        return;
+                }
+
+                string savePath = Path.GetFullPath(structFilePath); // 절대 경로로 변환
+                txtDataCodePath.Content = "현재 코드 저장 경로 : " + selectedCodePath;
+                if (!Directory.Exists(selectedCodePath))
+                {
+                    Directory.CreateDirectory(selectedCodePath);
+                }
+                // Save the structure code to the file
+                if (File.Exists(savePath))
+                {
+                    File.Delete(savePath); // 기존 파일 삭제
+                }
+
+                structCode = "namespace DataDriven\n{\n" + structCode + "\n}"; // Wrap in namespace
+                structCode = "using System.Collections.Generic;\n" + structCode; // Add using directives
+                structCode = "using System.Xml.Serialization;\n" + structCode; // Add using directives for XML serialization
+                structCode = "using System.IO;\n" + structCode; // Add using directives for file operations
+                structCode = "// This file is auto-generated from XML files.\n" + structCode;
+
+                File.WriteAllText(savePath, structCode);
+                
+                System.Windows.MessageBox.Show("Structure code generated successfully!", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
             }
         }
     }

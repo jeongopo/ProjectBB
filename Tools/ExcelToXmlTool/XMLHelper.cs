@@ -1,6 +1,8 @@
 using System.Data;
 using System.Xml;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace ExcelToXml
 {
@@ -79,6 +81,51 @@ namespace ExcelToXml
 
             doc.Save(filePath);
             return 1;
+        }
+
+        public static string GenerateStructFromXml(string xmlPath)
+        {
+            string[] files = Directory.GetFiles(xmlPath, "*.xml");
+            if (files.Length == 0)
+            {
+                throw new FileNotFoundException("No XML files found in the specified directory.");
+            }
+
+            StringBuilder sb = new StringBuilder();
+            foreach (string file in files)
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(file);
+
+                string structName = Path.GetFileNameWithoutExtension(file);
+                if (string.IsNullOrEmpty(structName))
+                    throw new Exception("파일 이름이 비어 있거나 유효하지 않습니다.");
+
+                XmlNode? infoNode = doc.SelectSingleNode("//Info");
+                if (infoNode == null)
+                    throw new Exception("Info 노드를 찾을 수 없습니다.");
+
+
+                sb.AppendLine($"\tpublic struct {structName}");
+                sb.AppendLine("\t{");
+
+                foreach (XmlNode child in infoNode.ChildNodes)
+                {
+                    string fieldName = child.Name;
+                    string type = child.InnerText.Trim();
+
+                    // 소문자 bool은 C# 예약어로 대소문자 구분이 없으므로 올바르게 처리
+                    if (type.Equals("bool", StringComparison.OrdinalIgnoreCase)) type = "bool";
+                    else if (type.Equals("int", StringComparison.OrdinalIgnoreCase)) type = "int";
+                    else if (type.Equals("string", StringComparison.OrdinalIgnoreCase)) type = "string";
+                    else type = "string"; // 기본값 처리
+
+                    sb.AppendLine($"\t\tpublic {type} {fieldName};");
+                }
+
+                sb.AppendLine("\t}");
+            }
+            return sb.ToString();
         }
     }
 }
