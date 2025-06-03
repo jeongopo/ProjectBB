@@ -2,6 +2,7 @@ using System.Data;
 using System.Xml;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using System.Text;
 
 namespace ExcelToXml
@@ -83,11 +84,13 @@ namespace ExcelToXml
             return 1;
         }
 
-        public static string GenerateStructFromXml(string xmlPath)
+        public static string GenerateStructFromXml(string xmlPath, out List<string> structNames)
         {
+            structNames = new List<string>();
             string[] files = Directory.GetFiles(xmlPath, "*.xml");
             if (files.Length == 0)
             {
+                System.Windows.MessageBox.Show("지정된 디렉토리에 XML 파일이 없습니다: " + xmlPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
                 throw new FileNotFoundException("No XML files found in the specified directory.");
             }
 
@@ -99,14 +102,19 @@ namespace ExcelToXml
 
                 string structName = Path.GetFileNameWithoutExtension(file);
                 if (string.IsNullOrEmpty(structName))
-                    throw new Exception("파일 이름이 비어 있거나 유효하지 않습니다.");
+                {
+                    System.Windows.MessageBox.Show("파일 이름이 비어 있거나 유효하지 않습니다: " + file, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    continue;
+                }
 
                 XmlNode? infoNode = doc.SelectSingleNode("//Info");
                 if (infoNode == null)
-                    throw new Exception("Info 노드를 찾을 수 없습니다.");
+                {
+                    System.Windows.MessageBox.Show("Info 노드를 찾을 수 없습니다: " + file, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    continue;
+                }
 
-
-                sb.AppendLine($"\tpublic struct {structName}");
+                sb.AppendLine($"\tpublic class {structName}");
                 sb.AppendLine("\t{");
 
                 foreach (XmlNode child in infoNode.ChildNodes)
@@ -120,11 +128,14 @@ namespace ExcelToXml
                     else if (type.Equals("string", StringComparison.OrdinalIgnoreCase)) type = "string";
                     else type = "string"; // 기본값 처리
 
-                    sb.AppendLine($"\t\tpublic {type} {fieldName};");
+                    sb.AppendLine($"\t\t\tpublic {type} {fieldName};");
                 }
-
                 sb.AppendLine("\t}");
+
+                structNames.Add(structName);
+                System.Windows.MessageBox.Show($"구조체 {structName} 생성 완료", "Info", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
             }
+
             return sb.ToString();
         }
     }

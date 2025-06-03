@@ -58,7 +58,8 @@ namespace ExcelToXml
             var config = new ToolConfig
             {
                 ExcelFolderPath = selectedFolderPath,
-                XmlFolderPath = selectedXMLPath
+                XmlFolderPath = selectedXMLPath,
+                CodeFolderPath = selectedCodePath
             };
             SaveConfig(configFile, config);
         }
@@ -212,8 +213,8 @@ namespace ExcelToXml
                     return;
                 }
                 txtDataCodePath.Content = "현재 엑셀 저장 경로 : " + selectedCodePath;
-
-                string structCode = XmlHelper.GenerateStructFromXml(selectedXMLPath);
+                List<string> structNames = new List<string>();
+                string structCode = XmlHelper.GenerateStructFromXml(selectedXMLPath, out structNames);
                 if (string.IsNullOrEmpty(structCode))
                 {
                     System.Windows.MessageBox.Show("Failed to generate structure code.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
@@ -241,15 +242,34 @@ namespace ExcelToXml
                     File.Delete(savePath); // 기존 파일 삭제
                 }
 
-                structCode = "namespace DataDriven\n{\n" + structCode + "\n}"; // Wrap in namespace
-                structCode = "using System.Collections.Generic;\n" + structCode; // Add using directives
-                structCode = "using System.Xml.Serialization;\n" + structCode; // Add using directives for XML serialization
-                structCode = "using System.IO;\n" + structCode; // Add using directives for file operations
-                structCode = "// This file is auto-generated from XML files.\n" + structCode;
+                string classHeaderCode = "public class DataStorage\n{\n";
+
+                
+                for (int i = 0; i < structNames.Count; i++)
+                {
+                    classHeaderCode += $"\tpublic Dictionary<string,{structNames[i]}> {structNames[i]}Data;\n";
+                }
+                classHeaderCode += "\tpublic void LoadData()\n"
+                                + "\t{\n";
+                for (int i = 0; i < structNames.Count; i++)
+                {
+                    classHeaderCode += $"\t\t{structNames[i]}Data = DataManager.LoadDefineData<{structNames[i]}>(\"{structNames[i]}\");\n";
+                }
+                classHeaderCode += "\t}\n";
+
+                structCode = classHeaderCode
+                            + "\t// classDefine\n"
+                            + structCode
+                            + "}\n";
+                string usingCode = "// This file is auto-generated from XML files.\n"
+                                + "using System;\n"
+                                + "using System.IO;\n"
+                                + "using System.Xml.Serialization;\n"
+                                + "using System.Collections.Generic;\n"
+                                + "using UnityEngine;\n";
+                structCode = usingCode + structCode;
 
                 File.WriteAllText(savePath, structCode);
-                
-                System.Windows.MessageBox.Show("Structure code generated successfully!", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
             }
         }
     }

@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExcelToXml"
         mc:Ignorable="d"
-        Title="Excel to XML Converter" Height="450" Width="800">
+        Title="Excel to XML Converter" Height="600" Width="1200"
+        WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
