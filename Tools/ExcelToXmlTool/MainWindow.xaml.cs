@@ -120,22 +120,45 @@ namespace ExcelToXml
                 string folderPath = Path.GetDirectoryName(filePath);
                 RefreshFileList(folderPath);
             }
+        }
 
-            /*  
-            //폴더 기준 처리          
-                System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.FolderBrowserDialog()
+        private void btnSelectXMLFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new System.Windows.Forms.OpenFileDialog();
+            dialog.Filter = "XML Files (*.xml)|*.xml" ;
+            dialog.Title = "Select XML File";
+            dialog.CheckFileExists = true;
+            dialog.InitialDirectory = selectedXMLPath;
+            
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string filePath = dialog.FileName;
+                string folderPath = Path.GetDirectoryName(filePath);
+
+                selectedXMLPath = folderPath;
+                txtXMLFolderPath.Content = "현재 XML 저장 경로 : " + selectedXMLPath;
+            }
+        }
+
+        private void btnSelectCodeFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new System.Windows.Forms.OpenFileDialog();
+            dialog.Filter = "Code Files (*.cs)|*.cs";
+            dialog.InitialDirectory = selectedCodePath;
+
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string filePath = dialog.FileName;
+                string folderPath = Path.GetDirectoryName(filePath);
+
+                selectedCodePath = folderPath;
+                if (Directory.Exists(selectedCodePath) == false)
                 {
-                    Description = "Select a folder containing Excel files",
-                    ShowNewFolderButton = false,
-                    Filter = "Excel Files (*.xlsx)|*.xlsx"
-                };
-                if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    string folderPath = openFileDialog.SelectedPath;
-                    var excelFiles = Directory.GetFiles(folderPath, "*.xlsx|*.xls", SearchOption.AllDirectories);
-                    fileList.ItemsSource = excelFiles;
+                    System.Windows.MessageBox.Show("경로가 유효하지 않습니다.\n현재 경로 : " + selectedCodePath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    return;
                 }
-                */
+                txtDataCodePath.Content = "현재 코드 저장 경로 : " + selectedCodePath;
+            }
         }
 
         private void fileList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -169,7 +192,7 @@ namespace ExcelToXml
 
                 if (File.Exists(saveDialog.FileName))
                 {
-                    var result = System.Windows.MessageBox.Show("File already exists. Do you want to overwrite?", "File Exists", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
+                    var result = System.Windows.MessageBox.Show("동일한 이름의 XML 파일이 이미 존재합니다. 덮어쓰시겠습니까?", "File Exists", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
                     if (result != System.Windows.MessageBoxResult.Yes)
                         return;
                 }
@@ -197,80 +220,98 @@ namespace ExcelToXml
         }
         void btnGenerateStruct_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.FolderBrowserDialog openFolderDialog = new System.Windows.Forms.FolderBrowserDialog()
+            string folderPath = selectedCodePath;
+            if (Directory.Exists(folderPath) == false)
             {
-                Description = "Select a folder containing Save Data files",
-                ShowNewFolderButton = true,
-                SelectedPath = selectedCodePath
-            };
-            if (openFolderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                string folderPath = openFolderDialog.SelectedPath;
-                selectedCodePath = folderPath;
-                if (Directory.Exists(folderPath) == false)
-                {
-                    System.Windows.MessageBox.Show("경로가 유효하지 않습니다.\n현재 경로 : " + folderPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                    return;
-                }
-                txtDataCodePath.Content = "현재 엑셀 저장 경로 : " + selectedCodePath;
-                List<string> structNames = new List<string>();
-                string structCode = XmlHelper.GenerateStructFromXml(selectedXMLPath, out structNames);
-                if (string.IsNullOrEmpty(structCode))
-                {
-                    System.Windows.MessageBox.Show("Failed to generate structure code.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                    return;
-                }
-
-                string structFileName = "DataDrivenDefines.cs";
-                string structFilePath = Path.Combine(selectedCodePath, structFileName);
-                if (File.Exists(structFilePath))
-                {
-                    var result = System.Windows.MessageBox.Show("Structure file already exists. Do you want to overwrite?", "File Exists", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
-                    if (result != System.Windows.MessageBoxResult.Yes)
-                        return;
-                }
-
-                string savePath = Path.GetFullPath(structFilePath); // 절대 경로로 변환
-                txtDataCodePath.Content = "현재 코드 저장 경로 : " + selectedCodePath;
-                if (!Directory.Exists(selectedCodePath))
-                {
-                    Directory.CreateDirectory(selectedCodePath);
-                }
-                // Save the structure code to the file
-                if (File.Exists(savePath))
-                {
-                    File.Delete(savePath); // 기존 파일 삭제
-                }
-
-                string classHeaderCode = "public class DataStorage\n{\n";
-
-                
-                for (int i = 0; i < structNames.Count; i++)
-                {
-                    classHeaderCode += $"\tpublic Dictionary<string,{structNames[i]}> {structNames[i]}Data;\n";
-                }
-                classHeaderCode += "\tpublic void LoadData()\n"
-                                + "\t{\n";
-                for (int i = 0; i < structNames.Count; i++)
-                {
-                    classHeaderCode += $"\t\t{structNames[i]}Data = DataManager.LoadDefineData<{structNames[i]}>(\"{structNames[i]}\");\n";
-                }
-                classHeaderCode += "\t}\n";
-
-                structCode = classHeaderCode
-                            + "\t// classDefine\n"
-                            + structCode
-                            + "}\n";
-                string usingCode = "// This file is auto-generated from XML files.\n"
-                                + "using System;\n"
-                                + "using System.IO;\n"
-                                + "using System.Xml.Serialization;\n"
-                                + "using System.Collections.Generic;\n"
-                                + "using UnityEngine;\n";
-                structCode = usingCode + structCode;
-
-                File.WriteAllText(savePath, structCode);
+                System.Windows.MessageBox.Show("경로가 유효하지 않습니다.\n현재 경로 : " + folderPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return;
             }
+            List<string> structNames = new List<string>();
+            string structCode = XmlHelper.GenerateStructFromXml(selectedXMLPath, out structNames);
+            if (string.IsNullOrEmpty(structCode))
+            {
+                System.Windows.MessageBox.Show("구조체 코드 생성에 실패했습니다. XML 경로나 내용을 확인해주세요.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return;
+            }
+
+            string structFileName = "DataDrivenDefines.cs";
+            string structFilePath = Path.Combine(selectedCodePath, structFileName);
+            if (File.Exists(structFilePath))
+            {
+                var result = System.Windows.MessageBox.Show("구조체 C# 파일이 이미 존재합니다. 덮어쓰시겠습니까?", "File Exists", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
+                if (result != System.Windows.MessageBoxResult.Yes)
+                    return;
+            }
+
+            string savePath = Path.GetFullPath(structFilePath); // 절대 경로로 변환
+
+            // Save the structure code to the file
+            if (File.Exists(savePath))
+            {
+                File.Delete(savePath); // 기존 파일 삭제
+            }
+
+            string classHeaderCode = "public class DataStorage\n{\n";
+
+            for (int i = 0; i < structNames.Count; i++)
+            {
+                classHeaderCode += $"\tpublic Dictionary<string,{structNames[i]}> {structNames[i]}Data;\n";
+            }
+            classHeaderCode += "\tpublic void LoadData()\n"
+                            + "\t{\n";
+            for (int i = 0; i < structNames.Count; i++)
+            {
+                classHeaderCode += $"\t\t{structNames[i]}Data = DataManager.LoadDefineData<{structNames[i]}>(\"{structNames[i]}\");\n";
+            }
+            classHeaderCode += "\t}\n";
+
+            structCode = classHeaderCode
+                        + "\t// classDefine\n"
+                        + structCode
+                        + "}\n";
+            string usingCode = "// This file is auto-generated from XML files.\n"
+                            + "using System;\n"
+                            + "using System.IO;\n"
+                            + "using System.Xml.Serialization;\n"
+                            + "using System.Collections.Generic;\n"
+                            + "using UnityEngine;\n";
+            structCode = usingCode + structCode;
+
+            File.WriteAllText(savePath, structCode);
+            System.Windows.MessageBox.Show("구조체 코드를 저장했습니다.", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        }
+        void btnGenerateEnum_Click(object sender, RoutedEventArgs e)
+        {
+            string folderPath = selectedCodePath;
+            if (Directory.Exists(folderPath) == false)
+            {
+                System.Windows.MessageBox.Show("경로가 유효하지 않습니다.\n현재 경로 : " + folderPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return;
+            }
+
+            ExcelHelper.GenerateEnumFromExcel(Path.Combine(selectedFolderPath, "DataEnumDefines.xlsx"), out string enumCode);
+            if (string.IsNullOrEmpty(enumCode))
+            {
+                System.Windows.MessageBox.Show("Enum 코드 생성에 실패했습니다. 엑셀 경로나 내용을 확인해주세요.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                return;
+            }
+            string enumFileName = "DataEnumDefines.cs";
+            string enumFilePath = Path.Combine(selectedCodePath, enumFileName);
+            if (File.Exists(enumFilePath))
+            {
+                var result = System.Windows.MessageBox.Show("Enum C# 파일이 이미 존재합니다. 덮어쓰시겠습니까?", "File Exists", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
+                if (result != System.Windows.MessageBoxResult.Yes)
+                    return;
+            }
+            string savePath = Path.GetFullPath(enumFilePath); // 절대 경로로 변환
+            if (File.Exists(savePath))
+            {
+                File.Delete(savePath); // 기존 파일 삭제
+            }
+
+            // Save the enum code to the file
+            File.WriteAllText(savePath, enumCode);
+            System.Windows.MessageBox.Show("Enum 코드를 저장했습니다.", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         }
     }
 }
