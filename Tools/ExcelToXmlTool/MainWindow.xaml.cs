@@ -274,7 +274,8 @@ namespace ExcelToXml
                             + "using System.IO;\n"
                             + "using System.Xml.Serialization;\n"
                             + "using System.Collections.Generic;\n"
-                            + "using UnityEngine;\n";
+                            + "using UnityEngine;\n"
+                            + "using DataEnumDefines;\n";
             structCode = usingCode + structCode;
 
             File.WriteAllText(savePath, structCode);

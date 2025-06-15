@@ -5,6 +5,7 @@
     <Ingredients>string</Ingredients>
     <CookingStep>int</CookingStep>
     <main>bool</main>
+    <Grade>EnumGrade</Grade>
   </Info>
   <Row>
     <ID>Recipe1</ID>
@@ -12,6 +13,7 @@
     <Ingredients>Ingredient1</Ingredients>
     <CookingStep>0</CookingStep>
     <main>True</main>
+    <Grade>Good</Grade>
   </Row>
   <Row>
     <ID>Recipe2</ID>
@@ -19,5 +21,6 @@
     <Ingredients>Ingredient2</Ingredients>
     <CookingStep>1</CookingStep>
     <main>False</main>
+    <Grade>Great</Grade>
   </Row>
 </Rows>

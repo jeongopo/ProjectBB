@@ -1,0 +1,30 @@
+<Rows>
+  <Info>
+    <ID>string</ID>
+    <Name>string</Name>
+    <Level>int</Level>
+    <CookingStep>int</CookingStep>
+    <Special>bool</Special>
+  </Info>
+  <Row>
+    <ID>Customer1</ID>
+    <Name>천사</Name>
+    <Level>2</Level>
+    <CookingStep>0</CookingStep>
+    <Special>True</Special>
+  </Row>
+  <Row>
+    <ID>Customer2</ID>
+    <Name>악마</Name>
+    <Level>3</Level>
+    <CookingStep>1</CookingStep>
+    <Special>False</Special>
+  </Row>
+  <Row>
+    <ID>Customer3</ID>
+    <Name>악마</Name>
+    <Level>5</Level>
+    <CookingStep>2</CookingStep>
+    <Special>False</Special>
+  </Row>
+</Rows>

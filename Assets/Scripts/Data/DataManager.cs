@@ -5,6 +5,7 @@ using System.Xml;
 using UnityEngine;
 using System;
 using Mono.Cecil;
+using DataEnumDefines;
 
 public class DataManager : MonoBehaviour
 {
@@ -23,7 +24,23 @@ public class DataManager : MonoBehaviour
         // Example usage of the loaded data
         foreach (var item in dataStorage.TestIngredientsData)
         {
-            Debug.Log($"ID: {item.Value.ID}, Name: {item.Value.Name}, Ingredients: {item.Value.Ingredients}, CookingStep: {item.Value.CookingStep}, Main: {item.Value.main}");
+            string TestStr;
+            switch (item.Value.Grade)
+            {
+                case EnumGrade.Good:
+                    TestStr = "Good";
+                    break;
+                case EnumGrade.Great:
+                    TestStr = "Great";
+                    break;
+                case EnumGrade.Normal:
+                    TestStr = "Normal";
+                    break;
+                default:
+                    TestStr = "Unknown";
+                    break;
+            }
+            Debug.Log($"ID: {item.Value.ID}, Name: {item.Value.Name}, Ingredients: {item.Value.Ingredients}, CookingStep: {item.Value.CookingStep}, Main: {item.Value.main}, Grade: {TestStr}");
         }
         foreach (var item in dataStorage.TestCustomerData)
         {
@@ -73,8 +90,23 @@ public class DataManager : MonoBehaviour
                         continue;
                     }
                 }
-                object? value = Convert.ChangeType(field.InnerText, member.FieldType);
-				member.SetValue(item, value);
+                if (member.FieldType.IsEnum)
+                {
+                    if (Enum.TryParse(member.FieldType, field.InnerText, out object enumValue))
+                    {
+                        member.SetValue(item, enumValue);
+                    }
+                    else
+                    {
+                        Debug.LogError($"Failed to parse enum {member.FieldType.Name} from value '{field.InnerText}' in row: {row.OuterXml}");
+                        continue;
+                    }
+                }
+                else
+                {
+                    object? value = Convert.ChangeType(field.InnerText, member.FieldType);
+                    member.SetValue(item, value);
+                }
 			}
 
             if (idValue != null && !dictionary.ContainsKey(idValue))

@@ -49,6 +49,10 @@ namespace ExcelToXml
                 {
                     type = "date";
                 }
+                else if (type.Contains("Enum"))
+                {
+                    // Enum 타입은 특별히 처리하지 않음           
+                }
                 else
                 {
                     return -1; // 타입이 유효하지 않으면 저장하지 않음
@@ -125,7 +129,9 @@ namespace ExcelToXml
                     // 소문자 bool은 C# 예약어로 대소문자 구분이 없으므로 올바르게 처리
                     if (type.Equals("bool", StringComparison.OrdinalIgnoreCase)) type = "bool";
                     else if (type.Equals("int", StringComparison.OrdinalIgnoreCase)) type = "int";
+                    else if (type.Equals("float", StringComparison.OrdinalIgnoreCase)) type = "float";
                     else if (type.Equals("string", StringComparison.OrdinalIgnoreCase)) type = "string";
+                    else if (type.Contains("Enum")) type = type;
                     else type = "string"; // 기본값 처리
 
                     sb.AppendLine($"\t\t\tpublic {type} {fieldName};");
