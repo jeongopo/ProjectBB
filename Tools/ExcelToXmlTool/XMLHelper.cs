@@ -11,7 +11,7 @@ namespace ExcelToXml
 {
     public static class XmlHelper
     {
-        public static int SaveDataTableToXml(DataTable table, string filePath)
+        public static BBErrorCode SaveDataTableToXml(DataTable table, string filePath)
         {
             XmlDocument doc = new XmlDocument();
             XmlElement root = doc.CreateElement("Rows");
@@ -20,7 +20,7 @@ namespace ExcelToXml
             if (table == null || table.Rows.Count == 0)
             {
                 doc.Save(filePath);
-                return 0;
+                return BBErrorCode.NoData;
             }
 
             XmlElement InfoElement = doc.CreateElement("Info");
@@ -69,7 +69,7 @@ namespace ExcelToXml
                 }
                 else
                 {
-                    return -1; // 타입이 유효하지 않으면 저장하지 않음
+                    return BBErrorCode.InvalidData; // 타입이 유효하지 않으면 저장하지 않음
                 }
 
                 XmlElement field = doc.CreateElement(columnName);
@@ -95,13 +95,7 @@ namespace ExcelToXml
                     string value = dataRow[colIndex]?.ToString() ?? "";
                     
                     XmlElement field = doc.CreateElement(columnName);
-                    string type = table.Rows[0][colIndex]?.ToString()?.Trim() ?? "string";
-                    /*
-                    if (type.Contains("[]"))
-                    {
-                        value = ConvertToArrayString(value);
-                    }
-                    */
+                    string type = InfoElement.ChildNodes[colIndex].InnerText;
                     if (type.Contains("ENUM"))
                     {
                         //대문자 통일 예외처리 
@@ -116,7 +110,7 @@ namespace ExcelToXml
             }
 
             doc.Save(filePath);
-            return 1;
+            return BBErrorCode.Success;
         }
 
         public static string GenerateStructFromXml(string xmlPath, out List<string> structNames)
@@ -170,7 +164,6 @@ namespace ExcelToXml
                 sb.AppendLine("\t}");
 
                 structNames.Add(structName);
-                System.Windows.MessageBox.Show($"구조체 {structName} 생성 완료", "Info", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
             }
 
             return sb.ToString();

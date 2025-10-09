@@ -22,7 +22,7 @@
                     <Label Name="txtDataCodePath" Width="auto" Margin="0 0 10 0"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Margin="0 0 0 10" >
-                    <Button Name="btnEnumGenerator" Content="Enum C# 코드 생성" Height = "35" Width="150" Margin="0 0 10 10" Click="btnGenerateEnum_Click"/>
+                    <Button Name="btnAllGenerator" Content="전체 강제 변환" Height="35" Width="150" Margin="0 0 10 10" Click="btnAllGenerator_Click" Background="LightCoral"/>
                 </StackPanel>
         </StackPanel>
 
@@ -31,6 +31,7 @@
             <ListBox Name="fileList" Height="500" SelectionChanged="fileList_SelectionChanged"/>
         </StackPanel>
         <StackPanel DockPanel.Dock = "bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 10 0 10">
+            <Button Name="btnEnumGenerator" Content="Enum C# 코드 생성" Height = "35" Width="150" Margin="0 0 10 10" Click="btnGenerateEnum_Click"/>
             <Button Name="btnSaveXml" Content="개별 XML 저장하기" Width="150" Height = "35" IsEnabled="False" Margin="0 0 10 10" Click="btnSaveXml_Click"/>
             <Button Name="btnGenerateCode" Content="XML C# 코드 생성" Height = "35" Width="150" Margin="0 0 10 10" Click="btnGenerateStruct_Click"/>
         </StackPanel>

@@ -12,6 +12,22 @@ using System.Text.Json.Serialization;
 
 namespace ExcelToXml
 {
+    public enum BBErrorCode
+    {
+        Success = 1,
+        NoData = 0,
+        DataValue = 10,
+        TypeCheck = 11,
+        InvalidData = 12,
+        Path = 20,
+        EnumPath = 21,
+        StructPath = 22,
+        XmlPath = 23,
+        FolderPath = 24,
+        CodePath = 25,
+        Cancel = 100,
+    }
+
     public partial class MainWindow : Window
     {
         private Dictionary<string, DataTable> currentSheets;
@@ -80,13 +96,12 @@ namespace ExcelToXml
             File.WriteAllText(path, json);
         }
 
-        void RefreshFileList(string folderPath)
+        BBErrorCode RefreshFileList(string folderPath)
         {
             selectedFolderPath = folderPath;
             if (Directory.Exists(folderPath) == false)
             {
-                System.Windows.MessageBox.Show("경로가 유효하지 않습니다.\n현재 경로 : " + folderPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                return;
+                return BBErrorCode.FolderPath;
             }
             txtExcelFolderPath.Content = "현재 엑셀 저장 경로 : " + folderPath;
 
@@ -107,6 +122,7 @@ namespace ExcelToXml
                 }
             };
             btnSaveXml.Visibility = Visibility.Visible;
+            return BBErrorCode.Success;
         }
         private void btnSelectFolder_Click(object sender, RoutedEventArgs e)
         {
@@ -118,18 +134,24 @@ namespace ExcelToXml
             {
                 string filePath = dialog.FileName;
                 string folderPath = Path.GetDirectoryName(filePath);
-                RefreshFileList(folderPath);
-            }
+
+                BBErrorCode Result = RefreshFileList(folderPath);
+                if(Result != BBErrorCode.Success)
+                {
+                    PrintErrorCode(Result);
+                    return;
+                } 
+            }   
         }
 
         private void btnSelectXMLFolder_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new System.Windows.Forms.OpenFileDialog();
-            dialog.Filter = "XML Files (*.xml)|*.xml" ;
+            dialog.Filter = "XML Files (*.xml)|*.xml";
             dialog.Title = "Select XML File";
             dialog.CheckFileExists = true;
             dialog.InitialDirectory = selectedXMLPath;
-            
+
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string filePath = dialog.FileName;
@@ -177,7 +199,9 @@ namespace ExcelToXml
         private void btnSaveXml_Click(object sender, RoutedEventArgs e)
         {
             if (currentSheets == null)
+            {
                 return;
+            }
 
             System.Windows.Forms.SaveFileDialog saveDialog = new System.Windows.Forms.SaveFileDialog { Filter = "XML Files (*.xml)|*.xml" };
             saveDialog.InitialDirectory = selectedXMLPath;
@@ -201,51 +225,55 @@ namespace ExcelToXml
                 txtXMLFolderPath.Content = "현재 XML 저장 경로 : " + selectedXMLPath;
 
                 // Save the selected sheet to XML
-                int saveResult = XmlHelper.SaveDataTableToXml(currentSheets.First().Value, saveDialog.FileName);
-                if (saveResult == -1)
+                BBErrorCode saveResult = XmlHelper.SaveDataTableToXml(currentSheets.First().Value, saveDialog.FileName);
+                if (saveResult == BBErrorCode.Success)
                 {
-                    System.Windows.MessageBox.Show("Invalid data type in the first column. Please check the data.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                    return;
-                }
-                else if (saveResult == 0)
-                {
-                    System.Windows.MessageBox.Show("No data to save.", "Info", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
-                    return;
+                    System.Windows.MessageBox.Show("XML saved successfully!", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("XML saved successfully!", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                    PrintErrorCode(saveResult);
                 }
             }
         }
         void btnGenerateStruct_Click(object sender, RoutedEventArgs e)
         {
+            BBErrorCode Result = GenerateStruct();
+            if (Result != BBErrorCode.Success)
+            {
+                PrintErrorCode(Result);
+                return;
+            }
+
+            System.Windows.MessageBox.Show("구조체 코드를 저장했습니다.", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        }
+
+        BBErrorCode GenerateStruct(bool bForce = false)
+        {
             string folderPath = selectedCodePath;
             if (Directory.Exists(folderPath) == false)
             {
-                System.Windows.MessageBox.Show("경로가 유효하지 않습니다.\n현재 경로 : " + folderPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                return;
+                return BBErrorCode.FolderPath;
             }
             List<string> structNames = new List<string>();
             string structCode = XmlHelper.GenerateStructFromXml(selectedXMLPath, out structNames);
             if (string.IsNullOrEmpty(structCode))
             {
-                System.Windows.MessageBox.Show("구조체 코드 생성에 실패했습니다. XML 경로나 내용을 확인해주세요.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                return;
+                return BBErrorCode.InvalidData;
             }
 
             string structFileName = "DataDrivenDefines.cs";
             string structFilePath = Path.Combine(selectedCodePath, structFileName);
-            if (File.Exists(structFilePath))
+            if (!bForce && File.Exists(structFilePath))
             {
                 var result = System.Windows.MessageBox.Show("구조체 C# 파일이 이미 존재합니다. 덮어쓰시겠습니까?", "File Exists", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
                 if (result != System.Windows.MessageBoxResult.Yes)
-                    return;
+                {
+                    return BBErrorCode.Cancel;
+                }
             }
 
             string savePath = Path.GetFullPath(structFilePath); // 절대 경로로 변환
-
-            // Save the structure code to the file
             if (File.Exists(savePath))
             {
                 File.Delete(savePath); // 기존 파일 삭제
@@ -279,30 +307,40 @@ namespace ExcelToXml
             structCode = usingCode + structCode;
 
             File.WriteAllText(savePath, structCode);
-            System.Windows.MessageBox.Show("구조체 코드를 저장했습니다.", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            return BBErrorCode.Success;
         }
+
         void btnGenerateEnum_Click(object sender, RoutedEventArgs e)
+        {
+            BBErrorCode Result = GenerateEnum();
+            if (Result != BBErrorCode.Success)
+            {
+                PrintErrorCode(Result);
+                return;
+            }
+            System.Windows.MessageBox.Show("Enum 코드를 저장했습니다.", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        }
+
+        BBErrorCode GenerateEnum(bool bForce = false)
         {
             string folderPath = selectedCodePath;
             if (Directory.Exists(folderPath) == false)
             {
-                System.Windows.MessageBox.Show("경로가 유효하지 않습니다.\n현재 경로 : " + folderPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                return;
+                return BBErrorCode.FolderPath;
             }
 
             ExcelHelper.GenerateEnumFromExcel(Path.Combine(selectedFolderPath, "DataEnumDefines.xlsx"), out string enumCode);
             if (string.IsNullOrEmpty(enumCode))
             {
-                System.Windows.MessageBox.Show("Enum 코드 생성에 실패했습니다. 엑셀 경로나 내용을 확인해주세요.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-                return;
+                return BBErrorCode.InvalidData;
             }
             string enumFileName = "DataEnumDefines.cs";
             string enumFilePath = Path.Combine(selectedCodePath, enumFileName);
-            if (File.Exists(enumFilePath))
+            if (!bForce && File.Exists(enumFilePath))
             {
                 var result = System.Windows.MessageBox.Show("Enum C# 파일이 이미 존재합니다. 덮어쓰시겠습니까?", "File Exists", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
                 if (result != System.Windows.MessageBoxResult.Yes)
-                    return;
+                    return BBErrorCode.Cancel;
             }
             string savePath = Path.GetFullPath(enumFilePath); // 절대 경로로 변환
             if (File.Exists(savePath))
@@ -312,7 +350,95 @@ namespace ExcelToXml
 
             // Save the enum code to the file
             File.WriteAllText(savePath, enumCode);
-            System.Windows.MessageBox.Show("Enum 코드를 저장했습니다.", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            return BBErrorCode.Success;
+        }
+
+        void btnAllGenerator_Click(object sender, RoutedEventArgs e)
+        {
+            BBErrorCode Result = GenerateAll();
+            if (Result != BBErrorCode.Success)
+            {
+                PrintErrorCode(Result);
+                return;
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("전체 변환을 완료했습니다.", "Done", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            }
+        }
+
+        void PrintErrorCode(BBErrorCode error)
+        {
+            switch (error)
+            {
+                case BBErrorCode.Success:
+                    // 성공한 경우 별도의 메시지 없음
+                    break;
+                case BBErrorCode.NoData:
+                    System.Windows.MessageBox.Show("저장할 데이터가 없습니다.", "Info", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                    break;
+                case BBErrorCode.DataValue:
+                    System.Windows.MessageBox.Show("데이터 값이 유효하지 않습니다. 데이터를 확인해주세요.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    break;
+                case BBErrorCode.TypeCheck:
+                    System.Windows.MessageBox.Show("데이터 타입이 유효하지 않습니다. 데이터를 확인해주세요.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    break;
+                case BBErrorCode.InvalidData:
+                    System.Windows.MessageBox.Show("구조체 코드 생성에 실패했습니다. XML 경로나 내용을 확인해주세요.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    break;
+                case BBErrorCode.FolderPath:
+                    System.Windows.MessageBox.Show("폴더 경로가 유효하지 않습니다.\n현재 경로 : " + selectedFolderPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    break;
+                case BBErrorCode.XmlPath:
+                    System.Windows.MessageBox.Show("XML 경로가 유효하지 않습니다.\n현재 경로 : " + selectedXMLPath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    break;
+                case BBErrorCode.CodePath:
+                    System.Windows.MessageBox.Show("경로가 유효하지 않습니다.\n현재 경로 : " + selectedCodePath, "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    break;
+                case BBErrorCode.Cancel:
+                    // 취소한 경우 별도의 메시지 없음
+                    break;
+                default:
+                    System.Windows.MessageBox.Show("알 수 없는 오류가 발생했습니다.", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                    break;
+            }
+        }
+
+        BBErrorCode GenerateAll()
+        {
+            RefreshFileList(selectedFolderPath);
+            // 전체 테이블 읽어와서 엑셀에 로드
+            var xlsxFiles = Directory.GetFiles(selectedFolderPath, "*.xlsx", SearchOption.AllDirectories);
+            var xlsFiles = Directory.GetFiles(selectedFolderPath, "*.xls", SearchOption.AllDirectories);
+            foreach (var file in xlsFiles.Concat(xlsxFiles))
+            {
+                if (file.Contains("DataEnumDefines"))
+                {
+                    continue; // Enum 파일은 건너뜀
+                }
+                var dataSet = ExcelHelper.LoadAllSheets(file);
+                foreach (DataTable dataTable in dataSet.Tables)
+                {
+                    currentSheets = new Dictionary<string, DataTable> { { dataTable.TableName, dataTable } };
+                    string fileNameWithoutExt = Path.GetFileNameWithoutExtension(file);
+                    string xmlFileName = fileNameWithoutExt + ".xml";
+                    string xmlFilePath = Path.Combine(selectedXMLPath, xmlFileName);
+
+                    BBErrorCode saveResult = XmlHelper.SaveDataTableToXml(currentSheets.First().Value, xmlFilePath);
+                    if (saveResult != BBErrorCode.Success)
+                    {
+                        return saveResult;
+                    }
+                }
+            }
+
+            // Generate struct code
+            GenerateStruct(true);
+
+            // Generate enum code
+            GenerateEnum(true);
+
+            return BBErrorCode.Success;
         }
     }
 }
