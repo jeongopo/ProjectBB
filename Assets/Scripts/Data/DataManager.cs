@@ -6,6 +6,8 @@ using UnityEngine;
 using System;
 using Mono.Cecil;
 using DataEnumDefines;
+using System.Linq;
+using static ParsingHelper;
 
 public class DataManager : MonoBehaviour
 {
@@ -24,27 +26,19 @@ public class DataManager : MonoBehaviour
         // Example usage of the loaded data
         foreach (var item in dataStorage.TestIngredientsData)
         {
-            string TestStr;
-            switch (item.Value.Grade)
-            {
-                case EnumGrade.Good:
-                    TestStr = "Good";
-                    break;
-                case EnumGrade.Great:
-                    TestStr = "Great";
-                    break;
-                case EnumGrade.Normal:
-                    TestStr = "Normal";
-                    break;
-                default:
-                    TestStr = "Unknown";
-                    break;
-            }
-            Debug.Log($"ID: {item.Value.ID}, Name: {item.Value.Name}, Ingredients: {item.Value.Ingredients}, CookingStep: {item.Value.CookingStep}, Main: {item.Value.main}, Grade: {TestStr}");
+            Debug.Log($"ID: {item.Value.ID}, Name: {item.Value.NAME}, Grade: {item.Value.GRADE}");
         }
         foreach (var item in dataStorage.TestCustomerData)
         {
-            Debug.Log($"ID: {item.Value.ID}, Name: {item.Value.Name}, Level: {item.Value.Level}, CookingStep: {item.Value.CookingStep}, Special: {item.Value.Special}");
+            Debug.Log($"ID: {item.Value.ID}, Name: {item.Value.NAME}, Level: {item.Value.LEVEL}, Cooking Step: {item.Value.COOKINGSTEP}, Special: {item.Value.SPECIAL}");
+        }
+        foreach (var item in dataStorage.TestMinigame_BoilingData)
+        {
+            Debug.Log($"ID: {item.Value.ID}, Name: {item.Value.NAME}, Ingredient: {item.Value.INGREDIENT}, Boiling Time: {item.Value.BOILING_TIME}, Boiling Difficulty: {item.Value.BOILING_DIFFICULTY}");
+            foreach(var spot in item.Value.SWEET_SPOT)
+            {
+                Debug.Log($"Sweet Spot: {spot}");
+            }   
         }
     }
     
@@ -102,9 +96,24 @@ public class DataManager : MonoBehaviour
                         continue;
                     }
                 }
+                else if (member.FieldType == typeof(int[]))
+                {
+                    int[] array = ParsingHelper.ParseIntArray(field.InnerText);
+                    member.SetValue(item, array);
+                }
+                else if (member.FieldType == typeof(float[]))
+                {
+                    float[] array = ParsingHelper.ParseFloatArray(field.InnerText);
+                    member.SetValue(item, array);
+                }
+                else if (member.FieldType == typeof(string[]))
+                {
+                    string[] array = ParsingHelper.ParseStringArray(field.InnerText);
+                    member.SetValue(item, array);
+                }
                 else
                 {
-                    object? value = Convert.ChangeType(field.InnerText, member.FieldType);
+                    object value = Convert.ChangeType(field.InnerText, member.FieldType);
                     member.SetValue(item, value);
                 }
 			}

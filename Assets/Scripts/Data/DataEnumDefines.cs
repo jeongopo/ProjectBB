@@ -2,15 +2,15 @@
 using System;
 namespace DataEnumDefines
 {
-	public enum EnumGrade
+	public enum ENUMGRADE
 	{
-		Normal = 1,
-		Good = 2,
-		Great = 3,
+		NORMAL = 1,
+		GOOD = 2,
+		GREAT = 3,
 	}
-	public enum EnumIngredientType
+	public enum ENUMINGREDIENTTYPE
 	{
-		Fruit = 1,
-		Meat = 2,
+		FRUIT = 1,
+		MEAT = 2,
 	}
 }

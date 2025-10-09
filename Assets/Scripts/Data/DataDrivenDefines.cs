@@ -9,27 +9,38 @@ public class DataStorage
 {
 	public Dictionary<string,TestCustomer> TestCustomerData;
 	public Dictionary<string,TestIngredients> TestIngredientsData;
+	public Dictionary<string,TestMinigame_Boiling> TestMinigame_BoilingData;
 	public void LoadData()
 	{
 		TestCustomerData = DataManager.LoadDefineData<TestCustomer>("TestCustomer");
 		TestIngredientsData = DataManager.LoadDefineData<TestIngredients>("TestIngredients");
+		TestMinigame_BoilingData = DataManager.LoadDefineData<TestMinigame_Boiling>("TestMinigame_Boiling");
 	}
 	// classDefine
 	public class TestCustomer
 	{
 			public string ID;
-			public string Name;
-			public int Level;
-			public int CookingStep;
-			public bool Special;
+			public string NAME;
+			public int LEVEL;
+			public int COOKINGSTEP;
+			public bool SPECIAL;
 	}
 	public class TestIngredients
 	{
 			public string ID;
-			public string Name;
-			public string Ingredients;
-			public int CookingStep;
-			public bool main;
-			public EnumGrade Grade;
+			public string NAME;
+			public string INGREDIENTS;
+			public int COOKINGSTEP;
+			public bool MAIN;
+			public ENUMGRADE GRADE;
+	}
+	public class TestMinigame_Boiling
+	{
+			public string ID;
+			public string NAME;
+			public string INGREDIENT;
+			public int[] SWEET_SPOT;
+			public int BOILING_TIME;
+			public int BOILING_DIFFICULTY;
 	}
 }

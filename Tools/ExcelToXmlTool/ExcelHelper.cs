@@ -40,6 +40,10 @@ namespace ExcelToXml
             return result;
         }
 
+        /// <summary>
+        /// 엑셀에서 바로 C# 코드로 생성. XML 변환 과정을 거치지 않는다
+        /// 모든 Enum 이름과 값은 대문자로 통일한다
+        /// </summary>
         public static void GenerateEnumFromExcel(string EnumFilePath, out string EnumCode)
         {
             EnumCode = string.Empty;
@@ -60,14 +64,14 @@ namespace ExcelToXml
             {
                 if (table.Rows.Count == 0) continue;
 
-                string enumName = table.TableName;
+                string enumName = table.TableName.ToUpper();
                 sb.AppendLine($"\tpublic enum {enumName}");
                 sb.AppendLine("\t{");
 
                 foreach (DataRow row in table.Rows)
                 {
                     if (row.ItemArray.Length < 2) continue; // Ensure there are at least two columns
-                    string name = row[0].ToString();
+                    string name = row[0].ToString().ToUpper();
                     string value = row[1].ToString();
 
                     sb.AppendLine($"\t\t{name} = {value},");

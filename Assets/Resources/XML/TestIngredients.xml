@@ -1,26 +1,26 @@
 <Rows>
   <Info>
     <ID>string</ID>
-    <Name>string</Name>
-    <Ingredients>string</Ingredients>
-    <CookingStep>int</CookingStep>
-    <main>bool</main>
-    <Grade>EnumGrade</Grade>
+    <NAME>string</NAME>
+    <INGREDIENTS>string</INGREDIENTS>
+    <COOKINGSTEP>int</COOKINGSTEP>
+    <MAIN>bool</MAIN>
+    <GRADE>ENUMGRADE</GRADE>
   </Info>
   <Row>
     <ID>Recipe1</ID>
-    <Name>레시피이름</Name>
-    <Ingredients>Ingredient1</Ingredients>
-    <CookingStep>0</CookingStep>
-    <main>True</main>
-    <Grade>Good</Grade>
+    <NAME>레시피이름</NAME>
+    <INGREDIENTS>Ingredient1</INGREDIENTS>
+    <COOKINGSTEP>0</COOKINGSTEP>
+    <MAIN>True</MAIN>
+    <GRADE>GOOD</GRADE>
   </Row>
   <Row>
     <ID>Recipe2</ID>
-    <Name>레시피의다음이름</Name>
-    <Ingredients>Ingredient2</Ingredients>
-    <CookingStep>1</CookingStep>
-    <main>False</main>
-    <Grade>Great</Grade>
+    <NAME>레시피의다음이름</NAME>
+    <INGREDIENTS>Ingredient2</INGREDIENTS>
+    <COOKINGSTEP>1</COOKINGSTEP>
+    <MAIN>False</MAIN>
+    <GRADE>GREAT</GRADE>
   </Row>
 </Rows>
