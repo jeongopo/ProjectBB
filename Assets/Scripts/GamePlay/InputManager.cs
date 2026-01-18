@@ -76,18 +76,12 @@ namespace GamePlay
             }
         }
         
-        /// <summary>
-        /// Input Actions 활성화
-        /// </summary>
         private void EnableInputActions()
         {
             moveAction?.Enable();
             interactAction?.Enable();
         }
         
-        /// <summary>
-        /// Input Actions 비활성화
-        /// </summary>
         private void DisableInputActions()
         {
             moveAction?.Disable();
@@ -108,8 +102,6 @@ namespace GamePlay
         
         }
         
-        
-        // Interact 콜백
         private void OnInteract(InputAction.CallbackContext context)
         {
             isInteracting = true;
@@ -141,7 +133,6 @@ namespace GamePlay
         
         private void OnDestroy()
         {
-
             if (interactAction != null)
             {
                 interactAction.performed -= OnInteract;
