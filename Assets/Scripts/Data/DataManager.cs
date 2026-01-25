@@ -11,7 +11,7 @@ using static ParsingHelper;
 
 public class DataManager : MonoBehaviour
 {
-    DataStorage dataStorage = new DataStorage();
+    public DataStorage dataStorage = new DataStorage();
 	const string XMLFilePath = "XML/";
 
     void Start()
