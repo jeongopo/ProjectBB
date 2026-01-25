@@ -3,6 +3,13 @@ using UnityEngine.Tilemaps;
 
 namespace GamePlay
 {
+    enum CharacterState
+    {
+        Idle,
+        Moving,
+        Interacting,
+    }
+
     [RequireComponent(typeof(Rigidbody2D))]
     public class MainCharacter : MonoBehaviour
     {
@@ -17,11 +24,15 @@ namespace GamePlay
         [SerializeField] private SpriteRenderer spriteRenderer;
 
         private Rigidbody2D rb;
+        private Animator animator;
+        
+        private CharacterState CurrentPlayerState = CharacterState.Idle;
         
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
             
+            animator = GetComponent<Animator>();
             if (spriteRenderer == null)
             {
                 spriteRenderer = GetComponent<SpriteRenderer>();
@@ -61,10 +72,19 @@ namespace GamePlay
             
             Vector2 movement = input.normalized * moveSpeed;
             rb.linearVelocity = movement;
-            
-            if (input.x != 0)
+
+            if(movement.magnitude > 0)
             {
-                FlipSprite(input.x);
+                UpdateCharacterState(CharacterState.Moving);
+                
+                if (input.x != 0)
+                {
+                    FlipSprite(input.x);
+                }
+            }
+            else
+            {
+                UpdateCharacterState(CharacterState.Idle);
             }
         }
         
@@ -81,6 +101,15 @@ namespace GamePlay
             {
                 spriteRenderer.flipX = true;
             }
+        }
+
+        void UpdateCharacterState(CharacterState newState)
+        {
+            if (CurrentPlayerState == newState) return;
+
+            Debug.Log("Character State changed " + CurrentPlayerState + " -> " + newState);
+            CurrentPlayerState = newState;
+            animator.SetInteger("State", (int) CurrentPlayerState);
         }
     }
 }
