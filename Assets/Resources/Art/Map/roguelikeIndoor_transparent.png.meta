@@ -1538,8 +1538,8 @@ TextureImporter:
         y: 288
         width: 17
         height: 17
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -8355,12 +8355,12 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 84
+        y: 85
         width: 17
-        height: 18
+        height: 17
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 0, y: 9, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
@@ -8377,12 +8377,12 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 16
-        y: 85
+        y: 86
         width: 18
-        height: 17
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+        height: 15
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 1, y: 8, z: 1, w: 0}
       customData: 
       outline: []
       physicsShape: []
@@ -8398,13 +8398,13 @@ TextureImporter:
       name: roguelikeIndoor_transparent_312
       rect:
         serializedVersion: 2
-        x: 33
-        y: 85
-        width: 18
-        height: 17
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+        x: 34
+        y: 86
+        width: 16
+        height: 16
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 9, z: 0, w: 1}
       customData: 
       outline: []
       physicsShape: []
@@ -8423,10 +8423,10 @@ TextureImporter:
         x: 51
         y: 85
         width: 16
-        height: 17
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 1, z: 0, w: 1}
+      border: {x: 0, y: 8, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
@@ -8448,7 +8448,7 @@ TextureImporter:
         height: 17
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 9, z: 1, w: 1}
+      border: {x: 0, y: 8, z: 1, w: 1}
       customData: 
       outline: []
       physicsShape: []
@@ -8470,7 +8470,7 @@ TextureImporter:
         height: 17
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 1, z: 0, w: 1}
+      border: {x: 0, y: 9, z: 0, w: 1}
       customData: 
       outline: []
       physicsShape: []
@@ -8492,7 +8492,7 @@ TextureImporter:
         height: 17
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 0, y: 7, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
@@ -8509,9 +8509,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 118
-        y: 85
+        y: 92
         width: 18
-        height: 17
+        height: 10
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -9064,7 +9064,7 @@ TextureImporter:
         height: 18
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 0, y: 10, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
@@ -9212,12 +9212,12 @@ TextureImporter:
       name: roguelikeIndoor_transparent_349
       rect:
         serializedVersion: 2
-        x: 169
+        x: 170
         y: 67
-        width: 12
+        width: 10
         height: 18
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -9238,9 +9238,9 @@ TextureImporter:
         y: 67
         width: 12
         height: 18
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 1, y: 0, z: 1, w: 0}
       customData: 
       outline: []
       physicsShape: []
@@ -9898,8 +9898,8 @@ TextureImporter:
         y: 50
         width: 12
         height: 18
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
