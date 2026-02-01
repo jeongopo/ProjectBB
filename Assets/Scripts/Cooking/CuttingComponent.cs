@@ -89,9 +89,9 @@ public class CuttingComponent : MonoBehaviour
     {
         if (isPlaying)
         {
-            float t = Mathf.Abs(barRect.localPosition.x) / (baseWidth / 2);
-            float multiplier = Mathf.Sin(t * Mathf.PI);
-            float move = speed * Time.deltaTime * (movingRight ? 1 : -1);
+            float t = (float) Mathf.Abs(barRect.localPosition.x) / (float) (baseWidth / 2);
+            float addValue = Mathf.Cos(t * Mathf.PI * 0.5f); 
+            float move = (SliderSpeed + addValue) * speed * Time.deltaTime * (movingRight ? 1 : -1);
             barRect.localPosition += new Vector3(move, 0, 0);
 
             if (barRect.localPosition.x >= baseWidth / 2)
