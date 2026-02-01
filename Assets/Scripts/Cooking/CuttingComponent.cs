@@ -11,7 +11,8 @@ public class CuttingComponent : MonoBehaviour
     public Image cuttingParamBar;
     public Button cuttingStartButton;
 
-    private int[] cuttingRange;
+
+    [SerializeField] private float SliderSpeed = 1.0f; // 바 이동 속도 조절 변수
 
     private RectTransform componentRect;
     private RectTransform barRect;
@@ -20,6 +21,13 @@ public class CuttingComponent : MonoBehaviour
     private float speed = 200f; // 바 이동 속도 (조정 가능)
     private bool movingRight = true;
     private bool isPlaying = false;
+    private int currentCycle = 0;
+
+    //Data
+    private int maxCuttingCycle = 10;
+    private int[] cuttingRange;
+    DataStorage.Minigame_Cutting currentCuttingData;
+    
     
     [SerializeField] private string TestDataID = "Boiling_easy_01";
 
@@ -40,12 +48,18 @@ public class CuttingComponent : MonoBehaviour
             Debug.Log("Found TestDataID in DataManager");
         }
 
-        cuttingRange = FindFirstObjectByType<DataManager>().dataStorage.Minigame_CuttingData[TestDataID].CUTTING_RANGE;
+        currentCuttingData = FindFirstObjectByType<DataManager>().dataStorage.Minigame_CuttingData[TestDataID];
+        cuttingRange = currentCuttingData.CUTTING_RANGE;
+        maxCuttingCycle = currentCuttingData.CUTTING_CYCLES;
 
         for (int i = 0; i < cuttingParams.Length; i++)
         {
             cuttingParams[i].rectTransform.sizeDelta = new Vector2(cuttingRange[i] * baseValue, cuttingParams[i].rectTransform.sizeDelta.y);
         }
+
+        barRect.localPosition = new Vector3(0,0, 0);
+        movingRight = false; // 좌측부터 시작
+        currentCycle = 0;
     }
 
     public void StartMiniGame()
@@ -53,7 +67,6 @@ public class CuttingComponent : MonoBehaviour
         InitCooking();
 
         isPlaying = true;
-        barRect.localPosition = new Vector3(-baseWidth / 2, barRect.localPosition.y, 0);
 
         FindFirstObjectByType<InputManager>().OnInteractPressed += Interact;
     }
@@ -76,18 +89,29 @@ public class CuttingComponent : MonoBehaviour
     {
         if (isPlaying)
         {
-            // 바 좌우 이동
+            float t = Mathf.Abs(barRect.localPosition.x) / (baseWidth / 2);
+            float multiplier = Mathf.Sin(t * Mathf.PI);
             float move = speed * Time.deltaTime * (movingRight ? 1 : -1);
             barRect.localPosition += new Vector3(move, 0, 0);
 
-            // 방향 전환: CuttingComponent 너비 내에서
             if (barRect.localPosition.x >= baseWidth / 2)
             {
                 movingRight = false;
             }
             else if (barRect.localPosition.x <= -baseWidth / 2)
             {
-                movingRight = true;
+                if(!movingRight)
+                {
+                    movingRight = true;
+                    currentCycle++;
+
+                    if( currentCycle >= maxCuttingCycle )
+                    {
+                        Debug.Log("최대 사이클 도달 - 미니게임 종료");
+                        //@TODO 실패처리
+                        EndMiniGame();
+                    }
+                }
             }
         }
     }
@@ -104,6 +128,7 @@ public class CuttingComponent : MonoBehaviour
             if (Math.Abs(barX) <= currentRange)
             {
                 Debug.Log($"결과: CuttingParam{i+1} 범위");
+                //@TODO 결과처리
                 break;
             }
         }
