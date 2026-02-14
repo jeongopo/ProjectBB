@@ -71,7 +71,7 @@ namespace GamePlay
             
             if (interactAction != null)
             {
-                interactAction.performed += OnInteract;
+                interactAction.started += OnInteract;
                 interactAction.canceled += OnInteractCanceled;
             }
         }
