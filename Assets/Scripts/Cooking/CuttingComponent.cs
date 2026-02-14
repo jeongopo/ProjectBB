@@ -8,12 +8,10 @@ using Unity.VisualScripting;
 using System.Data.Common;
 using DataEnumDefines;
 
-public class CuttingComponent : MonoBehaviour
+public class CuttingComponent : CookingComponent
 {
     public Image[] cuttingParams; // CuttingParam1, 2, 3 배열
     public Image cuttingParamBar;
-    public Button cuttingStartButton;
-    [SerializeField] private CookingTimerComponent cookingTimer;
 
     [SerializeField] private float SliderSpeed = 1.0f; // 바 이동 속도 조절 변수
 
@@ -23,7 +21,6 @@ public class CuttingComponent : MonoBehaviour
     private float baseValue;
     private float speed = 200f; // 바 이동 속도 (조정 가능)
     private bool movingRight = true;
-    private bool isPlaying = false;
     private int currentCycle = 0;
 
     //Data
@@ -37,22 +34,19 @@ public class CuttingComponent : MonoBehaviour
     
     [SerializeField] private string TestDataID = "Boiling_easy_01";
 
-    void Start()
+    protected override void Start()
     {
         componentRect = GetComponent<RectTransform>();
         barRect = cuttingParamBar.GetComponent<RectTransform>();
         baseWidth = componentRect.rect.width;
         baseValue = baseWidth / 100;
 
-        cuttingStartButton.onClick.AddListener(StartMiniGame);       
-
-        cookingTimer = FindFirstObjectByType<CookingTimerComponent>();
-        cookingTimer.gameObject.SetActive(false);
+        base.Start();
         
         results = new int[(int)ENUMGRADE.GREAT + 1];
     }
 
-    void InitCooking()
+    protected override void InitCooking()
     {
         if(FindFirstObjectByType<DataManager>().dataStorage.Minigame_CuttingData.ContainsKey(TestDataID))
         {
@@ -76,56 +70,40 @@ public class CuttingComponent : MonoBehaviour
         totalAttempts = 0;
     }
 
-    public void StartMiniGame()
-    {
-        if (cookingTimer != null)
-        {
-            cookingTimer.StartCountdown(OnTimerComplete);
-        }
-        else
-        {
-            OnTimerComplete();
-        }
-    }
-
-    private void OnTimerComplete()
-    {
-        InitCooking();
-
-        isPlaying = true;
-
-        FindFirstObjectByType<InputManager>().OnInteractPressed += Interact;
-    }
-
-    public void EndMiniGame()
+    protected override void EndMiniGame()
     {   
-        if(totalAttempts < currentCuttingData.CUTTING_COUNTS)
-        {
-            //실패 처리
-        }
-        else
-        {
-            int highestResultIndex = 0;
-            for(int i=0; i<results.Length; i++)
-            {
-                if( i != highestResultIndex && results[i] > results[highestResultIndex])
-                {
-                    highestResultIndex = i;
-                }
-            }
-            Debug.Log($"최종 결과: CuttingParam{highestResultIndex+1} 범위에서 가장 많은 성공 횟수 기록");
-            //@todo 보상 획득 처리
-        }
-
-        FindFirstObjectByType<InputManager>().OnInteractPressed -= Interact;
-        isPlaying = false;
+        OnGameEnd();
     }
 
-    void Interact()
+    protected override void Interact()
     {
         if (isPlaying)
         {
-            JudgeResult(); 
+            float barX = barRect.localPosition.x;
+            float currentRange = 0f;
+
+            for (int i = 0; i < cuttingRange.Length; i++)
+            {
+                currentRange = cuttingRange[i] * baseValue / 2;
+                if (Math.Abs(barX) <= currentRange)
+                {
+                    Debug.Log($"결과: CuttingParam{i+1} 범위");
+                    results[i]++;
+                    totalAttempts++;
+
+                    // 바 초기 위치로 리셋 
+                    barRect.localPosition = new Vector3(-baseWidth / 2, barRect.localPosition.y, barRect.localPosition.z);
+                    movingRight = false;
+                    break;
+                }
+            }
+        
+            if(totalAttempts >= currentCuttingData.CUTTING_COUNTS)
+            {
+                Debug.Log("모든 시도 완료 - 미니게임 종료");
+                //@TODO 결과에 따른 성공/실패 처리
+                JudgeResult();
+            }
         }
     }
 
@@ -160,33 +138,26 @@ public class CuttingComponent : MonoBehaviour
         }
     }
 
-    // 결과 판정
-    private void JudgeResult()
+    protected override void JudgeResult()
     {
-        float barX = barRect.localPosition.x;
-        float currentRange = 0f;
-
-        for (int i = 0; i < cuttingRange.Length; i++)
+        if(totalAttempts < currentCuttingData.CUTTING_COUNTS)
         {
-            currentRange = cuttingRange[i] * baseValue / 2;
-            if (Math.Abs(barX) <= currentRange)
+            //실패 처리
+        }
+        else
+        {
+            int highestResultIndex = 0;
+            for(int i=0; i<results.Length; i++)
             {
-                Debug.Log($"결과: CuttingParam{i+1} 범위");
-                results[i]++;
-                totalAttempts++;
-
-                // 바 초기 위치로 리셋 
-                barRect.localPosition = new Vector3(-baseWidth / 2, barRect.localPosition.y, barRect.localPosition.z);
-                movingRight = false;
-                break;
+                if( i != highestResultIndex && results[i] > results[highestResultIndex])
+                {
+                            highestResultIndex = i;
+                }
             }
+
+            Debug.Log($"최종 결과: CuttingParam{highestResultIndex+1} 범위에서 가장 많은 성공 횟수 기록");
+            //@todo 보상 획득 처리
         }
-        
-        if(totalAttempts >= currentCuttingData.CUTTING_COUNTS)
-        {
-            Debug.Log("모든 시도 완료 - 미니게임 종료");
-            //@TODO 결과에 따른 성공/실패 처리
-            EndMiniGame();
-        }
+        EndMiniGame();
     }
 }
