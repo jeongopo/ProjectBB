@@ -7,18 +7,29 @@ using UnityEngine;
 using DataEnumDefines;
 public class DataStorage
 {
+	public Dictionary<string,Minigame_Boiling> Minigame_BoilingData;
 	public Dictionary<string,Minigame_Cutting> Minigame_CuttingData;
 	public Dictionary<string,TestCustomer> TestCustomerData;
 	public Dictionary<string,TestIngredients> TestIngredientsData;
 	public Dictionary<string,TestMinigame_Boiling> TestMinigame_BoilingData;
 	public void LoadData()
 	{
+		Minigame_BoilingData = DataManager.LoadDefineData<Minigame_Boiling>("Minigame_Boiling");
 		Minigame_CuttingData = DataManager.LoadDefineData<Minigame_Cutting>("Minigame_Cutting");
 		TestCustomerData = DataManager.LoadDefineData<TestCustomer>("TestCustomer");
 		TestIngredientsData = DataManager.LoadDefineData<TestIngredients>("TestIngredients");
 		TestMinigame_BoilingData = DataManager.LoadDefineData<TestMinigame_Boiling>("TestMinigame_Boiling");
 	}
 	// classDefine
+	public class Minigame_Boiling
+	{
+			public string ID;
+			public string NAME;
+			public string INGREDIENT;
+			public int[] SWEET_SPOT;
+			public int BOILING_TIME;
+			public int BOILING_DIFFICULTY;
+	}
 	public class Minigame_Cutting
 	{
 			public string ID;
