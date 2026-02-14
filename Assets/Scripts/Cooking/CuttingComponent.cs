@@ -5,6 +5,8 @@ using System.Linq;
 using GamePlay;
 using System;
 using Unity.VisualScripting;
+using System.Data.Common;
+using DataEnumDefines;
 
 public class CuttingComponent : MonoBehaviour
 {
@@ -28,6 +30,9 @@ public class CuttingComponent : MonoBehaviour
     private int maxCuttingCycle = 10;
     private int[] cuttingRange;
     DataStorage.Minigame_Cutting currentCuttingData;
+
+    private int[] results;
+    int totalAttempts = 0;
     
     
     [SerializeField] private string TestDataID = "Boiling_easy_01";
@@ -43,6 +48,8 @@ public class CuttingComponent : MonoBehaviour
 
         cookingTimer = FindFirstObjectByType<CookingTimerComponent>();
         cookingTimer.gameObject.SetActive(false);
+        
+        results = new int[(int)ENUMGRADE.GREAT + 1];
     }
 
     void InitCooking()
@@ -64,6 +71,9 @@ public class CuttingComponent : MonoBehaviour
         barRect.localPosition = new Vector3(-baseWidth / 2, barRect.localPosition.y, barRect.localPosition.z);
         movingRight = false; // 좌측부터 시작
         currentCycle = 0;
+
+        Array.Clear(results, 0, results.Length);
+        totalAttempts = 0;
     }
 
     public void StartMiniGame()
@@ -89,6 +99,24 @@ public class CuttingComponent : MonoBehaviour
 
     public void EndMiniGame()
     {   
+        if(totalAttempts < currentCuttingData.CUTTING_COUNTS)
+        {
+            //실패 처리
+        }
+        else
+        {
+            int highestResultIndex = 0;
+            for(int i=0; i<results.Length; i++)
+            {
+                if( i != highestResultIndex && results[i] > results[highestResultIndex])
+                {
+                    highestResultIndex = i;
+                }
+            }
+            Debug.Log($"최종 결과: CuttingParam{highestResultIndex+1} 범위에서 가장 많은 성공 횟수 기록");
+            //@todo 보상 획득 처리
+        }
+
         FindFirstObjectByType<InputManager>().OnInteractPressed -= Interact;
         isPlaying = false;
     }
@@ -144,11 +172,21 @@ public class CuttingComponent : MonoBehaviour
             if (Math.Abs(barX) <= currentRange)
             {
                 Debug.Log($"결과: CuttingParam{i+1} 범위");
-                //@TODO 결과처리
+                results[i]++;
+                totalAttempts++;
+
+                // 바 초기 위치로 리셋 
+                barRect.localPosition = new Vector3(-baseWidth / 2, barRect.localPosition.y, barRect.localPosition.z);
+                movingRight = false;
                 break;
             }
         }
         
-        EndMiniGame();
+        if(totalAttempts >= currentCuttingData.CUTTING_COUNTS)
+        {
+            Debug.Log("모든 시도 완료 - 미니게임 종료");
+            //@TODO 결과에 따른 성공/실패 처리
+            EndMiniGame();
+        }
     }
 }
