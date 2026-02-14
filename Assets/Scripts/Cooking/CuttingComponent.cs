@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using GamePlay;
 using System;
+using Unity.VisualScripting;
 
 public class CuttingComponent : MonoBehaviour
 {
     public Image[] cuttingParams; // CuttingParam1, 2, 3 배열
     public Image cuttingParamBar;
     public Button cuttingStartButton;
-
+    [SerializeField] private CookingTimerComponent cookingTimer;
 
     [SerializeField] private float SliderSpeed = 1.0f; // 바 이동 속도 조절 변수
 
@@ -39,6 +40,9 @@ public class CuttingComponent : MonoBehaviour
         baseValue = baseWidth / 100;
 
         cuttingStartButton.onClick.AddListener(StartMiniGame);       
+
+        cookingTimer = FindFirstObjectByType<CookingTimerComponent>();
+        cookingTimer.gameObject.SetActive(false);
     }
 
     void InitCooking()
@@ -63,6 +67,18 @@ public class CuttingComponent : MonoBehaviour
     }
 
     public void StartMiniGame()
+    {
+        if (cookingTimer != null)
+        {
+            cookingTimer.StartCountdown(OnTimerComplete);
+        }
+        else
+        {
+            OnTimerComplete();
+        }
+    }
+
+    private void OnTimerComplete()
     {
         InitCooking();
 
