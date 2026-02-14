@@ -61,7 +61,7 @@ public class CuttingComponent : MonoBehaviour
             cuttingParams[i].rectTransform.sizeDelta = new Vector2(cuttingRange[i] * baseValue, cuttingParams[i].rectTransform.sizeDelta.y);
         }
 
-        barRect.localPosition = new Vector3(0,0, 0);
+        barRect.localPosition = new Vector3(-baseWidth / 2, barRect.localPosition.y, barRect.localPosition.z);
         movingRight = false; // 좌측부터 시작
         currentCycle = 0;
     }
