@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      HUD_RightTop_ClockArrow_0: 5692477417637767053
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
