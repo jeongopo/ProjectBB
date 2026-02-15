@@ -46,7 +46,7 @@ namespace GamePlay
         {
             if (inputManager == null)
             {
-                inputManager = FindObjectOfType<InputManager>();
+                inputManager = FindAnyObjectByType<InputManager>();
                 if (inputManager == null)
                 {
                     Debug.LogError("InputManager를 찾을 수 없습니다!");

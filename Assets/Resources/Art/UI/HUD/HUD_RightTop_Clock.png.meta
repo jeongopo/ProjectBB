@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      HUD_RightTop_Clock_0: -3593227964709899937
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
