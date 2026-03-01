@@ -2301,13 +2301,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7108038423553677633}
+  - component: {fileID: 8057096079005499285}
   m_Layer: 5
   m_Name: BoilingPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7108038423553677633
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2329,6 +2330,25 @@ RectTransform:
   m_AnchoredPosition: {x: -150, y: 0}
   m_SizeDelta: {x: 350, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &8057096079005499285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8274864216712050443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d84d1ed7613f3d04f896b60285b325e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BoilingComponent
+  cookingTimer: {fileID: 6264974492741771212}
+  cuttingStartButton: {fileID: 1768012361020134004}
+  arrowImage: {fileID: 966497667503791920}
+  baseAngle: -90
+  coolDownSpeed: 45
+  interactIncrease: 15
+  TestDataID: 1
 --- !u!1 &8456669853574604523
 GameObject:
   m_ObjectHideFlags: 0
@@ -2482,7 +2502,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8978792991739603261
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2702,14 +2722,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9103303160615664885}
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2748039414408365976}
   m_Father: {fileID: 1730455771781826859}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
