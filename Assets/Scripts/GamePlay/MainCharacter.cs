@@ -25,6 +25,8 @@ namespace GamePlay
 
         private Rigidbody2D rb;
         private Animator animator;
+        private float lastMoveX = 0f;
+        private float lastMoveY = 0f;
         
         private CharacterState CurrentPlayerState = CharacterState.Idle;
         
@@ -69,17 +71,43 @@ namespace GamePlay
         private void HandleContinuousMovement()
         {
             Vector2 input = inputManager.MoveInput;
-            
+
             Vector2 movement = input.normalized * moveSpeed;
             rb.linearVelocity = movement;
+
+            // 마지막 방향 유지: 입력이 있을 때만 lastMoveX/Y 갱신
+            if(input.x != 0f || input.y != 0f)
+            {
+                lastMoveX = 0f;
+                lastMoveY = 0f;
+                
+                if (input.x > 0f) lastMoveX = 1f;
+                else if (input.x < 0f) lastMoveX = -1f;
+
+                if (input.y > 0f) lastMoveY = 1f;
+                else if (input.y < 0f) lastMoveY = -1f;
+            }
+
+            // 애니메이터 파라미터 업데이트 (BlendTree용)
+            if (animator != null)
+            {
+                animator.SetFloat("MoveX", lastMoveX);
+                animator.SetFloat("MoveY", lastMoveY);
+                animator.SetFloat("MoveSpeed", movement.magnitude);
+            }
 
             if(movement.magnitude > 0)
             {
                 UpdateCharacterState(CharacterState.Moving);
                 
+                // 멈췄을 때도 마지막 X 방향을 유지
                 if (input.x != 0)
                 {
                     FlipSprite(input.x);
+                }
+                else
+                {
+                    FlipSprite(lastMoveX);
                 }
             }
             else
