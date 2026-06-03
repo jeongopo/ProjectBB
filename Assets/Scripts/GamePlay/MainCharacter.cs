@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.InputSystem;
 
 namespace GamePlay
 {
@@ -15,7 +16,7 @@ namespace GamePlay
     {
         [Header("References")]
         [SerializeField] private InputManager inputManager;
-        [SerializeField] private Tilemap groundTilemap; // 이동 가능한 타일맵
+        [SerializeField] private Tilemap groundTilemap;
         
         [Header("Movement Settings")]
         [SerializeField] private float moveSpeed = 5f;
@@ -25,6 +26,7 @@ namespace GamePlay
 
         private Rigidbody2D rb;
         private Animator animator;
+        private InputAction moveAction;
         private float lastMoveX = 0f;
         private float lastMoveY = 0f;
         
@@ -48,10 +50,15 @@ namespace GamePlay
         {
             if (inputManager == null)
             {
-                inputManager = FindAnyObjectByType<InputManager>();
-                if (inputManager == null)
+                inputManager = FindFirstObjectByType<InputManager>();
+            }
+
+            if (inputManager != null)
+            {
+                var actionMap = inputManager.GetCurrentActionMap();
+                if (actionMap != null)
                 {
-                    Debug.LogError("InputManager를 찾을 수 없습니다!");
+                    moveAction = actionMap.FindAction("Move");
                 }
             }
 
@@ -70,7 +77,9 @@ namespace GamePlay
         
         private void HandleContinuousMovement()
         {
-            Vector2 input = inputManager.MoveInput;
+            if (moveAction == null) return;
+            
+            Vector2 input = moveAction.ReadValue<Vector2>();
 
             Vector2 movement = input.normalized * moveSpeed;
             rb.linearVelocity = movement;
