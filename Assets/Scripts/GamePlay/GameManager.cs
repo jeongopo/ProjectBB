@@ -1,13 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public enum GameState
-{
-	Gameplay, //regular state: player moves, attacks, can perform actions
-	Pause, //pause menu is opened, the whole game world is frozen
-	Dialogue,
-}
+using GameEnumDefines;
 
 // <summary>
 // 게임 전반적으로 관리해야 하는 클래스

@@ -6,29 +6,33 @@ using GamePlay;
 using System;
 using DataEnumDefines;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 public class BoilingComponent : CookingComponent
 {
     public Image arrowImage;
     private RectTransform arrowRect;
 
-    [SerializeField] private float baseAngle = 90f; // 이미지 설정으로 일정수치 돌려놓아야 함
-    private float currentAngle = 0f; // 실제 각도
+    [SerializeField] private float baseAngle = 90f;
+    private float currentAngle = 0f;
     private const float MAX_ANGLE = 180f;
     private const float MIN_ANGLE = 0f;
-    [SerializeField] private float coolDownSpeed = 45f; // 초당 감소 속도 (도/초)
-    [SerializeField] private float interactIncrease = 15f; // Interact 시 증가 각도 (도)
+    [SerializeField] private float coolDownSpeed = 45f;
+    [SerializeField] private float interactIncrease = 15f;
+    [SerializeField] private float targetMoveSpeed = 90f;
 
-    private int[] sweetSpotRange; // SWEET_SPOT 범위 [min, max]
+    private bool isMovingToTarget = false;
+    private float targetAngle = 90f;
+
+    private int[] sweetSpotRange;
     private int boilingTime;
-    private int boilingDifficulty;
 
     private int[] results;
     private float elapsedTime = 0f;
-    private float nextCheckTime = 1f; // 1초마다 체크
+    private float nextCheckTime = 1f;
     private bool failed = false;
 
-    [SerializeField] private string TestDataID = "1"; // XML의 ID와 일치
+    [SerializeField] private string TestDataID = "1";
 
     protected override void Start()
     {
@@ -44,7 +48,7 @@ public class BoilingComponent : CookingComponent
 
         base.Start();
 
-        currentAngle = (MIN_ANGLE + MAX_ANGLE) / 2f; // 중앙에서 시작
+        currentAngle = (MIN_ANGLE + MAX_ANGLE) / 2f;
 
         results = new int[(int)ENUMGRADE.GREAT + 1];
     }
@@ -68,9 +72,10 @@ public class BoilingComponent : CookingComponent
 
         sweetSpotRange = boilingData.SWEET_SPOT;
         boilingTime = boilingData.BOILING_TIME;
-        boilingDifficulty = boilingData.BOILING_DIFFICULTY;
 
-        currentAngle = (MIN_ANGLE + MAX_ANGLE) / 2f; // 중앙에서 시작
+        currentAngle = (MIN_ANGLE + MAX_ANGLE) / 2f;
+        targetAngle = currentAngle;
+        isMovingToTarget = false;
         elapsedTime = 0f;
         nextCheckTime = 1f;
         failed = false;
@@ -79,25 +84,32 @@ public class BoilingComponent : CookingComponent
         UpdateArrowRotation();
     }
 
-    protected override void Interact()
+    protected override void OnMove(Vector2 moveInput)
     {
-        if (isPlaying)
-        {
-            // 상호작용 시 각도 증가 (시계방향)
-            currentAngle = Mathf.Min(currentAngle + interactIncrease, 180.0f);
-            // 즉시 판정으로 저장하지 않고, 1초 체크 루틴에서 결과를 쌓음.
-        }
+        if (!isPlaying) return;
+        if (isMovingToTarget) return;
+        if (moveInput.x == 0) return;
+
+        // 끝점(0, 180)에 가까울수록 변화량 감소
+        float distanceToEndpoint = Mathf.Min(currentAngle, MAX_ANGLE - currentAngle);
+        float scale = distanceToEndpoint / 90f;
+        float delta = interactIncrease * scale;
+
+        if (moveInput.x > 0)
+            targetAngle = Mathf.Min(currentAngle + delta, MAX_ANGLE);
+        else
+            targetAngle = Mathf.Max(currentAngle - delta, MIN_ANGLE);
+
+        if (Mathf.Abs(targetAngle - currentAngle) > 0.01f)
+            isMovingToTarget = true;
     }
 
     private void CheckAndStoreResult()
     {
-        // 각도가 SWEET_SPOT 범위 내인지 확인
-        // 내부 각도는 0..180이므로 XML의 SWEET_SPOT(0..180)과 바로 비교
         int roundedAngle = Mathf.RoundToInt(currentAngle);
 
         if (sweetSpotRange == null || sweetSpotRange.Length < 2)
         {
-            // 안전하게 기본값 처리
             sweetSpotRange = new int[] { 0, 0 };
         }
 
@@ -135,16 +147,35 @@ public class BoilingComponent : CookingComponent
         OnGameEnd();
     }
 
-    private void Update()
+    protected override void Update()
     {
-        if (!isPlaying)
-            return;
+        base.Update();
 
-        // 시간 경과에 따라 각도를 0도 방향으로 감소
-        currentAngle = Mathf.Max(currentAngle - (coolDownSpeed * Time.deltaTime), MIN_ANGLE);
+        if (!isPlaying) return;
 
-        // 0도에 도달하면 실패로 간주하고 즉시 종료
-        if (currentAngle <= MIN_ANGLE && !failed)
+        float distanceToEndpoint = Mathf.Min(currentAngle, MAX_ANGLE - currentAngle);
+        float speedMultiplier = 1f + (1f - distanceToEndpoint / 90f);
+        if (isMovingToTarget)
+        {
+            currentAngle = Mathf.MoveTowards(currentAngle, targetAngle, targetMoveSpeed * Time.deltaTime);
+            if (currentAngle == targetAngle)
+                isMovingToTarget = false;
+        }
+        else
+        {
+            float deltaAngle = coolDownSpeed * Time.deltaTime * speedMultiplier;
+            if (currentAngle <= 90f)
+            {                
+                currentAngle = Mathf.Max(currentAngle - deltaAngle, MIN_ANGLE);
+            }
+            else
+            {
+                currentAngle = Mathf.Min(currentAngle + deltaAngle, MAX_ANGLE);
+            }
+        
+        }
+
+        if ((currentAngle <= MIN_ANGLE || currentAngle >= MAX_ANGLE) && !failed)
         {
             failed = true;
             isPlaying = false;
@@ -152,10 +183,8 @@ public class BoilingComponent : CookingComponent
             return;
         }
 
-        // 화살표 회전 업데이트
         UpdateArrowRotation();
 
-        // 1초마다 결과 체크
         elapsedTime += Time.deltaTime;
         if (elapsedTime >= nextCheckTime)
         {
@@ -163,7 +192,6 @@ public class BoilingComponent : CookingComponent
             nextCheckTime += 1f;
         }
 
-        // 게임 종료 조건 확인 (시간 초과)
         if (elapsedTime >= boilingTime)
         {
             isPlaying = false;
@@ -175,6 +203,6 @@ public class BoilingComponent : CookingComponent
     {
         if (arrowRect == null) return;
 
-        arrowRect.rotation = Quaternion.Euler(0, 0, -(currentAngle + baseAngle)); // Z축 음수로 회전
+        arrowRect.rotation = Quaternion.Euler(0, 0, -(currentAngle + baseAngle));
     }
 }
