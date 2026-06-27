@@ -19,16 +19,18 @@ public class BoilingComponent : CookingComponent
     private const float MIN_ANGLE = 0f;
     [SerializeField] private float coolDownSpeed = 45f;
     [SerializeField] private float interactIncrease = 15f;
+    [SerializeField] private float targetMoveSpeed = 90f;
+
+    private bool isMovingToTarget = false;
+    private float targetAngle = 90f;
 
     private int[] sweetSpotRange;
     private int boilingTime;
-    private int boilingDifficulty;
 
     private int[] results;
     private float elapsedTime = 0f;
     private float nextCheckTime = 1f;
     private bool failed = false;
-    private float lastInputTime = 0f;
 
     [SerializeField] private string TestDataID = "1";
 
@@ -70,9 +72,10 @@ public class BoilingComponent : CookingComponent
 
         sweetSpotRange = boilingData.SWEET_SPOT;
         boilingTime = boilingData.BOILING_TIME;
-        boilingDifficulty = boilingData.BOILING_DIFFICULTY;
 
         currentAngle = (MIN_ANGLE + MAX_ANGLE) / 2f;
+        targetAngle = currentAngle;
+        isMovingToTarget = false;
         elapsedTime = 0f;
         nextCheckTime = 1f;
         failed = false;
@@ -84,20 +87,21 @@ public class BoilingComponent : CookingComponent
     protected override void OnMove(Vector2 moveInput)
     {
         if (!isPlaying) return;
+        if (isMovingToTarget) return;
+        if (moveInput.x == 0) return;
 
-        if (moveInput.x != 0) lastInputTime = Time.time;
+        // 끝점(0, 180)에 가까울수록 변화량 감소
+        float distanceToEndpoint = Mathf.Min(currentAngle, MAX_ANGLE - currentAngle);
+        float scale = distanceToEndpoint / 90f;
+        float delta = interactIncrease * scale;
 
-        float distanceToCenter = 90f - Mathf.Abs(currentAngle - 90f);
-        float angleChange = interactIncrease * Time.deltaTime * distanceToCenter / 90f;
-        
-        if (moveInput.x < 0)
-        {
-            currentAngle = Mathf.Min(currentAngle + angleChange, MAX_ANGLE);
-        }
-        else if (moveInput.x > 0)
-        {
-            currentAngle = Mathf.Max(currentAngle - angleChange, MIN_ANGLE);
-        }
+        if (moveInput.x > 0)
+            targetAngle = Mathf.Min(currentAngle + delta, MAX_ANGLE);
+        else
+            targetAngle = Mathf.Max(currentAngle - delta, MIN_ANGLE);
+
+        if (Mathf.Abs(targetAngle - currentAngle) > 0.01f)
+            isMovingToTarget = true;
     }
 
     private void CheckAndStoreResult()
@@ -149,35 +153,26 @@ public class BoilingComponent : CookingComponent
 
         if (!isPlaying) return;
 
-        bool isInputActive = (Time.time - lastInputTime) < 1f;
-
         float distanceToEndpoint = Mathf.Min(currentAngle, MAX_ANGLE - currentAngle);
         float speedMultiplier = 1f + (1f - distanceToEndpoint / 90f);
-        
-
-        if (isInputActive)
+        if (isMovingToTarget)
         {
-            float deltaAngle = boilingDifficulty * Time.deltaTime * speedMultiplier * interactIncrease;
-            if (currentAngle <= 90f)
-            {
-                currentAngle = Mathf.Max(currentAngle + deltaAngle, MIN_ANGLE);
-            }
-            else
-            {
-                currentAngle = Mathf.Min(currentAngle - deltaAngle, MAX_ANGLE);
-            }
+            currentAngle = Mathf.MoveTowards(currentAngle, targetAngle, targetMoveSpeed * Time.deltaTime);
+            if (currentAngle == targetAngle)
+                isMovingToTarget = false;
         }
         else
         {
             float deltaAngle = coolDownSpeed * Time.deltaTime * speedMultiplier;
             if (currentAngle <= 90f)
-            {
+            {                
                 currentAngle = Mathf.Max(currentAngle - deltaAngle, MIN_ANGLE);
             }
             else
             {
                 currentAngle = Mathf.Min(currentAngle + deltaAngle, MAX_ANGLE);
             }
+        
         }
 
         if ((currentAngle <= MIN_ANGLE || currentAngle >= MAX_ANGLE) && !failed)

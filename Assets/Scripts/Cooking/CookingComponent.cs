@@ -8,7 +8,7 @@ using System;
 public abstract class CookingComponent : MonoBehaviour
 {
     [SerializeField] protected CookingTimerComponent cookingTimer;
-    [SerializeField] protected Button cuttingStartButton;
+    [SerializeField] protected Button CookingStartButton;
 
     protected bool isPlaying = false;
     protected InputManager inputManager;
@@ -17,9 +17,9 @@ public abstract class CookingComponent : MonoBehaviour
 
     protected virtual void Start()
     {
-        if (cuttingStartButton != null)
+        if (CookingStartButton != null)
         {
-            cuttingStartButton.onClick.AddListener(StartMiniGame);
+            CookingStartButton.onClick.AddListener(PreStartMiniGame);
         }
 
         if (cookingTimer == null)
@@ -35,19 +35,19 @@ public abstract class CookingComponent : MonoBehaviour
 
     protected abstract void InitCooking();
 
-    public virtual void StartMiniGame()
+    public virtual void PreStartMiniGame()
     {
         if (cookingTimer != null)
         {
-            cookingTimer.StartCountdown(OnTimerComplete);
+            cookingTimer.StartCountdown(StartMiniGame);
         }
         else
         {
-            OnTimerComplete();
+            StartMiniGame();
         }
     }
 
-    protected virtual void OnTimerComplete()
+    protected virtual void StartMiniGame()
     {
         inputManager = FindFirstObjectByType<InputManager>();
         if (inputManager != null)
