@@ -1,24 +1,25 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using GamePlay;
+using GameEnumDefines;
 using System;
 
-/// <summary>
-/// 모든 미니게임의 기본이 되는 추상 클래스
-/// 하위 미니게임 컴포넌트는 이 클래스를 상속받아 필요한 메서드를 구현
-/// </summary>
 public abstract class CookingComponent : MonoBehaviour
 {
     [SerializeField] protected CookingTimerComponent cookingTimer;
-    [SerializeField] protected Button cuttingStartButton;
+    [SerializeField] protected Button CookingStartButton;
 
     protected bool isPlaying = false;
+    protected InputManager inputManager;
+    protected InputAction moveAction;
+    protected InputAction interactAction;
 
     protected virtual void Start()
     {
-        if (cuttingStartButton != null)
+        if (CookingStartButton != null)
         {
-            cuttingStartButton.onClick.AddListener(StartMiniGame);
+            CookingStartButton.onClick.AddListener(PreStartMiniGame);
         }
 
         if (cookingTimer == null)
@@ -34,41 +35,99 @@ public abstract class CookingComponent : MonoBehaviour
 
     protected abstract void InitCooking();
 
-    public virtual void StartMiniGame()
+    public virtual void PreStartMiniGame()
     {
         if (cookingTimer != null)
         {
-            cookingTimer.StartCountdown(OnTimerComplete);
+            cookingTimer.StartCountdown(StartMiniGame);
         }
         else
         {
-            OnTimerComplete();
+            StartMiniGame();
         }
     }
 
-    protected virtual void OnTimerComplete()
+    protected virtual void StartMiniGame()
     {
-        InitCooking();
-        isPlaying = true;
+        inputManager = FindFirstObjectByType<InputManager>();
+        if (inputManager != null)
+        {
+            inputManager.SwitchInputState(InputState.Minigame);
+        }
 
-        FindFirstObjectByType<InputManager>().OnInteractPressed += Interact;
+        InitCooking();
+        SetupMoveAction();
+        SetupInteractAction();
+        isPlaying = true;
     }
 
-    protected abstract void Interact();
+    private void SetupMoveAction()
+    {
+        if (inputManager == null) return;
+
+        var actionMap = inputManager.GetCurrentActionMap();
+        if (actionMap != null)
+        {
+            moveAction = actionMap.FindAction("Game_Move");
+        }
+    }
+
+    private void SetupInteractAction()
+    {
+        if (inputManager == null) return;
+
+        var actionMap = inputManager.GetCurrentActionMap();
+        if (actionMap != null)
+        {
+            interactAction = actionMap.FindAction("Game_Interact");
+            if (interactAction != null)
+            {
+                interactAction.started += OnInteractStarted;
+                interactAction.canceled += OnInteractCanceled;
+            }
+        }
+    }
+
+    private void OnInteractStarted(InputAction.CallbackContext context)
+    {
+        Interact();
+    }
+
+    private void OnInteractCanceled(InputAction.CallbackContext context)
+    {
+        // 필요시 취소 로직
+    }
+
+    protected virtual void Update()
+    {
+        if (!isPlaying || moveAction == null || !moveAction.enabled)
+            return;
+
+        Vector2 moveInput = moveAction.ReadValue<Vector2>();
+        OnMove(moveInput);
+    }
+
+    protected virtual void Interact() {}
+
+    protected virtual void OnMove(Vector2 moveInput) {}
 
     protected abstract void JudgeResult();
 
-    /// <summary>
-    /// 미니게임 종료 및 결과 처리
-    /// </summary>
     protected abstract void EndMiniGame();
 
-    /// <summary>
-    /// 미니게임 종료 시 호출되는 공통 정리 로직
-    /// </summary>
     protected virtual void OnGameEnd()
     {
-        FindFirstObjectByType<InputManager>().OnInteractPressed -= Interact;
+        if (interactAction != null)
+        {
+            interactAction.started -= OnInteractStarted;
+            interactAction.canceled -= OnInteractCanceled;
+        }
+        
+        if (inputManager != null)
+        {
+            inputManager.SwitchInputState(InputState.Default);
+        }
+        
         isPlaying = false;
     }
 }

@@ -1174,7 +1174,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5394905230378708173
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2301,7 +2301,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7108038423553677633}
-  - component: {fileID: 8057096079005499285}
+  - component: {fileID: 4353706092095407839}
   m_Layer: 5
   m_Name: BoilingPanel
   m_TagString: Untagged
@@ -2330,7 +2330,7 @@ RectTransform:
   m_AnchoredPosition: {x: -150, y: 0}
   m_SizeDelta: {x: 350, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &8057096079005499285
+--- !u!114 &4353706092095407839
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2343,12 +2343,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoilingComponent
   cookingTimer: {fileID: 6264974492741771212}
-  cuttingStartButton: {fileID: 1768012361020134004}
+  CookingStartButton: {fileID: 1768012361020134004}
   arrowImage: {fileID: 966497667503791920}
-  baseAngle: -90
+  baseAngle: 90
   coolDownSpeed: 45
-  interactIncrease: 15
-  TestDataID: 1
+  interactIncrease: 100
+  targetMoveSpeed: 90
+  TestDataID: 3
 --- !u!1 &8456669853574604523
 GameObject:
   m_ObjectHideFlags: 0
@@ -2536,8 +2537,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37a967d3e711a844186c6eac28b52680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cookingTimer: {fileID: 0}
-  cuttingStartButton: {fileID: 5959938590566353233}
+  cookingTimer: {fileID: 6264974492741771212}
+  CookingStartButton: {fileID: 5959938590566353233}
   cuttingParams:
   - {fileID: 8655643746823700482}
   - {fileID: 2391754296575377656}

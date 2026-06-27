@@ -107,8 +107,9 @@ public class CuttingComponent : CookingComponent
         }
     }
 
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         if (isPlaying)
         {
             float t = (float) Mathf.Abs(barRect.localPosition.x) / (float) (baseWidth / 2);
