@@ -154,7 +154,6 @@ namespace GamePlay
         {
             if (CurrentPlayerState == newState) return;
 
-            Debug.Log("Character State changed " + CurrentPlayerState + " -> " + newState);
             CurrentPlayerState = newState;
             animator.SetInteger("State", (int) CurrentPlayerState);
         }

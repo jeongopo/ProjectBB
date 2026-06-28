@@ -47,13 +47,9 @@ public class BoilingComponent : CookingComponent
         }
 
         base.Start();
-
-        currentAngle = (MIN_ANGLE + MAX_ANGLE) / 2f;
-
-        results = new int[(int)ENUMGRADE.GREAT + 1];
     }
 
-    protected override void InitCooking()
+    public override void InitMiniGameData()
     {
         var dataManager = FindFirstObjectByType<DataManager>();
         if (dataManager == null)
@@ -73,14 +69,14 @@ public class BoilingComponent : CookingComponent
         sweetSpotRange = boilingData.SWEET_SPOT;
         boilingTime = boilingData.BOILING_TIME;
 
-        currentAngle = (MIN_ANGLE + MAX_ANGLE) / 2f;
         targetAngle = currentAngle;
         isMovingToTarget = false;
         elapsedTime = 0f;
         nextCheckTime = 1f;
         failed = false;
 
-        Array.Clear(results, 0, results.Length);
+        currentAngle = (MIN_ANGLE + MAX_ANGLE) / 2f;
+        results = new int[(int)ENUMGRADE.GREAT + 1];
         UpdateArrowRotation();
     }
 

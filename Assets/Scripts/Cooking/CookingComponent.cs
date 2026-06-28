@@ -7,6 +7,8 @@ using System;
 
 public abstract class CookingComponent : MonoBehaviour
 {
+    public event Action OnMiniGameEnd;
+
     [SerializeField] protected CookingTimerComponent cookingTimer;
     [SerializeField] protected Button CookingStartButton;
 
@@ -33,8 +35,27 @@ public abstract class CookingComponent : MonoBehaviour
         }
     }
 
-    protected abstract void InitCooking();
+    //처음 요리 UI 열리자마자 생기는 이벤트
+    public void InitCooking()
+    {
+        inputManager = FindFirstObjectByType<InputManager>();
+        if (inputManager != null)
+        {
+            inputManager.SwitchInputState(InputState.Minigame);
+        }
 
+        SetupMoveAction();
+        SetupInteractAction();
+        
+        InitMiniGameData();
+    }
+
+    public virtual void InitMiniGameData()
+    {
+        //게임 여러번 실행할때 계속 불릴 함수
+    }
+
+    //미니게임 실행 직전
     public virtual void PreStartMiniGame()
     {
         if (cookingTimer != null)
@@ -47,17 +68,9 @@ public abstract class CookingComponent : MonoBehaviour
         }
     }
 
+    //실제 미니게임 시작
     protected virtual void StartMiniGame()
     {
-        inputManager = FindFirstObjectByType<InputManager>();
-        if (inputManager != null)
-        {
-            inputManager.SwitchInputState(InputState.Minigame);
-        }
-
-        InitCooking();
-        SetupMoveAction();
-        SetupInteractAction();
         isPlaying = true;
     }
 
@@ -90,6 +103,8 @@ public abstract class CookingComponent : MonoBehaviour
 
     private void OnInteractStarted(InputAction.CallbackContext context)
     {
+        if(!isPlaying || interactAction == null || !interactAction.enabled)
+            return;
         Interact();
     }
 
@@ -122,12 +137,13 @@ public abstract class CookingComponent : MonoBehaviour
             interactAction.started -= OnInteractStarted;
             interactAction.canceled -= OnInteractCanceled;
         }
-        
+
         if (inputManager != null)
         {
             inputManager.SwitchInputState(InputState.Default);
         }
-        
+
         isPlaying = false;
+        OnMiniGameEnd?.Invoke();
     }
 }

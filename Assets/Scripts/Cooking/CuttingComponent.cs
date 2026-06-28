@@ -42,11 +42,9 @@ public class CuttingComponent : CookingComponent
         baseValue = baseWidth / 100;
 
         base.Start();
-        
-        results = new int[(int)ENUMGRADE.GREAT + 1];
     }
 
-    protected override void InitCooking()
+    public override void InitMiniGameData()
     {
         if(FindFirstObjectByType<DataManager>().dataStorage.Minigame_CuttingData.ContainsKey(TestDataID))
         {
@@ -66,7 +64,7 @@ public class CuttingComponent : CookingComponent
         movingRight = false; // 좌측부터 시작
         currentCycle = 0;
 
-        Array.Clear(results, 0, results.Length);
+        results = new int[(int)ENUMGRADE.GREAT + 1];
         totalAttempts = 0;
     }
 
