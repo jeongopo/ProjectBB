@@ -7,6 +7,8 @@ using System;
 
 public abstract class CookingComponent : MonoBehaviour
 {
+    public event Action OnMiniGameEnd;
+
     [SerializeField] protected CookingTimerComponent cookingTimer;
     [SerializeField] protected Button CookingStartButton;
 
@@ -33,10 +35,29 @@ public abstract class CookingComponent : MonoBehaviour
         }
     }
 
-    protected abstract void InitCooking();
+    //처음 요리 UI 열리자마자 생기는 이벤트
+    public void InitCooking()
+    {
+        inputManager = FindFirstObjectByType<InputManager>();
+        if (inputManager != null)
+        {
+            inputManager.SwitchInputState(InputState.Minigame);
+        }
 
+        SetupMoveAction();
+        SetupInteractAction();
+    }
+
+    public virtual void InitMiniGameData()
+    {
+        //게임 여러번 실행할때 계속 불릴 함수
+    }
+
+    //미니게임 실행 직전
     public virtual void PreStartMiniGame()
     {
+        InitMiniGameData();
+
         if (cookingTimer != null)
         {
             cookingTimer.StartCountdown(StartMiniGame);
@@ -47,17 +68,9 @@ public abstract class CookingComponent : MonoBehaviour
         }
     }
 
+    //실제 미니게임 시작
     protected virtual void StartMiniGame()
     {
-        inputManager = FindFirstObjectByType<InputManager>();
-        if (inputManager != null)
-        {
-            inputManager.SwitchInputState(InputState.Minigame);
-        }
-
-        InitCooking();
-        SetupMoveAction();
-        SetupInteractAction();
         isPlaying = true;
     }
 
@@ -90,6 +103,8 @@ public abstract class CookingComponent : MonoBehaviour
 
     private void OnInteractStarted(InputAction.CallbackContext context)
     {
+        if(!isPlaying || interactAction == null || !interactAction.enabled)
+            return;
         Interact();
     }
 
@@ -115,19 +130,26 @@ public abstract class CookingComponent : MonoBehaviour
 
     protected abstract void EndMiniGame();
 
+    //미니게임 종료 후 호출되는 함수. 미니게임이 여러번 실행될 수 있음
     protected virtual void OnGameEnd()
+    {   
+        isPlaying = false;
+        OnMiniGameEnd?.Invoke();
+    }
+
+    //요리 자체가 끝남
+    public virtual void OnCookingEnd()
     {
         if (interactAction != null)
         {
             interactAction.started -= OnInteractStarted;
             interactAction.canceled -= OnInteractCanceled;
         }
-        
+
         if (inputManager != null)
         {
             inputManager.SwitchInputState(InputState.Default);
         }
-        
-        isPlaying = false;
+
     }
 }

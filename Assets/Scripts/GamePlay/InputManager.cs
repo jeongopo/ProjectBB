@@ -22,6 +22,8 @@ namespace GamePlay
                 Debug.LogError("InputActionAsset이 할당되지 않았습니다!");
                 return;
             }
+
+            inputActions.FindActionMap(GetActionMapName(currentInputState))?.Enable();
         }
 
         public void SwitchInputState(InputState newState)

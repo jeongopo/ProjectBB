@@ -17,4 +17,10 @@ public enum InputState
     Minigame, //input state for minigames, disables player movement and enables minigame controls
     UI, //input state for UI navigation, disables player movement and enables UI controls
 }
+
+public enum CookingType
+{
+    Boiling,
+    Cutting,
+}
 }

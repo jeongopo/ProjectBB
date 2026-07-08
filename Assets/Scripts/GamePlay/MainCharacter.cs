@@ -30,6 +30,10 @@ namespace GamePlay
         private InputAction moveAction;
         private float lastMoveX = 0f;
         private float lastMoveY = 0f;
+
+        public Vector2 FacingDirection => (lastMoveX == 0f && lastMoveY == 0f)
+            ? Vector2.down
+            : new Vector2(lastMoveX, lastMoveY).normalized;
         
         private CharacterState CurrentPlayerState = CharacterState.Idle;
         
@@ -154,7 +158,6 @@ namespace GamePlay
         {
             if (CurrentPlayerState == newState) return;
 
-            Debug.Log("Character State changed " + CurrentPlayerState + " -> " + newState);
             CurrentPlayerState = newState;
             animator.SetInteger("State", (int) CurrentPlayerState);
         }
