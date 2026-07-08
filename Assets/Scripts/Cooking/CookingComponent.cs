@@ -46,8 +46,6 @@ public abstract class CookingComponent : MonoBehaviour
 
         SetupMoveAction();
         SetupInteractAction();
-        
-        InitMiniGameData();
     }
 
     public virtual void InitMiniGameData()
@@ -58,6 +56,8 @@ public abstract class CookingComponent : MonoBehaviour
     //미니게임 실행 직전
     public virtual void PreStartMiniGame()
     {
+        InitMiniGameData();
+
         if (cookingTimer != null)
         {
             cookingTimer.StartCountdown(StartMiniGame);
@@ -130,7 +130,15 @@ public abstract class CookingComponent : MonoBehaviour
 
     protected abstract void EndMiniGame();
 
+    //미니게임 종료 후 호출되는 함수. 미니게임이 여러번 실행될 수 있음
     protected virtual void OnGameEnd()
+    {   
+        isPlaying = false;
+        OnMiniGameEnd?.Invoke();
+    }
+
+    //요리 자체가 끝남
+    public virtual void OnCookingEnd()
     {
         if (interactAction != null)
         {
@@ -143,7 +151,5 @@ public abstract class CookingComponent : MonoBehaviour
             inputManager.SwitchInputState(InputState.Default);
         }
 
-        isPlaying = false;
-        OnMiniGameEnd?.Invoke();
     }
 }

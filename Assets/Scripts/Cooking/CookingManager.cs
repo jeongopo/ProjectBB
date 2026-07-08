@@ -43,15 +43,18 @@ public class CookingManager : MonoBehaviour
 
     private void OnMiniGameEnded()
     {
-        if (currentComponent != null)
-        {
-            currentComponent.OnMiniGameEnd -= OnMiniGameEnded;
-            currentComponent = null;
-        }
+        // 보상 처리
     }
 
     public void CloseCooking()
     {
+        if (currentComponent != null)
+        {
+            currentComponent.OnCookingEnd();
+            currentComponent.OnMiniGameEnd -= OnMiniGameEnded;
+            currentComponent = null;
+        }
+
         SetAllSubPanelsActive(false);
         if (cookingPanel != null)
             cookingPanel.SetActive(false);
