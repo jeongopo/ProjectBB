@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 103324079570289975}
   - component: {fileID: 8795524410244277175}
   - component: {fileID: 5499021814329931316}
+  - component: {fileID: 5646321108951959116}
   m_Layer: 0
   m_Name: MainCharacter
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -199,7 +200,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.15, y: 0.29}
+    oldSize: {x: 0.9375, y: 1.8125}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -207,6 +208,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.4033793, y: 0.7276436}
   m_EdgeRadius: 0
+--- !u!114 &5646321108951959116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1124839396752061246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d45a972bbbfd454dbc7041fc2a92b2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GamePlay.PlayerInteractor
 --- !u!1 &8835660287472105544
 GameObject:
   m_ObjectHideFlags: 0
