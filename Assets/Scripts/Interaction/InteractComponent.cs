@@ -1,17 +1,15 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using GamePlay;
-using GameEnumDefines;
+using UnityEngine.InputSystem;
 
 namespace Interaction
 {
     public abstract class InteractComponent : MonoBehaviour, IInteractable
     {
         [SerializeField] private Vector2 interactSize = Vector2.one;
-
-        private InputManager inputManager;
-        private InputAction interactAction;
-        private bool playerInRange = false;
+        protected virtual void Start()
+        {
+        }
 
         protected virtual void Awake()
         {
@@ -24,45 +22,18 @@ namespace Interaction
             forwarder.Init(this);
         }
 
-        protected virtual void Start()
-        {
-            inputManager = FindFirstObjectByType<InputManager>();
-
-            var actionMap = inputManager?.GetCurrentActionMap();
-            interactAction = actionMap?.FindAction("Interact");
-            if (interactAction != null)
-                interactAction.started += OnInteractPerformed;
-
-            Debug.Log($"[InteractComponent] {name} | inputManager: {inputManager != null} | actionMap: {actionMap?.name} | interactAction: {interactAction != null}");
-        }
-
-        private void OnDestroy()
-        {
-            if (interactAction != null)
-                interactAction.started -= OnInteractPerformed;
-        }
-
         internal void HandleTriggerEnter(Collider2D other)
         {
-            Debug.Log($"[InteractComponent] TriggerEnter: {other.name} tag={other.tag}");
             if (!other.CompareTag("Player")) return;
-            playerInRange = true;
+            other.GetComponentInParent<PlayerInteractor>()?.Register(this);
             OnPlayerEnter();
         }
 
         internal void HandleTriggerExit(Collider2D other)
         {
             if (!other.CompareTag("Player")) return;
-            playerInRange = false;
+            other.GetComponentInParent<PlayerInteractor>()?.Unregister(this);
             OnPlayerExit();
-        }
-
-        private void OnInteractPerformed(InputAction.CallbackContext ctx)
-        {
-            Debug.Log($"[InteractComponent] OnInteractPerformed | playerInRange: {playerInRange} | state: {(inputManager != null ? inputManager.CurrentInputState.ToString() : "null")}");
-            if (!playerInRange) return;
-            if (inputManager != null && inputManager.CurrentInputState != InputState.Default) return;
-            Interact();
         }
 
         public void Interact() => OnInteract();

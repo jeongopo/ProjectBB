@@ -30,6 +30,10 @@ namespace GamePlay
         private InputAction moveAction;
         private float lastMoveX = 0f;
         private float lastMoveY = 0f;
+
+        public Vector2 FacingDirection => (lastMoveX == 0f && lastMoveY == 0f)
+            ? Vector2.down
+            : new Vector2(lastMoveX, lastMoveY).normalized;
         
         private CharacterState CurrentPlayerState = CharacterState.Idle;
         
