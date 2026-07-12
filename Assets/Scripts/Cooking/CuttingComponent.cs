@@ -12,6 +12,7 @@ public class CuttingComponent : CookingComponent
 {
     public Image[] cuttingParams; // CuttingParam1, 2, 3 배열
     public Image cuttingParamBar;
+    public Image cuttingBackImage; // 컷팅 존 배경 (가장 넓은 존 길이에 맞춤)
 
     [SerializeField] private float SliderSpeed = 1.0f; // 바 이동 속도 조절 변수
 
@@ -55,9 +56,17 @@ public class CuttingComponent : CookingComponent
         cuttingRange = currentCuttingData.CUTTING_RANGE;
         maxCuttingCycle = currentCuttingData.CUTTING_CYCLES;
 
+        float maxRangeWidth = 0f;
         for (int i = 0; i < cuttingParams.Length; i++)
         {
-            cuttingParams[i].rectTransform.sizeDelta = new Vector2(cuttingRange[i] * baseValue, cuttingParams[i].rectTransform.sizeDelta.y);
+            float width = cuttingRange[i] * baseValue;
+            cuttingParams[i].rectTransform.sizeDelta = new Vector2(width, cuttingParams[i].rectTransform.sizeDelta.y);
+            maxRangeWidth = Mathf.Max(maxRangeWidth, width);
+        }
+
+        if (cuttingBackImage != null)
+        {
+            cuttingBackImage.rectTransform.sizeDelta = new Vector2(maxRangeWidth, cuttingBackImage.rectTransform.sizeDelta.y);
         }
 
         barRect.localPosition = new Vector3(-baseWidth / 2, barRect.localPosition.y, barRect.localPosition.z);
@@ -69,8 +78,8 @@ public class CuttingComponent : CookingComponent
     }
 
     protected override void EndMiniGame()
-    {   
-        OnGameEnd();
+    {
+        ShowResultThenEndGame(JudgeResult());
     }
 
     protected override void Interact()
@@ -99,8 +108,7 @@ public class CuttingComponent : CookingComponent
             if(totalAttempts >= currentCuttingData.CUTTING_COUNTS)
             {
                 Debug.Log("모든 시도 완료 - 미니게임 종료");
-                //@TODO 결과에 따른 성공/실패 처리
-                JudgeResult();
+                EndMiniGame();
             }
         }
     }
@@ -137,26 +145,27 @@ public class CuttingComponent : CookingComponent
         }
     }
 
-    protected override void JudgeResult()
+    protected override ENUMGRADE JudgeResult()
     {
         if(totalAttempts < currentCuttingData.CUTTING_COUNTS)
         {
-            //실패 처리
+            //실패 처리 - 최저 등급으로 취급
+            return ENUMGRADE.NORMAL;
         }
-        else
-        {
-            int highestResultIndex = 0;
-            for(int i=0; i<results.Length; i++)
-            {
-                if( i != highestResultIndex && results[i] > results[highestResultIndex])
-                {
-                            highestResultIndex = i;
-                }
-            }
 
-            Debug.Log($"최종 결과: CuttingParam{highestResultIndex+1} 범위에서 가장 많은 성공 횟수 기록");
-            //@todo 보상 획득 처리
+        int highestResultIndex = 0;
+        for(int i=0; i<results.Length; i++)
+        {
+            if( i != highestResultIndex && results[i] > results[highestResultIndex])
+            {
+                        highestResultIndex = i;
+            }
         }
-        EndMiniGame();
+
+        Debug.Log($"최종 결과: CuttingParam{highestResultIndex+1} 범위에서 가장 많은 성공 횟수 기록");
+        //@todo 보상 획득 처리
+
+        // CuttingParam1이 가장 좁은 perfect 존이라 인덱스가 낮을수록 높은 등급
+        return (ENUMGRADE)(cuttingParams.Length - highestResultIndex);
     }
 }

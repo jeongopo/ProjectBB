@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using GameEnumDefines;
+using DataEnumDefines;
+using System;
+using System.Collections;
 
 public class CookingManager : MonoBehaviour
 {
@@ -12,6 +15,12 @@ public class CookingManager : MonoBehaviour
     [SerializeField] private BoilingComponent boilingComponent;
     [SerializeField] private CuttingComponent cuttingComponent;
 
+    [Header("Shared Result/Timer UI")]
+    [SerializeField] private CookingTimerComponent cookingTimer;
+    [SerializeField] private Image resultImage;
+    [SerializeField] private Sprite[] resultSprites; // 인덱스 = (int)ENUMGRADE - 1 : NORMAL(0), GOOD(1), GREAT(2)
+    [SerializeField] private float resultDisplayDuration = 2f;
+
     private CookingComponent currentComponent;
     private GamePlay.InputManager inputManager;
 
@@ -22,6 +31,54 @@ public class CookingManager : MonoBehaviour
             cookingPanel.SetActive(false);
         if (closeButton != null)
             closeButton.onClick.AddListener(CloseCooking);
+
+        if (cookingTimer != null)
+            cookingTimer.gameObject.SetActive(false);
+        if (resultImage != null)
+            resultImage.gameObject.SetActive(false);
+    }
+
+    public void PlayCountdown(Action onComplete)
+    {
+        if (cookingTimer != null)
+        {
+            cookingTimer.StartCountdown(onComplete);
+        }
+        else
+        {
+            onComplete?.Invoke();
+        }
+    }
+
+    public void ShowResult(ENUMGRADE grade, Action onHidden)
+    {
+        int spriteIndex = (int)grade - 1;
+        Sprite sprite = (resultSprites != null && spriteIndex >= 0 && spriteIndex < resultSprites.Length)
+            ? resultSprites[spriteIndex]
+            : null;
+
+        if (resultImage != null && sprite != null)
+        {
+            resultImage.sprite = sprite;
+            resultImage.gameObject.SetActive(true);
+            StartCoroutine(HideResultThenInvoke(onHidden));
+        }
+        else
+        {
+            onHidden?.Invoke();
+        }
+    }
+
+    private IEnumerator HideResultThenInvoke(Action onHidden)
+    {
+        yield return new WaitForSeconds(resultDisplayDuration);
+
+        if (resultImage != null)
+        {
+            resultImage.gameObject.SetActive(false);
+        }
+
+        onHidden?.Invoke();
     }
 
     public void OpenCooking(CookingType type)

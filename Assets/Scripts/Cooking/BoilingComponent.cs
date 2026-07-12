@@ -120,27 +120,27 @@ public class BoilingComponent : CookingComponent
         }
     }
 
-    protected override void JudgeResult()
+    protected override ENUMGRADE JudgeResult()
     {
         if(failed)
         {
             Debug.Log("실패");
-            return;
+            return ENUMGRADE.NORMAL;
         }
-        else if (results[(int)ENUMGRADE.GREAT] >= results[(int)ENUMGRADE.NORMAL])
+
+        if (results[(int)ENUMGRADE.GREAT] >= results[(int)ENUMGRADE.NORMAL])
         {
             Debug.Log("대성공");
+            return ENUMGRADE.GREAT;
         }
-        else
-        {
-            Debug.Log("성공");
-        }
+
+        Debug.Log("성공");
+        return ENUMGRADE.GOOD;
     }
 
     protected override void EndMiniGame()
     {
-        JudgeResult();
-        OnGameEnd();
+        ShowResultThenEndGame(JudgeResult());
     }
 
     protected override void Update()

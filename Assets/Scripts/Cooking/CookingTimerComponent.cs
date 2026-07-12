@@ -1,20 +1,21 @@
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 using System;
 using System.Collections;
-using Microsoft.Unity.VisualStudio.Editor;
 
 public class CookingTimerComponent : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI timerText;
-    
+    [SerializeField] private Image timerImage;
+    [SerializeField] private Sprite[] countdownSprites; // 순서: 3, 2, 1
+    [SerializeField] private Sprite startSprite; // "Start" 이미지
+
     private Action onTimerComplete;
 
     private void Start()
     {
-        if (timerText == null)
+        if (timerImage == null)
         {
-            timerText = GetComponentInChildren<TextMeshProUGUI>();
+            timerImage = GetComponentInChildren<Image>();
         }
     }
 
@@ -27,14 +28,20 @@ public class CookingTimerComponent : MonoBehaviour
 
     private IEnumerator CountdownCoroutine()
     {
-        for (int i = 3; i > 0; i--)
+        for (int i = 0; i < countdownSprites.Length; i++)
         {
-            if (timerText != null)
+            if (timerImage != null)
             {
-                timerText.text = i.ToString();
+                timerImage.sprite = countdownSprites[i];
             }
             yield return new WaitForSeconds(1f);
         }
+
+        if (timerImage != null)
+        {
+            timerImage.sprite = startSprite;
+        }
+        yield return new WaitForSeconds(1f);
 
         gameObject.SetActive(false);
         onTimerComplete?.Invoke();

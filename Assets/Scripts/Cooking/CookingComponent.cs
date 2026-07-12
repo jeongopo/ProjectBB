@@ -3,13 +3,14 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using GamePlay;
 using GameEnumDefines;
+using DataEnumDefines;
 using System;
 
 public abstract class CookingComponent : MonoBehaviour
 {
     public event Action OnMiniGameEnd;
 
-    [SerializeField] protected CookingTimerComponent cookingTimer;
+    [SerializeField] protected CookingManager cookingManager;
     [SerializeField] protected Button CookingStartButton;
 
     protected bool isPlaying = false;
@@ -24,14 +25,9 @@ public abstract class CookingComponent : MonoBehaviour
             CookingStartButton.onClick.AddListener(PreStartMiniGame);
         }
 
-        if (cookingTimer == null)
+        if (cookingManager == null)
         {
-            cookingTimer = FindFirstObjectByType<CookingTimerComponent>();
-        }
-
-        if (cookingTimer != null)
-        {
-            cookingTimer.gameObject.SetActive(false);
+            cookingManager = FindFirstObjectByType<CookingManager>();
         }
     }
 
@@ -56,11 +52,16 @@ public abstract class CookingComponent : MonoBehaviour
     //미니게임 실행 직전
     public virtual void PreStartMiniGame()
     {
+        if (CookingStartButton != null)
+        {
+            CookingStartButton.gameObject.SetActive(false);
+        }
+
         InitMiniGameData();
 
-        if (cookingTimer != null)
+        if (cookingManager != null)
         {
-            cookingTimer.StartCountdown(StartMiniGame);
+            cookingManager.PlayCountdown(StartMiniGame);
         }
         else
         {
@@ -126,14 +127,33 @@ public abstract class CookingComponent : MonoBehaviour
 
     protected virtual void OnMove(Vector2 moveInput) {}
 
-    protected abstract void JudgeResult();
+    protected abstract ENUMGRADE JudgeResult();
 
     protected abstract void EndMiniGame();
 
+    //결과 판정 후 공통 종료 절차: CookingManager가 결과 이미지를 보여준 뒤 게임 종료 처리
+    protected void ShowResultThenEndGame(ENUMGRADE grade)
+    {
+        isPlaying = false;
+
+        if (cookingManager != null)
+        {
+            cookingManager.ShowResult(grade, OnGameEnd);
+        }
+        else
+        {
+            OnGameEnd();
+        }
+    }
+
     //미니게임 종료 후 호출되는 함수. 미니게임이 여러번 실행될 수 있음
     protected virtual void OnGameEnd()
-    {   
+    {
         isPlaying = false;
+        if (CookingStartButton != null)
+        {
+            CookingStartButton.gameObject.SetActive(true);
+        }
         OnMiniGameEnd?.Invoke();
     }
 
