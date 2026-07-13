@@ -100,7 +100,7 @@ public class BoilingComponent : CookingComponent
             isMovingToTarget = true;
     }
 
-    private void CheckAndStoreResult()
+    protected override void CheckAndStoreResult()
     {
         int roundedAngle = Mathf.RoundToInt(currentAngle);
 
@@ -110,13 +110,22 @@ public class BoilingComponent : CookingComponent
         }
 
         Debug.Log($"Checking angle: {roundedAngle}, Sweet Spot Range: [{sweetSpotRange[0]}, {sweetSpotRange[1]}]");
+
+        ENUMGRADE roundGrade;
         if (roundedAngle >= sweetSpotRange[0] && roundedAngle <= sweetSpotRange[1])
         {
+            roundGrade = ENUMGRADE.GREAT;
             results[(int)ENUMGRADE.GREAT]++;
         }
         else
         {
+            roundGrade = ENUMGRADE.NORMAL;
             results[(int)ENUMGRADE.NORMAL]++;
+        }
+
+        if (cookingManager != null)
+        {
+            cookingManager.ShowRoundResult(roundGrade);
         }
     }
 

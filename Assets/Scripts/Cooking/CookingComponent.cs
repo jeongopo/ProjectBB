@@ -131,6 +131,9 @@ public abstract class CookingComponent : MonoBehaviour
 
     protected abstract void EndMiniGame();
 
+    //1회 판정 체크. 판정할 때마다 CookingManager에 결과를 보여줌
+    protected virtual void CheckAndStoreResult() { }
+
     //결과 판정 후 공통 종료 절차: CookingManager가 결과 이미지를 보여준 뒤 게임 종료 처리
     protected void ShowResultThenEndGame(ENUMGRADE grade)
     {

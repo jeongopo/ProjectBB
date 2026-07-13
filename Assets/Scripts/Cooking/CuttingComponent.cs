@@ -86,29 +86,40 @@ public class CuttingComponent : CookingComponent
     {
         if (isPlaying)
         {
-            float barX = barRect.localPosition.x;
-            float currentRange = 0f;
+            CheckAndStoreResult();
 
-            for (int i = 0; i < cuttingRange.Length; i++)
-            {
-                currentRange = cuttingRange[i] * baseValue / 2;
-                if (Math.Abs(barX) <= currentRange)
-                {
-                    Debug.Log($"결과: CuttingParam{i+1} 범위");
-                    results[i]++;
-                    totalAttempts++;
-
-                    // 바 초기 위치로 리셋 
-                    barRect.localPosition = new Vector3(-baseWidth / 2, barRect.localPosition.y, barRect.localPosition.z);
-                    movingRight = false;
-                    break;
-                }
-            }
-        
             if(totalAttempts >= currentCuttingData.CUTTING_COUNTS)
             {
                 Debug.Log("모든 시도 완료 - 미니게임 종료");
                 EndMiniGame();
+            }
+        }
+    }
+
+    protected override void CheckAndStoreResult()
+    {
+        float barX = barRect.localPosition.x;
+        float currentRange = 0f;
+
+        for (int i = 0; i < cuttingRange.Length; i++)
+        {
+            currentRange = cuttingRange[i] * baseValue / 2;
+            if (Math.Abs(barX) <= currentRange)
+            {
+                Debug.Log($"결과: CuttingParam{i+1} 범위");
+                results[i]++;
+                totalAttempts++;
+
+                if (cookingManager != null)
+                {
+                    ENUMGRADE roundGrade = (ENUMGRADE)(cuttingParams.Length - i);
+                    cookingManager.ShowRoundResult(roundGrade);
+                }
+
+                // 바 초기 위치로 리셋
+                barRect.localPosition = new Vector3(-baseWidth / 2, barRect.localPosition.y, barRect.localPosition.z);
+                movingRight = false;
+                break;
             }
         }
     }

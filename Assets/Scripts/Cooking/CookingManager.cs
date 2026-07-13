@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 using GameEnumDefines;
 using DataEnumDefines;
 using System;
@@ -15,14 +16,20 @@ public class CookingManager : MonoBehaviour
     [SerializeField] private BoilingComponent boilingComponent;
     [SerializeField] private CuttingComponent cuttingComponent;
 
-    [Header("Shared Result/Timer UI")]
+    [Header("Shared Timer UI")]
     [SerializeField] private CookingTimerComponent cookingTimer;
+
+    [Header("Result UI")]
+    [FormerlySerializedAs("resultImage")]
     [SerializeField] private Image resultImage;
-    [SerializeField] private Sprite[] resultSprites; // 인덱스 = (int)ENUMGRADE - 1 : NORMAL(0), GOOD(1), GREAT(2)
+    [SerializeField] private Sprite[] roundResultSprites; // 인덱스 = (int)ENUMGRADE - 1 : NORMAL(0), GOOD(1), GREAT(2)
+    [SerializeField] private float roundResultDisplayDuration = 1f;
+    [SerializeField] private Sprite[] finalResultSprites; // 인덱스 = (int)ENUMGRADE - 1 : NORMAL(0), GOOD(1), GREAT(2)
     [SerializeField] private float resultDisplayDuration = 2f;
 
     private CookingComponent currentComponent;
     private GamePlay.InputManager inputManager;
+    private Coroutine resultCoroutine;
 
     private void Awake()
     {
@@ -50,33 +57,61 @@ public class CookingManager : MonoBehaviour
         }
     }
 
+    //1회 판정마다 짧게 보여주는 이미지
+    public void ShowRoundResult(ENUMGRADE grade)
+    {
+        int spriteIndex = (int)grade - 1;
+        Sprite sprite = (roundResultSprites != null && spriteIndex >= 0 && spriteIndex < roundResultSprites.Length)
+            ? roundResultSprites[spriteIndex]
+            : null;
+
+        if (resultImage == null || sprite == null)
+            return;
+
+        if (resultCoroutine != null)
+            StopCoroutine(resultCoroutine);
+
+        resultImage.sprite = sprite;
+        resultImage.gameObject.SetActive(true);
+        resultCoroutine = StartCoroutine(HideRoundResultAfterDelay());
+    }
+
+    private IEnumerator HideRoundResultAfterDelay()
+    {
+        yield return new WaitForSeconds(roundResultDisplayDuration);
+
+        resultImage.gameObject.SetActive(false);
+        resultCoroutine = null;
+    }
+
+    //미니게임 최종 결과 표시 후 onHidden 콜백 호출
     public void ShowResult(ENUMGRADE grade, Action onHidden)
     {
         int spriteIndex = (int)grade - 1;
-        Sprite sprite = (resultSprites != null && spriteIndex >= 0 && spriteIndex < resultSprites.Length)
-            ? resultSprites[spriteIndex]
+        Sprite sprite = (finalResultSprites != null && spriteIndex >= 0 && spriteIndex < finalResultSprites.Length)
+            ? finalResultSprites[spriteIndex]
             : null;
 
-        if (resultImage != null && sprite != null)
-        {
-            resultImage.sprite = sprite;
-            resultImage.gameObject.SetActive(true);
-            StartCoroutine(HideResultThenInvoke(onHidden));
-        }
-        else
+        if (resultImage == null || sprite == null)
         {
             onHidden?.Invoke();
+            return;
         }
+
+        if (resultCoroutine != null)
+            StopCoroutine(resultCoroutine);
+
+        resultImage.sprite = sprite;
+        resultImage.gameObject.SetActive(true);
+        resultCoroutine = StartCoroutine(HideResultThenInvoke(onHidden));
     }
 
     private IEnumerator HideResultThenInvoke(Action onHidden)
     {
         yield return new WaitForSeconds(resultDisplayDuration);
 
-        if (resultImage != null)
-        {
-            resultImage.gameObject.SetActive(false);
-        }
+        resultImage.gameObject.SetActive(false);
+        resultCoroutine = null;
 
         onHidden?.Invoke();
     }
