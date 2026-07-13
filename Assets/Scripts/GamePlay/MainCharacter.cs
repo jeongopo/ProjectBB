@@ -81,6 +81,22 @@ namespace GamePlay
             {
                 HandleContinuousMovement();
             }
+            else
+            {
+                StopMovement();
+            }
+        }
+
+        private void StopMovement()
+        {
+            rb.linearVelocity = Vector2.zero;
+
+            if (animator != null)
+            {
+                animator.SetFloat("MoveSpeed", 0f);
+            }
+
+            UpdateCharacterState(CharacterState.Idle);
         }
 
         bool CanMoveCharacter()
