@@ -7,6 +7,9 @@ using UnityEngine;
 using DataEnumDefines;
 public class DataStorage
 {
+	public Dictionary<string,Drop> DropData;
+	public Dictionary<string,Hunting> HuntingData;
+	public Dictionary<string,Item> ItemData;
 	public Dictionary<string,Minigame_Boiling> Minigame_BoilingData;
 	public Dictionary<string,Minigame_Cutting> Minigame_CuttingData;
 	public Dictionary<string,TestCustomer> TestCustomerData;
@@ -14,6 +17,9 @@ public class DataStorage
 	public Dictionary<string,TestMinigame_Boiling> TestMinigame_BoilingData;
 	public void LoadData()
 	{
+		DropData = DataManager.LoadDefineData<Drop>("Drop");
+		HuntingData = DataManager.LoadDefineData<Hunting>("Hunting");
+		ItemData = DataManager.LoadDefineData<Item>("Item");
 		Minigame_BoilingData = DataManager.LoadDefineData<Minigame_Boiling>("Minigame_Boiling");
 		Minigame_CuttingData = DataManager.LoadDefineData<Minigame_Cutting>("Minigame_Cutting");
 		TestCustomerData = DataManager.LoadDefineData<TestCustomer>("TestCustomer");
@@ -21,6 +27,30 @@ public class DataStorage
 		TestMinigame_BoilingData = DataManager.LoadDefineData<TestMinigame_Boiling>("TestMinigame_Boiling");
 	}
 	// classDefine
+	public class Drop
+	{
+			public string ID;
+			public int MIN;
+			public int MAX;
+			public float RATE;
+			public string ITEMID;
+	}
+	public class Hunting
+	{
+			public string ID;
+			public string GROUND_NAME;
+			public string NAME_K;
+			public int OPEN_CONDITION;
+			public int TOTAL_BATTLE_PHASE;
+			public string[] DROP_ID;
+	}
+	public class Item
+	{
+			public string ID;
+			public string NAME;
+			public string DESC;
+			public string ICONPATH;
+	}
 	public class Minigame_Boiling
 	{
 			public string ID;

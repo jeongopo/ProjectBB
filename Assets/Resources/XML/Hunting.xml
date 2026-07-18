@@ -1,0 +1,50 @@
+<Rows>
+  <Info>
+    <ID>string</ID>
+    <GROUND_NAME>string</GROUND_NAME>
+    <NAME_K>string</NAME_K>
+    <OPEN_CONDITION>int</OPEN_CONDITION>
+    <TOTAL_BATTLE_PHASE>int</TOTAL_BATTLE_PHASE>
+    <DROP_ID>string[]</DROP_ID>
+  </Info>
+  <Row>
+    <ID>Hunting1</ID>
+    <GROUND_NAME>[chowon]</GROUND_NAME>
+    <NAME_K>[풍요의 초원]</NAME_K>
+    <OPEN_CONDITION>10</OPEN_CONDITION>
+    <TOTAL_BATTLE_PHASE>10</TOTAL_BATTLE_PHASE>
+    <DROP_ID>{drop1;drop2;drop3;drop4;drop5}</DROP_ID>
+  </Row>
+  <Row>
+    <ID>Hunting2</ID>
+    <GROUND_NAME>[hyupgok]</GROUND_NAME>
+    <NAME_K>[마그마 협곡]</NAME_K>
+    <OPEN_CONDITION>20</OPEN_CONDITION>
+    <TOTAL_BATTLE_PHASE>10</TOTAL_BATTLE_PHASE>
+    <DROP_ID>{drop1;drop3;drop4}</DROP_ID>
+  </Row>
+  <Row>
+    <ID>Hunting3</ID>
+    <GROUND_NAME>[gyegok]</GROUND_NAME>
+    <NAME_K>[혹한의 계곡]</NAME_K>
+    <OPEN_CONDITION>30</OPEN_CONDITION>
+    <TOTAL_BATTLE_PHASE>10</TOTAL_BATTLE_PHASE>
+    <DROP_ID>{drop1;drop2;drop3}</DROP_ID>
+  </Row>
+  <Row>
+    <ID>Hunting4</ID>
+    <GROUND_NAME>[mooyeok]</GROUND_NAME>
+    <NAME_K>[무역의 바다]</NAME_K>
+    <OPEN_CONDITION>40</OPEN_CONDITION>
+    <TOTAL_BATTLE_PHASE>10</TOTAL_BATTLE_PHASE>
+    <DROP_ID>{drop2}</DROP_ID>
+  </Row>
+  <Row>
+    <ID>Hunting5</ID>
+    <GROUND_NAME>[geocheo]</GROUND_NAME>
+    <NAME_K>[무닌의 거처]</NAME_K>
+    <OPEN_CONDITION>50</OPEN_CONDITION>
+    <TOTAL_BATTLE_PHASE>10</TOTAL_BATTLE_PHASE>
+    <DROP_ID>{drop3}</DROP_ID>
+  </Row>
+</Rows>
