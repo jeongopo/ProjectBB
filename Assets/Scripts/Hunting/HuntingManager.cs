@@ -16,13 +16,23 @@ public class HuntingManager : MonoBehaviour
     [SerializeField] private Transform itemListParent;
     [SerializeField] private ItemIcon itemIconPrefab;
 
+    [Header("Progress Image")]
+    [SerializeField] private Image progressImage;
+
     [Header("Test Data")]
     [SerializeField] private string testHuntingID = "Hunting1";
+
+    private const string ProgressHitSpritePath = "Art/Hunting/Hunting_SceneHit";
+    private const string ProgressNormalSpritePath = "Art/Hunting/Hunting_SceneNormal";
+    private const float ProgressHitDisplayDuration = 0.3f;
 
     private DataManager dataManager;
     private GamePlay.InputManager inputManager;
     private readonly List<ItemIcon> spawnedIcons = new List<ItemIcon>();
     private Coroutine battlePhaseCoroutine;
+    private Coroutine progressImageCoroutine;
+    private Sprite progressHitSprite;
+    private Sprite progressNormalSprite;
     private string currentHuntingID;
 
     private void Awake()
@@ -36,6 +46,11 @@ public class HuntingManager : MonoBehaviour
             closeButton.onClick.AddListener(CloseHunting);
         if (startButton != null)
             startButton.onClick.AddListener(StartHunting);
+
+        progressHitSprite = Resources.Load<Sprite>(ProgressHitSpritePath);
+        progressNormalSprite = Resources.Load<Sprite>(ProgressNormalSpritePath);
+        if (progressImage != null)
+            progressImage.sprite = progressNormalSprite;
     }
 
     public void OpenHunting(string huntingID = null)
@@ -115,6 +130,7 @@ public class HuntingManager : MonoBehaviour
                 Debug.Log($"HuntingManager: Phase {i + 1}/{spawnedIcons.Count} drop -> {itemID} x{dropCount}");
                 spawnedIcons[i].SetItem(itemID, dropCount);
                 spawnedIcons[i].Show();
+                PlayProgressHitEffect();
             }
 
             if (progressSlider != null)
@@ -134,6 +150,34 @@ public class HuntingManager : MonoBehaviour
             StopCoroutine(battlePhaseCoroutine);
             battlePhaseCoroutine = null;
         }
+
+        if (progressImageCoroutine != null)
+        {
+            StopCoroutine(progressImageCoroutine);
+            progressImageCoroutine = null;
+        }
+
+        if (progressImage != null)
+            progressImage.sprite = progressNormalSprite;
+    }
+
+    private void PlayProgressHitEffect()
+    {
+        if (progressImage == null || progressHitSprite == null)
+            return;
+
+        if (progressImageCoroutine != null)
+            StopCoroutine(progressImageCoroutine);
+
+        progressImageCoroutine = StartCoroutine(ProgressHitRoutine());
+    }
+
+    private IEnumerator ProgressHitRoutine()
+    {
+        progressImage.sprite = progressHitSprite;
+        yield return new WaitForSeconds(ProgressHitDisplayDuration);
+        progressImage.sprite = progressNormalSprite;
+        progressImageCoroutine = null;
     }
 
     private bool TryGetCurrentHuntingRow(out DataStorage.Hunting huntingRow)
