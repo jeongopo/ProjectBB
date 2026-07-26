@@ -9,18 +9,23 @@ public class HuntingManager : MonoBehaviour
     [Header("Panel")]
     [SerializeField] private GameObject huntingPanel;
     [SerializeField] private Button closeButton;
-    [SerializeField] private Button startButton;
-    [SerializeField] private Slider progressSlider;
 
-    [Header("Item Icons")]
+    [Header("Select Panel")]
+    [SerializeField] private GameObject selectPanel;
+    [SerializeField] private Transform selectListParent;
+    [SerializeField] private HuntingSelectItem selectItemPrefab;
+
+    [Header("Progress Panel")]
+    [SerializeField] private GameObject progressPanel;
+    [SerializeField] private Slider progressSlider;
     [SerializeField] private Transform itemListParent;
     [SerializeField] private ItemIcon itemIconPrefab;
-
-    [Header("Progress Image")]
     [SerializeField] private Image progressImage;
 
-    [Header("Test Data")]
-    [SerializeField] private string testHuntingID = "Hunting1";
+    [Header("Result Panel")]
+    [SerializeField] private GameObject resultPanel;
+    [SerializeField] private Transform resultGridParent;
+    [SerializeField] private Button returnButton;
 
     private const string ProgressHitSpritePath = "Art/Hunting/Hunting_SceneHit";
     private const string ProgressNormalSpritePath = "Art/Hunting/Hunting_SceneNormal";
@@ -29,6 +34,8 @@ public class HuntingManager : MonoBehaviour
     private DataManager dataManager;
     private GamePlay.InputManager inputManager;
     private readonly List<ItemIcon> spawnedIcons = new List<ItemIcon>();
+    private readonly List<HuntingSelectItem> spawnedSelectItems = new List<HuntingSelectItem>();
+    private readonly List<ItemIcon> spawnedResultIcons = new List<ItemIcon>();
     private Coroutine battlePhaseCoroutine;
     private Coroutine progressImageCoroutine;
     private Sprite progressHitSprite;
@@ -44,8 +51,8 @@ public class HuntingManager : MonoBehaviour
             huntingPanel.SetActive(false);
         if (closeButton != null)
             closeButton.onClick.AddListener(CloseHunting);
-        if (startButton != null)
-            startButton.onClick.AddListener(StartHunting);
+        if (returnButton != null)
+            returnButton.onClick.AddListener(ReturnToSelect);
 
         progressHitSprite = Resources.Load<Sprite>(ProgressHitSpritePath);
         progressNormalSprite = Resources.Load<Sprite>(ProgressNormalSpritePath);
@@ -53,21 +60,11 @@ public class HuntingManager : MonoBehaviour
             progressImage.sprite = progressNormalSprite;
     }
 
-    public void OpenHunting(string huntingID = null)
+    public void OpenHunting()
     {
-        currentHuntingID = string.IsNullOrEmpty(huntingID) ? testHuntingID : huntingID;
-
-        if (!TryGetCurrentHuntingRow(out var huntingRow))
-        {
-            Debug.LogWarning($"HuntingManager: Hunting data not found for ID {currentHuntingID}");
-            return;
-        }
-
         StopBattlePhase();
-        PrepareItemIcons(huntingRow.TOTAL_BATTLE_PHASE);
+        ShowSelectPanel();
 
-        if (startButton != null)
-            startButton.gameObject.SetActive(true);
         if (huntingPanel != null)
             huntingPanel.SetActive(true);
 
@@ -86,15 +83,62 @@ public class HuntingManager : MonoBehaviour
             inputManager.SwitchInputState(InputState.Default);
     }
 
-    private void StartHunting()
+    private void ShowSelectPanel()
     {
-        if (!TryGetCurrentHuntingRow(out var huntingRow))
+        if (progressPanel != null)
+            progressPanel.SetActive(false);
+        if (resultPanel != null)
+            resultPanel.SetActive(false);
+        if (selectPanel != null)
+            selectPanel.SetActive(true);
+
+        PopulateSelectList();
+    }
+
+    private void ReturnToSelect()
+    {
+        StopBattlePhase();
+        ShowSelectPanel();
+    }
+
+    private void PopulateSelectList()
+    {
+        foreach (var item in spawnedSelectItems)
+        {
+            if (item != null)
+                Destroy(item.gameObject);
+        }
+        spawnedSelectItems.Clear();
+
+        if (selectListParent == null || selectItemPrefab == null || dataManager?.dataStorage.HuntingData == null)
             return;
 
-        if (startButton != null)
-            startButton.gameObject.SetActive(false);
+        foreach (var huntingRow in dataManager.dataStorage.HuntingData.Values)
+        {
+            HuntingSelectItem item = Instantiate(selectItemPrefab, selectListParent);
+            item.SetData(huntingRow.ID, huntingRow.NAME_K, SelectHunting);
+            spawnedSelectItems.Add(item);
+        }
+    }
+
+    private void SelectHunting(string huntingID)
+    {
+        currentHuntingID = huntingID;
+
+        if (!TryGetCurrentHuntingRow(out var huntingRow))
+        {
+            Debug.LogWarning($"HuntingManager: Hunting data not found for ID {currentHuntingID}");
+            return;
+        }
+
+        if (selectPanel != null)
+            selectPanel.SetActive(false);
+        if (progressPanel != null)
+            progressPanel.SetActive(true);
         if (progressSlider != null)
             progressSlider.value = 0f;
+
+        PrepareItemIcons(huntingRow.TOTAL_BATTLE_PHASE);
 
         battlePhaseCoroutine = StartCoroutine(BattlePhaseRoutine(huntingRow));
     }
@@ -138,9 +182,54 @@ public class HuntingManager : MonoBehaviour
         }
 
         battlePhaseCoroutine = null;
+        ShowResultPanel();
+    }
 
-        if (startButton != null)
-            startButton.gameObject.SetActive(true);
+    private void ShowResultPanel()
+    {
+        if (progressPanel != null)
+            progressPanel.SetActive(false);
+        if (resultPanel != null)
+            resultPanel.SetActive(true);
+
+        PopulateResultGrid();
+    }
+
+    private void PopulateResultGrid()
+    {
+        foreach (var icon in spawnedResultIcons)
+        {
+            if (icon != null)
+                Destroy(icon.gameObject);
+        }
+        spawnedResultIcons.Clear();
+
+        if (resultGridParent == null || itemIconPrefab == null)
+            return;
+
+        var aggregatedCounts = new Dictionary<string, int>();
+        var orderedItemIDs = new List<string>();
+
+        foreach (var icon in spawnedIcons)
+        {
+            if (icon == null || !icon.gameObject.activeSelf)
+                continue;
+
+            if (!aggregatedCounts.ContainsKey(icon.ItemID))
+            {
+                aggregatedCounts[icon.ItemID] = 0;
+                orderedItemIDs.Add(icon.ItemID);
+            }
+            aggregatedCounts[icon.ItemID] += icon.Count;
+        }
+
+        foreach (var itemID in orderedItemIDs)
+        {
+            ItemIcon resultIcon = Instantiate(itemIconPrefab, resultGridParent);
+            resultIcon.SetItem(itemID, aggregatedCounts[itemID]);
+            resultIcon.Show();
+            spawnedResultIcons.Add(resultIcon);
+        }
     }
 
     private void StopBattlePhase()

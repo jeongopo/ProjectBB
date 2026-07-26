@@ -3,8 +3,6 @@ using Interaction;
 
 public class HuntingInteractComponent : InteractComponent
 {
-    [SerializeField] private string huntingID = "Hunting1";
-
     private HuntingManager huntingManager;
 
     protected override void Start()
@@ -18,6 +16,6 @@ public class HuntingInteractComponent : InteractComponent
     protected override void OnInteract()
     {
         if (huntingManager == null) return;
-        huntingManager.OpenHunting(huntingID);
+        huntingManager.OpenHunting();
     }
 }
