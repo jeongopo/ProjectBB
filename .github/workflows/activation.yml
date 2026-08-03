@@ -1,0 +1,24 @@
+name: Request Unity Activation File
+
+# 최초 1회만 수동 실행해서 .alf 파일을 발급받기 위한 워크플로우입니다.
+# 발급받은 후에는 이 workflow를 실행할 일이 없습니다 (삭제하지 않아도 무방).
+on:
+  workflow_dispatch: {}
+
+jobs:
+  request-activation-file:
+    name: Request activation file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request manual activation file
+        uses: game-ci/unity-request-activation-file@v2
+        id: activation
+        with:
+          unityVersion: 6000.3.8f1
+
+      - name: Upload activation file
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.activation.outputs.filePath }}
+          path: ${{ steps.activation.outputs.filePath }}
+          retention-days: 1
