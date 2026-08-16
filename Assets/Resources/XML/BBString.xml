@@ -452,11 +452,15 @@
     <BODY>호밀가루와 버터, 벌꿀을 섞어 구운 케이크. 축제 때 즐겨 먹는 귀한 디저트.</BODY>
   </Row>
   <Row>
-    <ID>STR_Item_Default</ID>
-    <BODY>테스트</BODY>
+    <ID>STR_UI_Confirm</ID>
+    <BODY>확인</BODY>
   </Row>
   <Row>
     <ID>STR_fresh_milk</ID>
     <BODY>이것은 신선한 우유의 설명</BODY>
+  </Row>
+  <Row>
+    <ID>STR_UI_Confirm</ID>
+    <BODY>확인</BODY>
   </Row>
 </Rows>

@@ -41,4 +41,11 @@
     <RATE>0.1</RATE>
     <ITEMID>120001</ITEMID>
   </Row>
+  <Row>
+    <ID>drop6</ID>
+    <MIN>30</MIN>
+    <MAX>20</MAX>
+    <RATE>0.5</RATE>
+    <ITEMID>105003</ITEMID>
+  </Row>
 </Rows>
