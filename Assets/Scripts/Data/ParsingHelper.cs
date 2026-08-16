@@ -25,10 +25,6 @@ public static class ParsingHelper
 		if (trimmed.StartsWith("{") && trimmed.EndsWith("}"))
 		{
 			trimmed = trimmed.Substring(1, Math.Max(0, trimmed.Length - 2));
-			return trimmed.Split(';')
-				.Select(s => s.Trim())
-				.Where(s => s.Length > 0)
-				.ToArray();
 		}
 
 		char[] separators = { ';', ',', ' ', '\t', '\n', '\r' };

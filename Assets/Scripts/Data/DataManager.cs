@@ -24,21 +24,9 @@ public class DataManager : MonoBehaviour
         dataStorage.LoadData();
 
         // Example usage of the loaded data
-        foreach (var item in dataStorage.TestIngredientsData)
+        foreach (var item in dataStorage.ItemData)
         {
-            Debug.Log($"ID: {item.Value.ID}, Name: {item.Value.NAME}, Grade: {item.Value.GRADE}");
-        }
-        foreach (var item in dataStorage.TestCustomerData)
-        {
-            Debug.Log($"ID: {item.Value.ID}, Name: {item.Value.NAME}, Level: {item.Value.LEVEL}, Cooking Step: {item.Value.COOKINGSTEP}, Special: {item.Value.SPECIAL}");
-        }
-        foreach (var item in dataStorage.TestMinigame_BoilingData)
-        {
-            Debug.Log($"ID: {item.Value.ID}, Name: {item.Value.NAME}, Ingredient: {item.Value.INGREDIENT}, Boiling Time: {item.Value.BOILING_TIME}, Boiling Difficulty: {item.Value.BOILING_DIFFICULTY}");
-            foreach(var spot in item.Value.SWEET_SPOT)
-            {
-                Debug.Log($"Sweet Spot: {spot}");
-            }   
+            Debug.Log($"ID: {item.Value.ID}, Name: {item.Value.NAME}, Description: {dataStorage.GetBBStringText(item.Value.DESC)}");
         }
     }
     

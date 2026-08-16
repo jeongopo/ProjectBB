@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/user/AppData/Local/Temp/claude/c--Users-user-Documents-GitHub-ProjectBB/92f5ceef-ab36-49a1-b761-72f70f8a096a/scratchpad/xml_out/**)",
+      "Read(//c/Users/user/AppData/Local/Temp/claude/c--Users-user-Documents-GitHub-ProjectBB/92f5ceef-ab36-49a1-b761-72f70f8a096a/scratchpad/code_out/**)"
+    ]
+  }
+}

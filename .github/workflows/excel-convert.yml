@@ -1,0 +1,39 @@
+name: Convert Excel Data
+
+on:
+  push:
+    paths:
+      - 'Data/Excel/**'
+
+jobs:
+  convert:
+    name: Convert Excel to XML/code
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Run Excel data tool
+        run: dotnet run --project Tools/ExcelDataTool
+
+      - name: Commit regenerated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Assets/Resources/XML Assets/Scripts/Data/DataDrivenDefines.cs Assets/Scripts/Data/DataEnumDefines.cs
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: regenerate data from Excel"
+            git push
+          fi

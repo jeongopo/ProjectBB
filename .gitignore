@@ -104,6 +104,9 @@ project.fragment.lock.json
 packages/
 *.nuspec
 
+## Excel data tool (needs its own .csproj tracked despite the blanket *.csproj ignore above)
+!Tools/ExcelDataTool/ExcelDataTool.csproj
+
 ## Temporary files
 *.tmp
 *.bak
@@ -116,6 +119,3 @@ desktop.ini
 
 ## Excel temp files
 ~$*.xls*
-
-# Ignore private Config files
-/Tools/ExcelToXmlTool/publish/XMLConvertConfig.json
