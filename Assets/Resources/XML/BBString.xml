@@ -1,0 +1,466 @@
+<Rows>
+  <Info>
+    <ID>string</ID>
+    <BODY>string</BODY>
+  </Info>
+  <Row>
+    <ID>STR_trash_dish</ID>
+    <BODY>조합 실패 요리</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_trash_dish</ID>
+    <BODY>재료 조합이 잘못되어 먹을 수 없는 음식이 되어버렸다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_fresh_milk_boil</ID>
+    <BODY>삶은 신선한 우유</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_fresh_milk_boil</ID>
+    <BODY>신선한 우유를(을) 물에 넣고 끓여 부드럽게 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_aged_cheese_chop</ID>
+    <BODY>썬 숙성 치즈</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_aged_cheese_chop</ID>
+    <BODY>숙성 치즈를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_wild_berry_chop</ID>
+    <BODY>썬 야생 베리</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_wild_berry_chop</ID>
+    <BODY>야생 베리를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_moss_mushroom_chop</ID>
+    <BODY>썬 이끼 버섯</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_moss_mushroom_chop</ID>
+    <BODY>이끼 버섯를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_moss_mushroom_boil</ID>
+    <BODY>삶은 이끼 버섯</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_moss_mushroom_boil</ID>
+    <BODY>이끼 버섯를(을) 물에 넣고 끓여 부드럽게 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_apple_chop</ID>
+    <BODY>썬 사과</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_apple_chop</ID>
+    <BODY>사과를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_seabird_egg_grill</ID>
+    <BODY>구운 바다새 알</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_seabird_egg_grill</ID>
+    <BODY>바다새 알를(을) 불에 구워 풍미를 살린 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_seabird_egg_boil</ID>
+    <BODY>삶은 바다새 알</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_seabird_egg_boil</ID>
+    <BODY>바다새 알를(을) 물에 넣고 끓여 부드럽게 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_coarse_barley_grind</ID>
+    <BODY>간 거친 보리</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_coarse_barley_grind</ID>
+    <BODY>거친 보리를(을) 곱게 갈아 가루로 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_coarse_barley_brew</ID>
+    <BODY>발효된 거친 보리</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_coarse_barley_brew</ID>
+    <BODY>거친 보리를(을) 발효시켜 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_rye_grind</ID>
+    <BODY>간 호밀</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_rye_grind</ID>
+    <BODY>호밀를(을) 곱게 갈아 가루로 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_parsley_chop</ID>
+    <BODY>썬 파슬리</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_parsley_chop</ID>
+    <BODY>파슬리를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_wild_garlic_chop</ID>
+    <BODY>썬 야생 마늘</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_wild_garlic_chop</ID>
+    <BODY>야생 마늘를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_wild_garlic_grill</ID>
+    <BODY>구운 야생 마늘</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_wild_garlic_grill</ID>
+    <BODY>야생 마늘를(을) 불에 구워 풍미를 살린 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_boar_meat_chop</ID>
+    <BODY>썬 멧돼지 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_boar_meat_chop</ID>
+    <BODY>멧돼지 고기를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_boar_meat_grill</ID>
+    <BODY>구운 멧돼지 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_boar_meat_grill</ID>
+    <BODY>멧돼지 고기를(을) 불에 구워 풍미를 살린 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_boar_meat_boil</ID>
+    <BODY>삶은 멧돼지 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_boar_meat_boil</ID>
+    <BODY>멧돼지 고기를(을) 물에 넣고 끓여 부드럽게 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_boar_meat_smoke</ID>
+    <BODY>훈제 멧돼지 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_boar_meat_smoke</ID>
+    <BODY>멧돼지 고기를(을) 연기에 훈제하여 저장성과 풍미를 더한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_mutton_chop</ID>
+    <BODY>썬 양 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_mutton_chop</ID>
+    <BODY>양 고기를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_mutton_grill</ID>
+    <BODY>구운 양 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_mutton_grill</ID>
+    <BODY>양 고기를(을) 불에 구워 풍미를 살린 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_mutton_boil</ID>
+    <BODY>삶은 양 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_mutton_boil</ID>
+    <BODY>양 고기를(을) 물에 넣고 끓여 부드럽게 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_reindeer_meat_chop</ID>
+    <BODY>썬 순록 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_reindeer_meat_chop</ID>
+    <BODY>순록 고기를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_reindeer_meat_grill</ID>
+    <BODY>구운 순록 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_reindeer_meat_grill</ID>
+    <BODY>순록 고기를(을) 불에 구워 풍미를 살린 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_rabbit_meat_chop</ID>
+    <BODY>썬 토끼 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_rabbit_meat_chop</ID>
+    <BODY>토끼 고기를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_rabbit_meat_grill</ID>
+    <BODY>구운 토끼 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_rabbit_meat_grill</ID>
+    <BODY>토끼 고기를(을) 불에 구워 풍미를 살린 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_seabird_meat_chop</ID>
+    <BODY>썬 바다새 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_seabird_meat_chop</ID>
+    <BODY>바다새 고기를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_seabird_meat_grill</ID>
+    <BODY>구운 바다새 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_seabird_meat_grill</ID>
+    <BODY>바다새 고기를(을) 불에 구워 풍미를 살린 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_bear_meat_chop</ID>
+    <BODY>썬 곰 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_bear_meat_chop</ID>
+    <BODY>곰 고기를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_bear_meat_grill</ID>
+    <BODY>구운 곰 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_bear_meat_grill</ID>
+    <BODY>곰 고기를(을) 불에 구워 풍미를 살린 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_hazelnut_grind</ID>
+    <BODY>간 헤이즐넛</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_hazelnut_grind</ID>
+    <BODY>헤이즐넛를(을) 곱게 갈아 가루로 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_walnut_grind</ID>
+    <BODY>간 호두</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_walnut_grind</ID>
+    <BODY>호두를(을) 곱게 갈아 가루로 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_dried_herring_grill</ID>
+    <BODY>구운 말린 청어</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_dried_herring_grill</ID>
+    <BODY>말린 청어를(을) 불에 구워 풍미를 살린 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_dried_cod_boil</ID>
+    <BODY>삶은 말린 대구</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_dried_cod_boil</ID>
+    <BODY>말린 대구를(을) 물에 넣고 끓여 부드럽게 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_mussel_boil</ID>
+    <BODY>삶은 홍합</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_mussel_boil</ID>
+    <BODY>홍합를(을) 물에 넣고 끓여 부드럽게 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_turnip_chop</ID>
+    <BODY>썬 순무</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_turnip_chop</ID>
+    <BODY>순무를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_turnip_boil</ID>
+    <BODY>삶은 순무</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_turnip_boil</ID>
+    <BODY>순무를(을) 물에 넣고 끓여 부드럽게 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_cabbage_chop</ID>
+    <BODY>썬 양배추</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_cabbage_chop</ID>
+    <BODY>양배추를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_bean_boil</ID>
+    <BODY>삶은 콩</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_bean_boil</ID>
+    <BODY>콩를(을) 물에 넣고 끓여 부드럽게 만든 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_carrot_chop</ID>
+    <BODY>썬 당근</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_carrot_chop</ID>
+    <BODY>당근를(을) 잘게 썰어 조리하기 좋게 손질한 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_carrot_grill</ID>
+    <BODY>구운 당근</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_carrot_grill</ID>
+    <BODY>당근를(을) 불에 구워 풍미를 살린 재료.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_boar_stew</ID>
+    <BODY>멧돼지 고기와 뿌리채소를 오래 끓여낸 든든한 스튜. 원정을 앞둔 전사들이 즐겨 먹음.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_berry_boar_steak</ID>
+    <BODY>버터에 구운 멧돼지 고기 위에 새콤한 야생 베리를 올린 스테이크.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_herb_mutton_roast</ID>
+    <BODY>허브 향을 가득 입혀 구운 양고기. 잡내를 잡아낸 연회용 요리.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_mutton_cabbage_stew</ID>
+    <BODY>절인 양배추와 양고기를 함께 끓인 스튜. 신맛과 짠맛이 조화를 이룸.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_reindeer_mushroom_stew</ID>
+    <BODY>이끼 버섯의 은은한 향이 스며든 순록 고기 스튜.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_honey_roasted_reindeer</ID>
+    <BODY>숲의 벌꿀을 발라 구운 순록 고기. 겉은 바삭하고 속은 촉촉함.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_rabbit_bean_soup</ID>
+    <BODY>담백한 토끼 고기와 콩을 넣어 끓인 가벼운 수프.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_seabird_barley_porridge</ID>
+    <BODY>바다새 고기와 보리를 함께 끓인 죽. 절벽 마을의 겨울철 별식.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_hearty_bear_stew</ID>
+    <BODY>곰 고기와 뿌리채소를 진하게 끓여낸 스튜. 긴 원정을 앞둔 전사들의 보양식.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_cheese_bear_steak</ID>
+    <BODY>숙성 치즈를 올려 구운 곰 고기 스테이크. 진한 육즙과 고소한 치즈의 조화.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_milk_pudding</ID>
+    <BODY>우유와 바다새 알을 섞어 굳힌 부드러운 푸딩. 벌꿀을 곁들여 냄.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_herb_cheese_bake</ID>
+    <BODY>숙성 치즈를 호밀빵 위에 올려 구운 뒤 파슬리를 뿌린 간단한 요리.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_berry_pie</ID>
+    <BODY>야생 베리와 버터를 넣어 구운 호밀 파이. 달콤하고 향긋함.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_sauteed_mushroom</ID>
+    <BODY>이끼 버섯을 버터와 마늘에 볶아낸 향긋한 곁들임 요리.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_baked_apple</ID>
+    <BODY>사과에 벌꿀과 버터를 발라 구운 소박한 디저트.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_steamed_seabird_egg</ID>
+    <BODY>바다새 알을 버터와 파슬리로 간해 부드럽게 쪄낸 요리.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_barley_bread</ID>
+    <BODY>거친 보리로 반죽해 짭짤하게 구운 투박한 빵. 원정 중 오래 두고 먹기 좋음.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_rye_pancake</ID>
+    <BODY>호밀 반죽에 바다새 알을 섞어 버터에 부쳐낸 전.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_parsley_salad</ID>
+    <BODY>파슬리와 당근을 소금과 버터로 무친 상큼한 곁들임.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_pickled_garlic</ID>
+    <BODY>야생 마늘을 소금에 절여 오래 두고 먹을 수 있게 만듦.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_hazelnut_cookie</ID>
+    <BODY>헤이즐넛 가루에 호밀과 벌꿀, 버터를 섞어 구운 달콤한 과자.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_candied_walnut</ID>
+    <BODY>호두를 벌꿀에 조려 만든 달콤한 간식. 귀한 손님을 대접할 때 내놓음.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_smoked_herring</ID>
+    <BODY>말린 청어를 소금 간해 훈연한 요리. 짙은 훈연 향이 특징.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_fried_cod</ID>
+    <BODY>말린 대구에 버터와 호밀가루를 입혀 바삭하게 튀긴 요리.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_mussel_skewer</ID>
+    <BODY>홍합을 마늘과 소금으로 간해 꼬치에 꿰어 구운 요리.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_braised_turnip</ID>
+    <BODY>순무를 버터와 벌꿀, 소금으로 은은하게 조려낸 요리.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_pickled_cabbage</ID>
+    <BODY>양배추를 소금에 절여 장기 보관이 가능하게 만든 저장식.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_bean_stew</ID>
+    <BODY>콩과 뿌리채소를 오래 끓여낸 걸쭉한 스튜.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_glazed_carrot</ID>
+    <BODY>당근을 벌꿀과 버터로 윤기 나게 조려낸 곁들임 요리.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_honey_cake</ID>
+    <BODY>호밀가루와 버터, 벌꿀을 섞어 구운 케이크. 축제 때 즐겨 먹는 귀한 디저트.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_UI_Confirm</ID>
+    <BODY>확인</BODY>
+  </Row>
+  <Row>
+    <ID>STR_fresh_milk</ID>
+    <BODY>이것은 신선한 우유의 설명</BODY>
+  </Row>
+  <Row>
+    <ID>STR_UI_Confirm</ID>
+    <BODY>확인</BODY>
+  </Row>
+</Rows>
