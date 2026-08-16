@@ -77,7 +77,7 @@ public class DataManager : MonoBehaviour
 
                 if (field.Name == "ID")
                 {
-                    idValue = field.InnerText;
+                    idValue = field.InnerText?.Trim();
                     if (string.IsNullOrEmpty(idValue))
                     {
                         Debug.LogError($"ID field is empty for row: {row.OuterXml}");
@@ -111,9 +111,13 @@ public class DataManager : MonoBehaviour
                     string[] array = ParsingHelper.ParseStringArray(field.InnerText);
                     member.SetValue(item, array);
                 }
+                else if (member.FieldType == typeof(string))
+                {
+                    member.SetValue(item, field.InnerText?.Trim());
+                }
                 else
                 {
-                    object value = Convert.ChangeType(field.InnerText, member.FieldType);
+                    object value = Convert.ChangeType(field.InnerText.Trim(), member.FieldType);
                     member.SetValue(item, value);
                 }
 			}

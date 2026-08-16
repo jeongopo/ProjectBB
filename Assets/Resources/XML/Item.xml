@@ -1,0 +1,38 @@
+<Rows>
+  <Info>
+    <ID>string</ID>
+    <NAME>string</NAME>
+    <DESC>string</DESC>
+    <ICONPATH>string</ICONPATH>
+  </Info>
+  <Row>
+    <ID>Item1</ID>
+    <NAME>고기</NAME>
+    <DESC>이것은 고기의 설명</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_bear_meat.png</ICONPATH>
+  </Row>
+  <Row>
+    <ID>Item2</ID>
+    <NAME>버터</NAME>
+    <DESC>이것은 버터의 설명</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_butter.png</ICONPATH>
+  </Row>
+  <Row>
+    <ID>Item3</ID>
+    <NAME>썬고기</NAME>
+    <DESC>이것은 썬 고기의 설명</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_bear_meat_chop.png</ICONPATH>
+  </Row>
+  <Row>
+    <ID>Item4</ID>
+    <NAME>치즈</NAME>
+    <DESC>이것은 치즈의 설명</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_aged_cheese.png</ICONPATH>
+  </Row>
+  <Row>
+    <ID>Item5</ID>
+    <NAME>우유</NAME>
+    <DESC>이것은 피자의 설명</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_fresh_milk.png</ICONPATH>
+  </Row>
+</Rows>
