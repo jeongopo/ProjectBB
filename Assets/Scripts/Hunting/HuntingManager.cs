@@ -116,7 +116,7 @@ public class HuntingManager : MonoBehaviour
         foreach (var huntingRow in dataManager.dataStorage.HuntingData.Values)
         {
             HuntingSelectItem item = Instantiate(selectItemPrefab, selectListParent);
-            item.SetData(huntingRow.ID, huntingRow.NAME_K, SelectHunting);
+            item.SetData(huntingRow.ID, huntingRow.NAME_K, huntingRow.DROP_ID, dataManager, SelectHunting);
             spawnedSelectItems.Add(item);
         }
     }
