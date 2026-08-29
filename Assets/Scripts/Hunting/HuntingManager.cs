@@ -33,6 +33,7 @@ public class HuntingManager : MonoBehaviour
 
     private DataManager dataManager;
     private GamePlay.InputManager inputManager;
+    private InventoryManager inventoryManager;
     private readonly List<ItemIcon> spawnedIcons = new List<ItemIcon>();
     private readonly List<HuntingSelectItem> spawnedSelectItems = new List<HuntingSelectItem>();
     private readonly List<ItemIcon> spawnedResultIcons = new List<ItemIcon>();
@@ -46,6 +47,7 @@ public class HuntingManager : MonoBehaviour
     {
         dataManager = FindFirstObjectByType<DataManager>();
         inputManager = FindFirstObjectByType<GamePlay.InputManager>();
+        inventoryManager = FindFirstObjectByType<InventoryManager>();
 
         if (huntingPanel != null)
             huntingPanel.SetActive(false);
@@ -175,6 +177,7 @@ public class HuntingManager : MonoBehaviour
                 spawnedIcons[i].SetItem(itemID, dropCount);
                 spawnedIcons[i].Show();
                 PlayProgressHitEffect();
+                inventoryManager?.AddItem(itemID, dropCount);
             }
 
             if (progressSlider != null)

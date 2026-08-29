@@ -40,8 +40,11 @@ namespace GamePlay
             OnInputStateChanged?.Invoke(newState);
         }
 
-        public InputActionMap GetCurrentActionMap() 
+        public InputActionMap GetCurrentActionMap()
             => inputActions?.FindActionMap(GetActionMapName(currentInputState));
+
+        public InputActionMap GetActionMap(InputState state)
+            => inputActions?.FindActionMap(GetActionMapName(state));
 
         private string GetActionMapName(InputState state) => state switch
         {
