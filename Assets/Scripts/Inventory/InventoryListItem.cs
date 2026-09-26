@@ -16,6 +16,7 @@ public class InventoryListItem : MonoBehaviour
             return;
 
         itemIcon.SetItem(itemID, count);
+        itemIcon.CountVisible = true;
         itemIcon.Show();
     }
 

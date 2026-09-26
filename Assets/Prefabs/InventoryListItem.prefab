@@ -231,6 +231,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: ItemIcon
       objectReference: {fileID: 0}
+    - target: {fileID: 5982569118468058932, guid: e4852d9bd4d767044a8dba61328b7b95, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
+      objectReference: {fileID: 0}
+    - target: {fileID: 6958769137026692744, guid: e4852d9bd4d767044a8dba61328b7b95, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 40
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

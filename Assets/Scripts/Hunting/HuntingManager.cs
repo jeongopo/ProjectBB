@@ -230,6 +230,7 @@ public class HuntingManager : MonoBehaviour
         {
             ItemIcon resultIcon = Instantiate(itemIconPrefab, resultGridParent);
             resultIcon.SetItem(itemID, aggregatedCounts[itemID]);
+            resultIcon.CountVisible = true;
             resultIcon.Show();
             spawnedResultIcons.Add(resultIcon);
         }
