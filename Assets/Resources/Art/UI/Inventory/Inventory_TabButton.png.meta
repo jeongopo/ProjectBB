@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8cdb67c2456b13c49bce072d3517bb30
+guid: 45796474ec91f0a4fabc6abf916beacd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -372949452097032247
-    second: Inventory_Back_0
+      213: 4859070101193211740
+    second: Inventory_TabButton_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Inventory_Back_0
+      name: Inventory_TabButton_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 612
-        height: 597
+        width: 100
+        height: 72
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9cf6494037403daf0800000000000000
-      internalID: -372949452097032247
+      spriteID: c5fb7583382ee6340800000000000000
+      internalID: 4859070101193211740
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 6d1b4011ac9b0cb499673b4dfaebe45e
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Inventory_Back_0: -372949452097032247
+      Inventory_TabButton_0: 4859070101193211740
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
