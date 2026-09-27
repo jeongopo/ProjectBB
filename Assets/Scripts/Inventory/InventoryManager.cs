@@ -27,8 +27,7 @@ public class InventoryManager : MonoBehaviour
     private readonly List<InventoryListItem> slots = new List<InventoryListItem>();
 
     private GamePlay.InputManager inputManager;
-    private InputAction toggleActionDefault;
-    private InputAction toggleActionUI;
+    private InputAction toggleAction;
 
     private void Awake()
     {
@@ -45,10 +44,8 @@ public class InventoryManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (toggleActionDefault != null)
-            toggleActionDefault.started -= OnToggleInventory;
-        if (toggleActionUI != null)
-            toggleActionUI.started -= OnToggleInventory;
+        if (toggleAction != null)
+            toggleAction.started -= OnToggleInventory;
     }
 
     private void CreateSlots()
@@ -69,15 +66,11 @@ public class InventoryManager : MonoBehaviour
         if (inputManager == null)
             return;
 
-        // "I" 토글은 Default(게임플레이)와 UI(인벤토리 오픈 중) 양쪽에서 다 눌릴 수 있어야 하므로
-        // 두 액션맵 모두에 같은 이름("Inventory")의 액션이 있어야 함
-        toggleActionDefault = inputManager.GetActionMap(InputState.Default)?.FindAction(ToggleActionName);
-        toggleActionUI = inputManager.GetActionMap(InputState.UI)?.FindAction(ToggleActionName);
+        // Default 액션맵은 Default/Popup 상태 모두에서 항상 켜져 있으므로 한 번만 구독하면 됨
+        toggleAction = inputManager.GetActionMap(InputState.Default)?.FindAction(ToggleActionName);
 
-        if (toggleActionDefault != null)
-            toggleActionDefault.started += OnToggleInventory;
-        if (toggleActionUI != null)
-            toggleActionUI.started += OnToggleInventory;
+        if (toggleAction != null)
+            toggleAction.started += OnToggleInventory;
     }
 
     private void OnToggleInventory(InputAction.CallbackContext ctx)
@@ -100,7 +93,7 @@ public class InventoryManager : MonoBehaviour
         if (inventoryPanel != null)
             inventoryPanel.SetActive(true);
         if (inputManager != null)
-            inputManager.SwitchInputState(InputState.UI);
+            inputManager.SwitchInputState(InputState.Popup);
     }
 
     public void CloseInventory()
