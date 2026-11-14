@@ -23,5 +23,6 @@ public enum CookingType
 {
     Boiling,
     Cutting,
+    Plating,
 }
 }

@@ -32,7 +32,7 @@ public abstract class CookingComponent : MonoBehaviour
     }
 
     //처음 요리 UI 열리자마자 생기는 이벤트
-    public void InitCooking()
+    public virtual void InitCooking()
     {
         inputManager = FindFirstObjectByType<InputManager>();
         if (inputManager != null)

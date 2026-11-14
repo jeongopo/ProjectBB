@@ -15,6 +15,7 @@ public class CookingManager : MonoBehaviour
     [Header("Cooking Components")]
     [SerializeField] private BoilingComponent boilingComponent;
     [SerializeField] private CuttingComponent cuttingComponent;
+    [SerializeField] private PlatingComponent platingComponent;
 
     [Header("Shared Timer UI")]
     [SerializeField] private CookingTimerComponent cookingTimer;
@@ -159,12 +160,14 @@ public class CookingManager : MonoBehaviour
     {
         if (boilingComponent != null) boilingComponent.gameObject.SetActive(active);
         if (cuttingComponent != null) cuttingComponent.gameObject.SetActive(active);
+        if (platingComponent != null) platingComponent.gameObject.SetActive(active);
     }
 
     private CookingComponent GetCookingComponent(CookingType type) => type switch
     {
         CookingType.Boiling => boilingComponent,
         CookingType.Cutting => cuttingComponent,
+        CookingType.Plating => platingComponent,
         _ => null
     };
 }

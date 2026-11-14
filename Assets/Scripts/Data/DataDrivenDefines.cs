@@ -13,7 +13,8 @@ public class DataStorage
 	public Dictionary<string,Item> ItemData;
 	public Dictionary<string,Minigame_Boiling> Minigame_BoilingData;
 	public Dictionary<string,Minigame_Cutting> Minigame_CuttingData;
-	public Dictionary<string,Recipe> RecipeData;
+	public Dictionary<string,Recipe_Combine> Recipe_CombineData;
+	public Dictionary<string,Recipe_Interaction> Recipe_InteractionData;
 	public Dictionary<string,TestCustomer> TestCustomerData;
 	public Dictionary<string,TestIngredients> TestIngredientsData;
 	public Dictionary<string,TestMinigame_Boiling> TestMinigame_BoilingData;
@@ -25,7 +26,8 @@ public class DataStorage
 		ItemData = DataManager.LoadDefineData<Item>("Item");
 		Minigame_BoilingData = DataManager.LoadDefineData<Minigame_Boiling>("Minigame_Boiling");
 		Minigame_CuttingData = DataManager.LoadDefineData<Minigame_Cutting>("Minigame_Cutting");
-		RecipeData = DataManager.LoadDefineData<Recipe>("Recipe");
+		Recipe_CombineData = DataManager.LoadDefineData<Recipe_Combine>("Recipe_Combine");
+		Recipe_InteractionData = DataManager.LoadDefineData<Recipe_Interaction>("Recipe_Interaction");
 		TestCustomerData = DataManager.LoadDefineData<TestCustomer>("TestCustomer");
 		TestIngredientsData = DataManager.LoadDefineData<TestIngredients>("TestIngredients");
 		TestMinigame_BoilingData = DataManager.LoadDefineData<TestMinigame_Boiling>("TestMinigame_Boiling");
@@ -80,7 +82,22 @@ public class DataStorage
 			public int CUTTING_ACCELERATION;
 			public int[] CUTTING_RANGE;
 	}
-	public class Recipe
+	public class Recipe_Combine
+	{
+			public string ID;
+			public string _DEV_NAME;
+			public string NAME;
+			public string PRODUCT_DISH_ID;
+			public string COMPONENT_1;
+			public string COMPONENT_2;
+			public string COMPONENT_3;
+			public string COMPONENT_4;
+			public string COMPONENT_5;
+			public string TRASH_DISH_ID;
+			public string DESC_BODY;
+			public string DISPLAY_NAME;
+	}
+	public class Recipe_Interaction
 	{
 			public string ID;
 			public string INPUT_ITEM_ID;
