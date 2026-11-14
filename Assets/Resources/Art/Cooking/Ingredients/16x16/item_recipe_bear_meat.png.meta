@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 612c53e9d1a201243ab91adfe29c9d63
+guid: 8f2785154ae8b294dae7963fe651bb89
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3745659380781995748
-    second: item_recipe_bear_meat_chop_0
+      213: -5490548276153705004
+    second: item_recipe_bear_meat_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: item_recipe_bear_meat_chop_0
+      name: item_recipe_bear_meat_0
       rect:
         serializedVersion: 2
-        x: 197
-        y: 363
-        width: 863
-        height: 562
+        x: 0
+        y: 1
+        width: 16
+        height: 14
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c1921e673aeb40cc0800000000000000
-      internalID: -3745659380781995748
+      spriteID: 4dd99b9de67adc3b0800000000000000
+      internalID: -5490548276153705004
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      item_recipe_bear_meat_chop_0: -3745659380781995748
+      item_recipe_bear_meat_0: -5490548276153705004
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
