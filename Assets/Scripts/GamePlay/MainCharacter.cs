@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.InputSystem;
-using GameEnumDefines;
 
 namespace GamePlay
 {
@@ -101,8 +100,7 @@ namespace GamePlay
 
         bool CanMoveCharacter()
         {
-            if (inputManager.CurrentInputState != InputState.Default) return false;
-            return true;
+            return inputManager.CanCharacterMove;
         }
         
         private void HandleContinuousMovement()

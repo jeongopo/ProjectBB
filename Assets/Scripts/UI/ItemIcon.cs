@@ -1,4 +1,5 @@
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,8 @@ public class ItemIcon : MonoBehaviour
     private const string ArtResourceRoot = "Art/";
 
     [SerializeField] private Image itemImage;
+    [SerializeField] private TMP_Text countText;
+    [SerializeField] private bool countVisible = true;
 
     private DataManager dataManager;
     private string itemID;
@@ -16,16 +19,35 @@ public class ItemIcon : MonoBehaviour
     public string ItemID => itemID;
     public int Count => count;
 
+    public bool CountVisible
+    {
+        get => countVisible;
+        set
+        {
+            countVisible = value;
+            if (countText != null)
+                countText.gameObject.SetActive(value);
+        }
+    }
+
     private void Awake()
     {
         if (itemImage == null)
             itemImage = transform.Find("Item_Image")?.GetComponent<Image>();
+        if (countText == null)
+            countText = transform.Find("Item_Count")?.GetComponent<TMP_Text>();
+
+        if (countText != null)
+            countText.gameObject.SetActive(countVisible);
     }
 
-    public void SetItem(string itemID, int count = 0)
+    public void SetItem(string itemID, int count = 1)
     {
         this.itemID = itemID;
         this.count = count;
+
+        if (countText != null)
+            countText.text = count.ToString();
 
         if (dataManager == null)
             dataManager = FindFirstObjectByType<DataManager>();

@@ -15,7 +15,8 @@ public enum InputState
 {
     Default, //default input state for player movement and interactions
     Minigame, //input state for minigames, disables player movement and enables minigame controls
-    UI, //input state for UI navigation, disables player movement and enables UI controls
+    UI, //input state for fully modal UI (e.g. dialogue), disables player movement and enables UI controls
+    Popup, //input state for popup-style panels (e.g. inventory), keeps player movement enabled alongside UI controls
 }
 
 public enum CookingType
