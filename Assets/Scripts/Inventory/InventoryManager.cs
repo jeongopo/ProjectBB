@@ -20,6 +20,7 @@ public class InventoryManager : MonoBehaviour
     private class ItemStack
     {
         public string ItemID;
+        public int Grade; // 재료 등급(★). 날것은 0
         public int Count;
     }
 
@@ -104,19 +105,19 @@ public class InventoryManager : MonoBehaviour
             inputManager.SwitchInputState(InputState.Default);
     }
 
-    public void AddItem(string itemID, int count)
+    public void AddItem(string itemID, int count, int grade = 0)
     {
         if (string.IsNullOrEmpty(itemID) || count <= 0)
             return;
 
-        ItemStack stack = itemStacks.Find(s => s.ItemID == itemID);
+        ItemStack stack = itemStacks.Find(s => s.ItemID == itemID && s.Grade == grade);
         if (stack != null)
         {
             stack.Count += count;
         }
         else if (itemStacks.Count < MaxSlots)
         {
-            itemStacks.Add(new ItemStack { ItemID = itemID, Count = count });
+            itemStacks.Add(new ItemStack { ItemID = itemID, Grade = grade, Count = count });
         }
         else
         {
@@ -126,6 +127,55 @@ public class InventoryManager : MonoBehaviour
 
         if (inventoryPanel != null && inventoryPanel.activeSelf)
             RefreshSlots();
+    }
+
+    // 등급 구분 없이 합산한 보유 수량
+    public int GetCount(string itemID)
+    {
+        int total = 0;
+        foreach (ItemStack stack in itemStacks)
+        {
+            if (stack.ItemID == itemID)
+                total += stack.Count;
+        }
+        return total;
+    }
+
+    public int GetCount(string itemID, int grade)
+    {
+        ItemStack stack = itemStacks.Find(s => s.ItemID == itemID && s.Grade == grade);
+        return stack != null ? stack.Count : 0;
+    }
+
+    // itemID를 보유한 등급 목록 (등급 내림차순)
+    public List<int> GetOwnedGrades(string itemID)
+    {
+        List<int> grades = new List<int>();
+        foreach (ItemStack stack in itemStacks)
+        {
+            if (stack.ItemID == itemID && stack.Count > 0)
+                grades.Add(stack.Grade);
+        }
+        grades.Sort((a, b) => b.CompareTo(a));
+        return grades;
+    }
+
+    public bool RemoveItem(string itemID, int grade, int count = 1)
+    {
+        if (string.IsNullOrEmpty(itemID) || count <= 0)
+            return false;
+
+        ItemStack stack = itemStacks.Find(s => s.ItemID == itemID && s.Grade == grade);
+        if (stack == null || stack.Count < count)
+            return false;
+
+        stack.Count -= count;
+        if (stack.Count == 0)
+            itemStacks.Remove(stack);
+
+        if (inventoryPanel != null && inventoryPanel.activeSelf)
+            RefreshSlots();
+        return true;
     }
 
     private void RefreshSlots()

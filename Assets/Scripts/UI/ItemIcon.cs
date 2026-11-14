@@ -90,7 +90,7 @@ public class ItemIcon : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private static Sprite LoadIconSprite(string iconPath)
+    public static Sprite LoadIconSprite(string iconPath)
     {
         if (string.IsNullOrEmpty(iconPath))
             return null;
