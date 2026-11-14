@@ -452,6 +452,14 @@
     <BODY>호밀가루와 버터, 벌꿀을 섞어 구운 케이크. 축제 때 즐겨 먹는 귀한 디저트.</BODY>
   </Row>
   <Row>
+    <ID>STR_overcooked_food</ID>
+    <BODY>너무 익힌 음식</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Body_overcooked_food</ID>
+    <BODY>오래 조리해서 새까맣게 타 버렸다. 먹을 수 없다.</BODY>
+  </Row>
+  <Row>
     <ID>STR_UI_Confirm</ID>
     <BODY>확인</BODY>
   </Row>
@@ -460,7 +468,155 @@
     <BODY>이것은 신선한 우유의 설명</BODY>
   </Row>
   <Row>
+    <ID>STR_aged_cheese</ID>
+    <BODY>오랜 시간 숙성시켜 풍미가 깊어진 단단한 치즈.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_butter</ID>
+    <BODY>고소한 향이 나는 부드러운 버터. 요리에 풍미를 더한다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_wild_berry</ID>
+    <BODY>숲에서 따 온 새콤달콤한 야생 열매.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_moss_mushroom</ID>
+    <BODY>습한 바위틈에서 자라는 이끼 낀 버섯. 흙내음이 난다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_apple</ID>
+    <BODY>아삭하고 달콤한 붉은 사과.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_seabird_egg</ID>
+    <BODY>해안 절벽에서 얻은 바다새의 알. 푸른 점이 박혀 있다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_coarse_barley</ID>
+    <BODY>껍질째 거칠게 빻은 굵은 보리. 든든한 곡물이다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_rye</ID>
+    <BODY>추운 땅에서도 잘 자라는 구수한 호밀.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_parsley</ID>
+    <BODY>향긋한 풀내음이 나는 허브. 음식 맛을 산뜻하게 한다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_wild_garlic</ID>
+    <BODY>알싸한 향이 강한 야생 마늘.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_boar_meat</ID>
+    <BODY>질기지만 맛이 진한 멧돼지 고기.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_mutton</ID>
+    <BODY>독특한 향이 있는 양고기. 푹 익히면 부드럽다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_reindeer_meat</ID>
+    <BODY>살코기가 많고 담백한 순록 고기.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_rabbit_meat</ID>
+    <BODY>기름기가 적고 부드러운 토끼 고기.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_seabird_meat</ID>
+    <BODY>짭짤한 바다 내음이 나는 바다새 고기.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_bear_meat</ID>
+    <BODY>기름지고 힘 좋은 곰 고기. 손질이 까다롭다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_hazelnut</ID>
+    <BODY>고소하게 톡 터지는 작은 헤이즐넛.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_walnut</ID>
+    <BODY>단단한 껍질 속에 고소한 속살이 든 호두.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_dried_herring</ID>
+    <BODY>소금에 절여 말린 청어. 오래 두고 먹을 수 있다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_dried_cod</ID>
+    <BODY>바람에 바싹 말린 대구. 물에 불려 쓴다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_mussel</ID>
+    <BODY>차가운 바다에서 건진 짭조름한 홍합.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_turnip</ID>
+    <BODY>달큰한 맛이 나는 둥근 뿌리채소.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_cabbage</ID>
+    <BODY>겹겹이 잎이 싸여 아삭한 양배추.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_bean</ID>
+    <BODY>단백질이 풍부한 콩. 스튜에 넣으면 든든하다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_carrot</ID>
+    <BODY>달고 아삭한 주황빛 당근.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_forest_honey</ID>
+    <BODY>숲속 벌집에서 얻은 진한 황금빛 꿀.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_salt</ID>
+    <BODY>음식 맛의 기본이 되는 거친 소금.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_unidentified_dried_meat</ID>
+    <BODY>무슨 고기인지 알 수 없는 질긴 육포. 먹을 수는 있다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_sunstone_powder</ID>
+    <BODY>태양석을 곱게 간 가루. 붉게 반짝이며 온기가 느껴진다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_worldtree_sap</ID>
+    <BODY>세계수에서 흘러나온 맑은 수액. 신비한 기운이 감돈다.</BODY>
+  </Row>
+  <Row>
     <ID>STR_UI_Confirm</ID>
     <BODY>확인</BODY>
+  </Row>
+  <Row>
+    <ID>STR_UI_Plating_Success</ID>
+    <BODY>성공!</BODY>
+  </Row>
+  <Row>
+    <ID>STR_UI_Plating_Fail</ID>
+    <BODY>실패</BODY>
+  </Row>
+  <Row>
+    <ID>STR_UI_Plating_NoOrder</ID>
+    <BODY>아직 받은 주문이 없습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_UI_Plating_RecipeError</ID>
+    <BODY>레시피 설정 오류입니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_UI_Plating_CustomerLeft</ID>
+    <BODY>손님이 떠났습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_UI_Plating_Shortage</ID>
+    <BODY>재료 부족: {0} {1}개</BODY>
+  </Row>
+  <Row>
+    <ID>STR_UI_Plating_ShortageMulti</ID>
+    <BODY>재료 부족: {0} {1}개 외 {2}종</BODY>
   </Row>
 </Rows>
