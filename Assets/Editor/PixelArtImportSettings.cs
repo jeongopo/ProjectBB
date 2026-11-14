@@ -3,8 +3,8 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// Assets/Art/PP_Interiors 아래로 들어오는 모든 텍스처에 픽셀아트용 임포트 설정을
-/// 자동으로 적용한다. 수동으로 Inspector를 만질 필요가 없다.
+/// Assets/Art/PP_Interiors, Assets/Resources/Art/UI 아래로 들어오는 모든 텍스처에
+/// 픽셀아트용 임포트 설정을 자동으로 적용한다. 수동으로 Inspector를 만질 필요가 없다.
 ///
 /// 적용 항목:
 ///   - Texture Type      : Sprite (2D and UI)
@@ -14,18 +14,24 @@ using UnityEngine;
 ///   - Max Size          : 4096                ← 원본 축소 방지
 ///   - Mesh Type         : Full Rect           ← 타일 가장자리 잘림 방지
 ///   - Mip Maps          : off
-///   - Sprite Mode       : 16의 배수 크기면 Multiple, 아니면 Single
+///   - Sprite Mode       : PP_Interiors는 16의 배수 크기면 Multiple, 아니면 Single / UI는 항상 Single
 /// </summary>
 public class PixelArtImportSettings : AssetPostprocessor
 {
     public const string Root = "Assets/Art/PP_Interiors";
+    public const string UIRoot = "Assets/Resources/Art/UI";
     public const int PixelsPerUnit = 16;
     public const int Cell = 16;
     public const int MaxTextureSize = 4096;
 
+    static bool IsUnder(string path, string root)
+    {
+        return path.Replace('\\', '/').StartsWith(root + "/");
+    }
+
     static bool InScope(string path)
     {
-        return path.Replace('\\', '/').StartsWith(Root + "/");
+        return IsUnder(path, Root) || IsUnder(path, UIRoot);
     }
 
     void OnPreprocessTexture()
@@ -44,10 +50,10 @@ public class PixelArtImportSettings : AssetPostprocessor
         ti.maxTextureSize = MaxTextureSize;
         ti.sRGBTexture = true;
 
-        // 가로세로가 모두 16의 배수이고 한 칸보다 크면 타일시트로 본다.
+        // 가로세로가 모두 16의 배수이고 한 칸보다 크면 타일시트로 본다. UI 폴더는 항상 Single.
         bool isSheet = false;
         int w, h;
-        if (TryGetPngSize(assetPath, out w, out h))
+        if (IsUnder(assetPath, Root) && TryGetPngSize(assetPath, out w, out h))
             isSheet = (w % Cell == 0) && (h % Cell == 0) && (w > Cell || h > Cell);
 
         ti.spriteImportMode = isSheet ? SpriteImportMode.Multiple : SpriteImportMode.Single;
@@ -96,7 +102,7 @@ public class PixelArtImportSettings : AssetPostprocessor
     [MenuItem("Tools/Pixel Art/1. Reapply Import Settings")]
     public static void ReapplyAll()
     {
-        var guids = AssetDatabase.FindAssets("t:Texture2D", new[] { Root });
+        var guids = AssetDatabase.FindAssets("t:Texture2D", new[] { Root, UIRoot });
         try
         {
             AssetDatabase.StartAssetEditing();
