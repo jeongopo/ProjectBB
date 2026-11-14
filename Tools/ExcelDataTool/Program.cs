@@ -5,6 +5,8 @@ const string EnumDefinesFileName = "DataEnumDefines.xlsx";
 const string EnumDefinesCodeFileName = "DataEnumDefines.cs";
 const string StructCodeFileName = "DataDrivenDefines.cs";
 
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
 string repoRoot = FindRepoRoot(Directory.GetCurrentDirectory());
 string excelDir = GetArg(args, "--excel") ?? Path.Combine(repoRoot, "Data", "Excel");
 string xmlDir = GetArg(args, "--xml") ?? Path.Combine(repoRoot, "Assets", "Resources", "XML");
