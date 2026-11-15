@@ -9,6 +9,14 @@ namespace GamePlay
     [RequireComponent(typeof(MainCharacter))]
     public class PlayerInteractor : MonoBehaviour
     {
+        [Header("Target Selection")]
+        [Tooltip("바라보는 방향과의 내적이 이 값 미만인 오브젝트는 정면 후보에서 제외한다. 0.3은 약 70도.")]
+        [SerializeField] private float _frontDotThreshold = 0.3f;
+        [Tooltip("거리 보정값. 클수록 거리보다 방향을 더 중시한다.")]
+        [SerializeField] private float _distanceBias = 0.25f;
+        [Tooltip("지정하면 이 콜라이더 중심을 플레이어 기준점으로 쓴다. 비우면 같은 오브젝트의 Collider2D.")]
+        [SerializeField] private Collider2D _footCollider;
+
         private readonly List<InteractComponent> nearbyInteractables = new();
         private MainCharacter character;
         private InputManager inputManager;
@@ -17,6 +25,10 @@ namespace GamePlay
         private void Awake()
         {
             character = GetComponent<MainCharacter>();
+            if (_footCollider == null)
+            {
+                TryGetComponent(out _footCollider);
+            }
         }
 
         private void Start()
@@ -56,7 +68,7 @@ namespace GamePlay
         {
             if (nearbyInteractables.Count == 0) return null;
 
-            Vector2 playerPos = transform.position;
+            Vector2 origin = _footCollider != null ? (Vector2)_footCollider.bounds.center : (Vector2)transform.position;
             Vector2 facing = character.FacingDirection;
 
             InteractComponent best = null;
@@ -66,14 +78,14 @@ namespace GamePlay
             {
                 if (interactable == null) continue;
 
-                Vector2 toTarget = (Vector2)interactable.transform.position - playerPos;
-                float distance = Mathf.Max(toTarget.magnitude, 0.001f);
-                float dot = Vector2.Dot(facing, toTarget / distance);
+                // 큰 오브젝트도 정면에 닿아 있으면 정면으로 보도록, 중심이 아니라 몸체에서 가장 가까운 점을 기준으로 한다.
+                Vector2 toTarget = interactable.GetClosestPoint(origin) - origin;
+                float distance = toTarget.magnitude;
+                float dot = distance < 0.0001f ? 1f : Vector2.Dot(facing, toTarget / distance);
 
-                // 바라보는 방향 앞쪽(90도 이내)만 고려
-                if (dot < 0f) continue;
+                if (dot < _frontDotThreshold) continue;
 
-                float score = dot / distance;
+                float score = dot / (distance + _distanceBias);
                 if (score > bestScore)
                 {
                     bestScore = score;
@@ -88,7 +100,7 @@ namespace GamePlay
                 foreach (var interactable in nearbyInteractables)
                 {
                     if (interactable == null) continue;
-                    float dist = Vector2.Distance(playerPos, interactable.transform.position);
+                    float dist = Vector2.Distance(origin, interactable.GetClosestPoint(origin));
                     if (dist < minDist)
                     {
                         minDist = dist;
