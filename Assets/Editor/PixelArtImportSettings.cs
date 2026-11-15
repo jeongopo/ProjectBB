@@ -21,6 +21,8 @@ public class PixelArtImportSettings : AssetPostprocessor
     public const string Root = "Assets/Art/PP_Interiors";
     public const string UIRoot = "Assets/Resources/Art/UI";
     public const string IngredientRoot = "Assets/Resources/Art/Cooking/Ingredients";
+    public const string MapRoot = "Assets/Resources/Art/Map";
+    public const string CharacterRoot = "Assets/Resources/Art/Character";
     public const int PixelsPerUnit = 16;
     public const int Cell = 16;
     public const int MaxTextureSize = 4096;
@@ -37,6 +39,18 @@ public class PixelArtImportSettings : AssetPostprocessor
 
     void OnPreprocessTexture()
     {
+        if (IsUnder(assetPath, MapRoot))
+        {
+            ApplyKeepSliceSettings((TextureImporter)assetImporter, true);
+            return;
+        }
+
+        if (IsUnder(assetPath, CharacterRoot))
+        {
+            ApplyKeepSliceSettings((TextureImporter)assetImporter, false);
+            return;
+        }
+
         if (!InScope(assetPath)) return;
 
         var ti = (TextureImporter)assetImporter;
@@ -77,6 +91,26 @@ public class PixelArtImportSettings : AssetPostprocessor
         ti.SetPlatformTextureSettings(platform);
     }
 
+    // 맵/캐릭터 텍스처는 이미 슬라이스되어 있으므로 Sprite Mode와 슬라이스는 건드리지 않는다.
+    // 캐릭터는 시트마다 PPU가 달라 필터/압축만 맞춘다.
+    static void ApplyKeepSliceSettings(TextureImporter ti, bool applyPixelsPerUnit)
+    {
+        ti.filterMode = FilterMode.Point;
+        ti.mipmapEnabled = false;
+        ti.textureCompression = TextureImporterCompression.Uncompressed;
+
+        var s = new TextureImporterSettings();
+        ti.ReadTextureSettings(s);
+        if (applyPixelsPerUnit)
+        {
+            s.spritePixelsPerUnit = PixelsPerUnit;
+        }
+
+        s.filterMode = FilterMode.Point;
+        s.mipmapEnabled = false;
+        ti.SetTextureSettings(s);
+    }
+
     /// <summary>PNG 헤더(IHDR)에서 가로/세로를 읽는다. 텍스처를 로드하지 않아도 된다.</summary>
     public static bool TryGetPngSize(string path, out int width, out int height)
     {
@@ -103,7 +137,7 @@ public class PixelArtImportSettings : AssetPostprocessor
     [MenuItem("Tools/Pixel Art/1. Reapply Import Settings")]
     public static void ReapplyAll()
     {
-        var guids = AssetDatabase.FindAssets("t:Texture2D", new[] { Root, UIRoot, IngredientRoot });
+        var guids = AssetDatabase.FindAssets("t:Texture2D", new[] { Root, UIRoot, IngredientRoot, MapRoot, CharacterRoot });
         try
         {
             AssetDatabase.StartAssetEditing();
