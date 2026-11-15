@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 06c9c6fc07b8c244590d9d899d8b64d2
+guid: 27f5849ce2bf8ea4e926bbdd9604428d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2992287813760866808
-    second: item_recipe_bear_meat_gril_0
+      213: 6659650023117862076
+    second: item_recipe_cabbage_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -48,12 +48,12 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 1
+  spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -72,10 +72,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: item_recipe_bear_meat_gril_0
+      name: item_recipe_cabbage_0
       rect:
         serializedVersion: 2
-        x: 186
-        y: 338
-        width: 896
-        height: 607
+        x: 0
+        y: 1
+        width: 16
+        height: 15
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 806ad0356124976d0800000000000000
-      internalID: -2992287813760866808
+      spriteID: cb4bc546964db6c50800000000000000
+      internalID: 6659650023117862076
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      item_recipe_bear_meat_gril_0: -2992287813760866808
+      item_recipe_cabbage_0: 6659650023117862076
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
