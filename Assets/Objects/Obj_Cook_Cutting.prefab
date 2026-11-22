@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4054996960689093742
+--- !u!1 &1838928096359256677
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,41 +8,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 114486494950228822}
-  - component: {fileID: 5056135877776236141}
-  - component: {fileID: 6143807329449936637}
-  - component: {fileID: 7974539957025865709}
+  - component: {fileID: 3875692068109284583}
+  - component: {fileID: 7114805854046458290}
   m_Layer: 0
-  m_Name: Obj_Cook_Cutting
+  m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &114486494950228822
+--- !u!4 &3875692068109284583
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4054996960689093742}
+  m_GameObject: {fileID: 1838928096359256677}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -12.982618, y: 1.818495, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.875, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 249304582873613703}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 114486494950228822}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &5056135877776236141
+--- !u!212 &7114805854046458290
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4054996960689093742}
+  m_GameObject: {fileID: 1838928096359256677}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -94,6 +92,41 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &4054996960689093742
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 114486494950228822}
+  - component: {fileID: 6143807329449936637}
+  - component: {fileID: 7974539957025865709}
+  - component: {fileID: 1521612724347139646}
+  m_Layer: 0
+  m_Name: Obj_Cook_Cutting
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &114486494950228822
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4054996960689093742}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -12.982618, y: 1.818495, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3875692068109284583}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &6143807329449936637
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -128,17 +161,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.05}
+  m_Offset: {x: 0, y: 0.5}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.48, y: 0.28}
+    oldSize: {x: 3, y: 1.75}
     newSize: {x: 0.48, y: 0.28}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.48, y: 0.4}
+  m_Size: {x: 3, y: 1}
   m_EdgeRadius: 0
 --- !u!114 &7974539957025865709
 MonoBehaviour:
@@ -152,8 +185,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a09206b11eb61df4a8c8446d17e56b72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interaction.CookingInteractComponent
-  interactSize: {x: 100, y: 100}
+  interactSize: {x: 1, y: 1}
   cookingType: 1
+--- !u!114 &1521612724347139646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4054996960689093742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cb36b7e9e3b4e78b75dc7206734dcd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GamePlay.Furniture
+  _furnitureId: Obj_Cook_Cutting
+  _size: {x: 3, y: 1}
 --- !u!1 &7363922723871316752
 GameObject:
   m_ObjectHideFlags: 0
@@ -184,7 +231,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 114486494950228822}
+  m_Father: {fileID: 3875692068109284583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1626378518292551996
 SpriteRenderer:

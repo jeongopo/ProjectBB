@@ -7,7 +7,8 @@
 - 언어: C#
 - 타겟 화면 해상도: 800x450 (16:9). UI(Canvas Scaler 기준 해상도), 카메라, 스프라이트 크기는 이 해상도 기준으로 잡는다.
 - 픽셀아트: 타일 1칸 = 16px, Pixels Per Unit = 16. Pixel Perfect Camera의 Reference Resolution은 800x450, Filter Mode는 Point.
-  - 임포트 설정은 `Assets/Editor/PixelArtImportSettings.cs`가 `Assets/Art/PP_Interiors`와 `Assets/Resources/Art/UI` 아래 텍스처에 자동 적용한다 (Sprite, PPU 16, Point). 이미 있는 텍스처는 메뉴 `Tools/Pixel Art/1. Reapply Import Settings`로 재적용한다.
+  - 임포트 설정은 `Assets/Editor/PixelArtImportSettings.cs`가 `Assets/Art/PP_Interiors`와 `Assets/Resources/Art/UI` 아래 텍스처에 자동 적용한다 (Sprite, PPU 16, Point). `Assets/Resources/Art/Map`은 슬라이스를 유지한 채 PPU 16/Point만 적용한다.
+  - 씬의 Grid Cell Size는 1x1로 통일한다. 이미 있는 텍스처는 메뉴 `Tools/Pixel Art/1. Reapply Import Settings`로 재적용한다.
 
 ## 디렉터리 구조
 
