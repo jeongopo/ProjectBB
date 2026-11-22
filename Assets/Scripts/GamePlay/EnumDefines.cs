@@ -31,4 +31,11 @@ public enum DayPhase
     Hunting,
     Business,
 }
+
+public enum CustomerState
+{
+    Entering,
+    Seated,
+    Leaving,
+}
 }
