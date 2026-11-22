@@ -9,6 +9,7 @@ public class DataStorage
 {
 	public Dictionary<string,BBString> BBStringData;
 	public Dictionary<string,Currency> CurrencyData;
+	public Dictionary<string,Customer> CustomerData;
 	public Dictionary<string,Drop> DropData;
 	public Dictionary<string,Hunting> HuntingData;
 	public Dictionary<string,Item> ItemData;
@@ -23,6 +24,7 @@ public class DataStorage
 	{
 		BBStringData = DataManager.LoadDefineData<BBString>("BBString");
 		CurrencyData = DataManager.LoadDefineData<Currency>("Currency");
+		CustomerData = DataManager.LoadDefineData<Customer>("Customer");
 		DropData = DataManager.LoadDefineData<Drop>("Drop");
 		HuntingData = DataManager.LoadDefineData<Hunting>("Hunting");
 		ItemData = DataManager.LoadDefineData<Item>("Item");
@@ -44,6 +46,11 @@ public class DataStorage
 	{
 			public string ID;
 			public string ICONPATH;
+	}
+	public class Customer
+	{
+			public string ID;
+			public int PATIENCE_MINUTES;
 	}
 	public class Drop
 	{
