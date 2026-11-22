@@ -8,6 +8,7 @@ using DataEnumDefines;
 public class DataStorage
 {
 	public Dictionary<string,BBString> BBStringData;
+	public Dictionary<string,Currency> CurrencyData;
 	public Dictionary<string,Drop> DropData;
 	public Dictionary<string,Hunting> HuntingData;
 	public Dictionary<string,Item> ItemData;
@@ -21,6 +22,7 @@ public class DataStorage
 	public void LoadData()
 	{
 		BBStringData = DataManager.LoadDefineData<BBString>("BBString");
+		CurrencyData = DataManager.LoadDefineData<Currency>("Currency");
 		DropData = DataManager.LoadDefineData<Drop>("Drop");
 		HuntingData = DataManager.LoadDefineData<Hunting>("Hunting");
 		ItemData = DataManager.LoadDefineData<Item>("Item");
@@ -37,6 +39,11 @@ public class DataStorage
 	{
 			public string ID;
 			public string BODY;
+	}
+	public class Currency
+	{
+			public string ID;
+			public string ICONPATH;
 	}
 	public class Drop
 	{

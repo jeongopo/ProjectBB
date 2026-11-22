@@ -1,0 +1,10 @@
+<Rows>
+  <Info>
+    <ID>string</ID>
+    <ICONPATH>string</ICONPATH>
+  </Info>
+  <Row>
+    <ID>gold</ID>
+    <ICONPATH>Common/HUD_Icon_Coin.png</ICONPATH>
+  </Row>
+</Rows>
