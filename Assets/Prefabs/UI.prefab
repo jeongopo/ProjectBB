@@ -3533,6 +3533,7 @@ GameObject:
   - component: {fileID: 5251511521234650000}
   - component: {fileID: 2853197359617233721}
   - component: {fileID: 8529657413902991329}
+  - component: {fileID: 4107588252227080692}
   m_Layer: 5
   m_Name: RightTop_Clock
   m_TagString: Untagged
@@ -3598,6 +3599,23 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4107588252227080692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7249883740830912611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2be06f50bfd4034c8fe1d91d5b23b40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ClockUI
+  _clock: {fileID: 0}
+  _timeText: {fileID: 8301388219099569900}
+  _arrow: {fileID: 118713561333149560}
+  _arrowTweenDuration: 0.3
+  _arrowEase: 6
 --- !u!1 &7258057284426180146
 GameObject:
   m_ObjectHideFlags: 0

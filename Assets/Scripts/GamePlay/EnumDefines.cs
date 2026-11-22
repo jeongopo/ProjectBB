@@ -25,4 +25,10 @@ public enum CookingType
     Cutting,
     Plating,
 }
+
+public enum DayPhase
+{
+    Hunting,
+    Business,
+}
 }
