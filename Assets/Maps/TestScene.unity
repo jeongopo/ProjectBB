@@ -307,6 +307,7 @@ GameObject:
   - component: {fileID: 481386182}
   - component: {fileID: 481386183}
   - component: {fileID: 481386184}
+  - component: {fileID: 481386185}
   m_Layer: 0
   m_Name: ManagerObject
   m_TagString: Untagged
@@ -424,6 +425,31 @@ MonoBehaviour:
   closeButton: {fileID: 5455478149702904115}
   slotParent: {fileID: 5455478149702904112}
   slotPrefab: {fileID: 6744478834684540407, guid: 582166ae624806a468f9e0cd52b14c41, type: 3}
+--- !u!114 &481386185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 481386178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c7e8bd368153a42a0737c0ca979394, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GamePlay.GameClock
+  _gameManager: {fileID: 0}
+  _inputManager: {fileID: 481386180}
+  _dayStartHour: 0
+  _dayEndHour: 24
+  _phases:
+  - _phase: 0
+    _startHour: 0
+    _realSecondsPerGameHour: 60
+  - _phase: 1
+    _startHour: 18
+    _realSecondsPerGameHour: 120
+  _pauseDuringMinigame: 1
+  _debugFastForwardMultiplier: 20
 --- !u!114 &692775785 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4017650739174309473, guid: 2d732985e8fc2ef4b81f8e5cd891f1b9, type: 3}
@@ -267480,6 +267506,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4107588252227080692, guid: 2d732985e8fc2ef4b81f8e5cd891f1b9, type: 3}
+      propertyPath: _clock
+      value: 
+      objectReference: {fileID: 481386185}
     - target: {fileID: 4353706092095407839, guid: 2d732985e8fc2ef4b81f8e5cd891f1b9, type: 3}
       propertyPath: targetMoveSpeed
       value: 150
