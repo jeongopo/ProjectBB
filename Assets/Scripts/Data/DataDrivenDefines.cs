@@ -110,6 +110,7 @@ public class DataStorage
 			public string TRASH_DISH_ID;
 			public string DESC_BODY;
 			public string DISPLAY_NAME;
+			public int PRICE;
 	}
 	public class Recipe_Interaction
 	{
