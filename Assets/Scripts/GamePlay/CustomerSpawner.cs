@@ -13,6 +13,7 @@ namespace GamePlay
         [SerializeField] private GameClock _clock = default;
         [SerializeField] private CustomerController _customerPrefab = default;
         [SerializeField] private Transform _entrance = default;
+        [SerializeField] private OrderBoard _orderBoard = default;
 
         [Header("Spawn")]
         [SerializeField] private int _spawnIntervalMinutes = 10;
@@ -35,6 +36,11 @@ namespace GamePlay
         {
             _seats = FindObjectsByType<CustomerSeat>(FindObjectsSortMode.None);
             _dataManager = FindFirstObjectByType<DataManager>();
+
+            if (_orderBoard == null)
+            {
+                _orderBoard = FindFirstObjectByType<OrderBoard>();
+            }
         }
 
         private void OnEnable()
@@ -147,7 +153,7 @@ namespace GamePlay
 
             customer.OnLeft += HandleCustomerLeft;
             _activeCustomers.Add(customer);
-            customer.Init(data, seat, _entrance.position, _clock);
+            customer.Init(data, seat, _entrance.position, _clock, _orderBoard);
         }
 
         private void HandleCustomerLeft(CustomerController customer)

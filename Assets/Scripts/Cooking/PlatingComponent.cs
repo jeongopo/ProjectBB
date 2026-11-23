@@ -35,7 +35,6 @@ public class PlatingComponent : CookingComponent
     private static readonly Color RowTextColor = new Color(0.25f, 0.15f, 0.08f, 1f);
     private static readonly Color RowAimedTextColor = new Color(0.8f, 0.2f, 0.1f, 1f);
 
-    private const string NoneID = "NONE";
     private const float PickedIconAlpha = 0.6f;
     private const float HoldMinScale = 0.85f;
     private const float ReadyRefreshInterval = 0.2f;
@@ -74,6 +73,7 @@ public class PlatingComponent : CookingComponent
 
     private DataManager dataManager;
     private InventoryManager inventory;
+    private GamePlay.OrderBoard orderBoard;
 
     private Phase phase = Phase.None;
     private readonly List<PlatingOrder> orders = new List<PlatingOrder>();
@@ -151,6 +151,27 @@ public class PlatingComponent : CookingComponent
         RebuildOrderRows();
     }
 
+    // 미니게임이 열려 있는 동안 새로 발행된 주문을 목록에 추가한다.
+    private void HandleOrderAdded(PlatingOrder order)
+    {
+        if (orders.Contains(order))
+            return;
+
+        orders.Add(order);
+        if (phase == Phase.OrderSelect)
+            RebuildOrderRows();
+    }
+
+    private void UnsubscribeOrderBoard()
+    {
+        if (orderBoard == null)
+            return;
+
+        orderBoard.OnOrderAdded -= HandleOrderAdded;
+        orderBoard.OnOrderRemoved -= NotifyCustomerLeft;
+        orderBoard = null;
+    }
+
     // ───────────────────────── 생명주기 ─────────────────────────
 
     public override void InitCooking()
@@ -164,8 +185,20 @@ public class PlatingComponent : CookingComponent
         if (plateGridRoot != null)
             boardImage = plateGridRoot.GetComponent<Image>();
 
-        if (orders.Count == 0)
+        // 식당 운영(OrderBoard)이 있으면 손님 주문을 쓰고, 없을 때만 임시 테스트 주문을 쓴다
+        UnsubscribeOrderBoard();
+        orderBoard = FindFirstObjectByType<GamePlay.OrderBoard>();
+        if (orderBoard != null)
+        {
+            SetOrders(orderBoard.PlatingOrders);
+            orderBoard.OnOrderAdded += HandleOrderAdded;
+            orderBoard.OnOrderRemoved += NotifyCustomerLeft;
+        }
+        else if (orders.Count == 0)
+        {
             LoadTestOrders();
+        }
+
         if (grantTestIngredientsOnOpen)
             GrantTestIngredients();
 
@@ -180,6 +213,7 @@ public class PlatingComponent : CookingComponent
 
     public override void OnCookingEnd()
     {
+        UnsubscribeOrderBoard();
         ResetPlayState();
         StopAllCoroutines();
         endingRoutine = null;
@@ -910,31 +944,9 @@ public class PlatingComponent : CookingComponent
         return recipes;
     }
 
-    // time_limit / mistake_penalty 는 데이터에 아직 없어서 기본값을 쓴다
     private PlatingRecipe ToPlatingRecipe(DataStorage.Recipe_Combine row)
     {
-        PlatingRecipe recipe = new PlatingRecipe
-        {
-            name = row.NAME,
-            displayName = row.DISPLAY_NAME,
-            outputItemID = row.PRODUCT_DISH_ID,
-            timeLimit = defaultTimeLimit,
-            mistakePenalty = defaultMistakePenalty,
-        };
-
-        string[] components = { row.COMPONENT_1, row.COMPONENT_2, row.COMPONENT_3, row.COMPONENT_4, row.COMPONENT_5 };
-        foreach (string itemID in components)
-        {
-            if (string.IsNullOrEmpty(itemID) || itemID == NoneID)
-                continue;
-
-            PlatingIngredient existing = recipe.ingredients.Find(i => i.itemID == itemID);
-            if (existing != null)
-                existing.count++;
-            else
-                recipe.ingredients.Add(new PlatingIngredient { itemID = itemID, count = 1 });
-        }
-        return recipe;
+        return PlatingRecipe.FromRecipeRow(row, defaultTimeLimit, defaultMistakePenalty);
     }
 
     // 테스트용: 주문에 필요한 재료를 인벤토리에 지급
