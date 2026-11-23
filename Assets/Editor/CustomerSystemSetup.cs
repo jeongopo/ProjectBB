@@ -8,7 +8,7 @@ using UnityEngine;
 /// 손님 시스템에 필요한 프리팹과 씬 오브젝트를 만든다.
 ///
 /// 사용법 (순서대로):
-/// 1. Tools / Customer / 1. Create Customer Prefab
+/// 1. Tools / Customer / 1. Create Or Update Customer Prefab
 /// 2. 씬을 연 상태에서 Tools / Customer / 2. Setup Spawner In Scene
 /// 3. 씬에서 의자 가구를 선택하고 Tools / Customer / 3. Add Seat To Selected
 /// </summary>
@@ -24,13 +24,14 @@ public static class CustomerSystemSetup
 
     // 플레이어와 같은 스프라이트를 임시로 쓰므로, 구분되도록 색만 살짝 다르게 한다.
     private static readonly Color CustomerTint = new Color(0.85f, 0.9f, 1f, 1f);
+    private static readonly Vector2 CustomerInteractSize = new Vector2(2.5f, 2.5f);
 
-    [MenuItem("Tools/Customer/1. Create Customer Prefab")]
+    [MenuItem("Tools/Customer/1. Create Or Update Customer Prefab")]
     public static void CreateCustomerPrefab()
     {
         if (File.Exists(CustomerPrefabPath))
         {
-            Debug.LogWarning($"[Customer] 이미 있어 건너뜀: {CustomerPrefabPath}");
+            UpdateCustomerPrefab();
             return;
         }
 
@@ -46,6 +47,8 @@ public static class CustomerSystemSetup
         {
             root.AddComponent<CustomerController>();
             root.AddComponent<YSorter>();
+            root.AddComponent<CustomerStatusView>();
+            ApplyInteractSize(root);
 
             // 루트가 발 위치가 되도록, 스프라이트의 아래쪽 끝을 루트에 맞춘다.
             GameObject visual = new GameObject("Visual");
@@ -67,6 +70,66 @@ public static class CustomerSystemSetup
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log($"[Customer] 손님 프리팹 생성 → {CustomerPrefabPath}");
+    }
+
+    // 이미 만든 프리팹에 빠진 컴포넌트(상태 표시 등)를 채운다. 스프라이트 같은 직접 고친 값은 건드리지 않는다.
+    private static void UpdateCustomerPrefab()
+    {
+        GameObject root = PrefabUtility.LoadPrefabContents(CustomerPrefabPath);
+        try
+        {
+            bool changed = EnsureComponent<CustomerController>(root);
+            changed |= EnsureComponent<YSorter>(root);
+            changed |= EnsureComponent<CustomerStatusView>(root);
+            changed |= ApplyInteractSize(root);
+
+            if (changed)
+            {
+                PrefabUtility.SaveAsPrefabAsset(root, CustomerPrefabPath);
+                Debug.Log($"[Customer] 손님 프리팹 갱신 → {CustomerPrefabPath}");
+            }
+            else
+            {
+                Debug.Log("[Customer] 손님 프리팹이 이미 최신입니다.");
+            }
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+
+        AssetDatabase.SaveAssets();
+    }
+
+    private static bool EnsureComponent<T>(GameObject target) where T : Component
+    {
+        if (target.TryGetComponent(out T _))
+        {
+            return false;
+        }
+
+        target.AddComponent<T>();
+        return true;
+    }
+
+    // 손님은 의자 칸 안에 앉아 있어서, 기본 범위(1x1)로는 옆에 선 플레이어가 닿지 않는다. 기본값일 때만 넓힌다.
+    private static bool ApplyInteractSize(GameObject root)
+    {
+        if (!root.TryGetComponent(out CustomerController controller))
+        {
+            return false;
+        }
+
+        SerializedObject serializedController = new SerializedObject(controller);
+        SerializedProperty size = serializedController.FindProperty("interactSize");
+        if (size == null || size.vector2Value != Vector2.one)
+        {
+            return false;
+        }
+
+        size.vector2Value = CustomerInteractSize;
+        serializedController.ApplyModifiedPropertiesWithoutUndo();
+        return true;
     }
 
     [MenuItem("Tools/Customer/2. Setup Spawner In Scene")]
@@ -105,9 +168,33 @@ public static class CustomerSystemSetup
             entrance.position = new Vector3(position.x, position.y, 0f);
         }
 
+        OrderBoard orderBoard = Object.FindFirstObjectByType<OrderBoard>();
+        if (orderBoard == null)
+        {
+            orderBoard = Undo.AddComponent<OrderBoard>(systemObject);
+        }
+
+        DayStats dayStats = Object.FindFirstObjectByType<DayStats>();
+        if (dayStats == null)
+        {
+            dayStats = Undo.AddComponent<DayStats>(systemObject);
+        }
+
+        SerializedObject serializedBoard = new SerializedObject(orderBoard);
+        serializedBoard.FindProperty("_dayStats").objectReferenceValue = dayStats;
+
+        CurrencyWallet wallet = Object.FindFirstObjectByType<CurrencyWallet>();
+        if (wallet != null)
+        {
+            serializedBoard.FindProperty("_wallet").objectReferenceValue = wallet;
+        }
+
+        serializedBoard.ApplyModifiedProperties();
+
         SerializedObject serializedSpawner = new SerializedObject(spawner);
         serializedSpawner.FindProperty("_customerPrefab").objectReferenceValue = prefab;
         serializedSpawner.FindProperty("_entrance").objectReferenceValue = entrance;
+        serializedSpawner.FindProperty("_orderBoard").objectReferenceValue = orderBoard;
 
         GameClock clock = Object.FindFirstObjectByType<GameClock>();
         if (clock != null)
@@ -127,6 +214,16 @@ public static class CustomerSystemSetup
         if (Object.FindFirstObjectByType<DataManager>() == null)
         {
             Debug.LogWarning("[Customer] 씬에 DataManager가 없습니다. 손님 데이터를 불러오려면 필요합니다.");
+        }
+
+        if (wallet == null)
+        {
+            Debug.LogWarning("[Customer] 씬에 CurrencyWallet이 없습니다. 서빙해도 골드를 받으려면 필요합니다.");
+        }
+
+        if (Object.FindFirstObjectByType<InventoryManager>() == null)
+        {
+            Debug.LogWarning("[Customer] 씬에 InventoryManager가 없습니다. 서빙할 요리를 꺼내려면 필요합니다.");
         }
 
         Debug.Log("[Customer] 스포너 설정 완료. CustomerEntrance를 입구 위치로 옮기세요.");
