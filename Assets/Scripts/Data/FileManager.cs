@@ -1,72 +1,57 @@
-﻿using System;
+using System;
 using System.IO;
 using UnityEngine;
-using System.Collections.Generic;
-using System.Xml;
 
 public static class FileManager
 {
-	public static bool WriteToFile(string fileName, string fileContents)
-	{
-		var fullPath = Path.Combine(Application.dataPath, fileName);
+    public static bool TryReadSave(string filename, out string json)
+    {
+        json = null;
+        string path = Path.Combine(Application.persistentDataPath, filename);
+        if (!File.Exists(path))
+        {
+            path = Path.Combine(Application.dataPath, filename);
+        }
 
-		try
-		{
-			File.WriteAllText(fullPath, fileContents);
-			return true;
-		}
-		catch (Exception e)
-		{
-			Debug.LogError($"Failed to write to {fullPath} with exception {e}");
-			return false;
-		}
-	}
+        try
+        {
+            if (File.Exists(path))
+            {
+                json = File.ReadAllText(path);
+            }
 
-	public static bool LoadFromFile(string fileName, out string result)
-	{
-		var fullPath = Path.Combine(Application.dataPath, fileName);
-		if (!File.Exists(fullPath))
-		{
-			File.WriteAllText(fullPath, "");
-		}
-		try
-		{
-			result = File.ReadAllText(fullPath);
-			return true;
-		}
-		catch (Exception e)
-		{
-			Debug.LogError($"Failed to read from {fullPath} with exception {e}");
-			result = "";
-			return false;
-		}
-	}
+            return !string.IsNullOrWhiteSpace(json);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            Debug.LogWarning($"[Save] {path}: {exception.Message}");
+            return false;
+        }
+    }
 
-	public static bool MoveFile(string fileName, string newFileName)
-	{
-		var fullPath = Path.Combine(Application.dataPath, fileName);
-		var newFullPath = Path.Combine(Application.dataPath, newFileName);
+    public static bool WriteSave(string filename, string json)
+    {
+        string path = Path.Combine(Application.persistentDataPath, filename);
+        string temporary = path + ".tmp";
+        try
+        {
+            Directory.CreateDirectory(Application.persistentDataPath);
+            File.WriteAllText(temporary, json);
+            if (File.Exists(path))
+            {
+                File.Replace(temporary, path, path + ".bak");
+            }
+            else
+            {
+                File.Move(temporary, path);
+            }
 
-		try
-		{
-			if (File.Exists(newFullPath))
-			{
-				File.Delete(newFullPath);
-			}
-
-			if (!File.Exists(fullPath))
-			{
-				return false;
-			}
-
-			File.Move(fullPath, newFullPath);
-		}
-		catch (Exception e)
-		{
-			Debug.LogError($"Failed to move file from {fullPath} to {newFullPath} with exception {e}");
-			return false;
-		}
-
-		return true;
-	}
+            return true;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            Debug.LogError($"[Save] {path}: {exception.Message}");
+            return false;
+        }
+    }
 }

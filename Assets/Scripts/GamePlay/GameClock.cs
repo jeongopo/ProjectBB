@@ -125,6 +125,12 @@ namespace GamePlay
             data._currentTime = TotalMinutes;
         }
 
+        internal void WriteNextDayTo(SaveData data)
+        {
+            data._currentDay = _day + 1;
+            data._currentTime = _dayStartHour * MinutesPerHour;
+        }
+
         private void BeginDay(int day, int startMinutes)
         {
             _day = Mathf.Max(1, day);

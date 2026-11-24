@@ -97,6 +97,44 @@ public class CurrencyWallet : MonoBehaviour
         return true;
     }
 
+    internal List<CurrencyAmount> CaptureBalances()
+    {
+        EnsureInitialized();
+        List<CurrencyAmount> balances = new List<CurrencyAmount>(_balances.Count);
+        foreach (KeyValuePair<string, int> balance in _balances)
+        {
+            balances.Add(new CurrencyAmount(balance.Key, balance.Value));
+        }
+
+        return balances;
+    }
+
+    internal void RestoreBalances(SaveData data)
+    {
+        EnsureInitialized();
+        List<string> previousIds = new List<string>(_balances.Keys);
+        _balances.Clear();
+        if (data.Balances != null)
+        {
+            foreach (CurrencyAmount balance in data.Balances)
+            {
+                Set(balance.CurrencyId, balance.Amount);
+            }
+        }
+        else
+        {
+            Set(CurrencyIds.Gold, data.coin);
+        }
+
+        foreach (string id in previousIds)
+        {
+            if (!_balances.ContainsKey(id))
+            {
+                OnChanged?.Invoke(id, 0);
+            }
+        }
+    }
+
     public void Set(string currencyId, int amount)
     {
         if (string.IsNullOrEmpty(currencyId))

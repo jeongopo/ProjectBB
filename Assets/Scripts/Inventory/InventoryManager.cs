@@ -137,6 +137,38 @@ public class InventoryManager : MonoBehaviour
     }
 
     // 등급 구분 없이 합산한 보유 수량
+    internal List<SavedItemStack> CaptureStacks()
+    {
+        List<SavedItemStack> stacks = new List<SavedItemStack>(itemStacks.Count);
+        foreach (ItemStack stack in itemStacks)
+        {
+            stacks.Add(new SavedItemStack { ItemId = stack.ItemID, Grade = stack.Grade, Count = stack.Count });
+        }
+
+        return stacks;
+    }
+
+    internal void RestoreStacks(SaveData data)
+    {
+        itemStacks.Clear();
+        if (data.ItemStacks != null)
+        {
+            foreach (SavedItemStack stack in data.ItemStacks)
+            {
+                AddItem(stack.ItemId, stack.Count, stack.Grade);
+            }
+        }
+        else if (data._playerInventory != null)
+        {
+            foreach (string itemId in data._playerInventory)
+            {
+                AddItem(itemId, 1);
+            }
+        }
+
+        RefreshSlots();
+    }
+
     public int GetCount(string itemID)
     {
         int total = 0;

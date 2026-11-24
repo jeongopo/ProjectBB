@@ -84,6 +84,7 @@ namespace GamePlay
 
             footsteps.Initialize(groundTilemap, rb);
             GameAudio.StartMusic();
+            gameObject.AddComponent<AudioOptionsUI>().Initialize(inputManager);
         }
         
         private void Update()
