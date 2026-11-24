@@ -683,4 +683,28 @@
     <ID>STR_Lobby_SaveFailed</ID>
     <BODY>진행 상황을 저장할 수 없습니다.</BODY>
   </Row>
+  <Row>
+    <ID>STR_Interact_Default</ID>
+    <BODY>상호작용</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Interact_Boil</ID>
+    <BODY>끓이기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Interact_Cut</ID>
+    <BODY>썰기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Interact_Plate</ID>
+    <BODY>담기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Interact_Hunt</ID>
+    <BODY>사냥</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Interact_Serve</ID>
+    <BODY>서빙</BODY>
+  </Row>
 </Rows>

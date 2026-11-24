@@ -61,6 +61,8 @@ namespace GamePlay
         public string CustomerId { get; private set; }
         public CustomerSeat Seat => _seat;
         public CustomerOrder Order { get; private set; }
+        public override bool CanInteract => base.CanInteract && State == CustomerState.Seated && Order != null;
+        public override string PromptKey => "STR_Interact_Serve";
         public float PatienceRatio => _maxPatienceMinutes > 0 ? (float)_remainingPatienceMinutes / _maxPatienceMinutes : 0f;
         public Sprite OrderIcon => _orderBoard != null && Order != null ? _orderBoard.GetOrderIcon(Order) : null;
 

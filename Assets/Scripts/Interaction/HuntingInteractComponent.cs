@@ -4,6 +4,8 @@ using Interaction;
 public class HuntingInteractComponent : InteractComponent
 {
     private HuntingManager huntingManager;
+    public override bool CanInteract => base.CanInteract && huntingManager != null;
+    public override string PromptKey => "STR_Interact_Hunt";
 
     protected override void Start()
     {
