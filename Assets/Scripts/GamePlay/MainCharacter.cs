@@ -23,6 +23,7 @@ namespace GamePlay
         
         [Header("Sprite Settings")]
         [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private Color _occlusionColor = new Color(1f, 0.92f, 0.76f, 0.45f);
 
         private Rigidbody2D rb;
         private Animator animator;
@@ -52,6 +53,11 @@ namespace GamePlay
         
         private void Start()
         {
+            if (spriteRenderer != null && _occlusionColor.a > 0f)
+            {
+                gameObject.AddComponent<CharacterOcclusionSilhouette>().Initialize(spriteRenderer, _occlusionColor);
+            }
+
             if (inputManager == null)
             {
                 inputManager = FindFirstObjectByType<InputManager>();
