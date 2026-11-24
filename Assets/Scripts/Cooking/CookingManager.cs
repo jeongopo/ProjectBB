@@ -1,4 +1,5 @@
 using UnityEngine;
+using GamePlay;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
 using GameEnumDefines;
@@ -38,7 +39,13 @@ public class CookingManager : MonoBehaviour
         if (cookingPanel != null)
             cookingPanel.SetActive(false);
         if (closeButton != null)
-            closeButton.onClick.AddListener(CloseCooking);
+        {
+            closeButton.onClick.AddListener(() =>
+            {
+                GameAudio.Play(SoundCue.PanelClose);
+                CloseCooking();
+            });
+        }
 
         if (cookingTimer != null)
             cookingTimer.gameObject.SetActive(false);
@@ -61,6 +68,7 @@ public class CookingManager : MonoBehaviour
     //1회 판정마다 짧게 보여주는 이미지
     public void ShowRoundResult(ENUMGRADE grade)
     {
+        GameAudio.Play(grade >= ENUMGRADE.GOOD ? SoundCue.CookingSuccess : SoundCue.CookingMiss, 0.45f);
         int spriteIndex = (int)grade - 1;
         Sprite sprite = (roundResultSprites != null && spriteIndex >= 0 && spriteIndex < roundResultSprites.Length)
             ? roundResultSprites[spriteIndex]
@@ -88,6 +96,7 @@ public class CookingManager : MonoBehaviour
     //미니게임 최종 결과 표시 후 onHidden 콜백 호출
     public void ShowResult(ENUMGRADE grade, Action onHidden)
     {
+        GameAudio.Play(grade >= ENUMGRADE.GOOD ? SoundCue.CookingSuccess : SoundCue.CookingMiss);
         int spriteIndex = (int)grade - 1;
         Sprite sprite = (finalResultSprites != null && spriteIndex >= 0 && spriteIndex < finalResultSprites.Length)
             ? finalResultSprites[spriteIndex]
@@ -129,6 +138,7 @@ public class CookingManager : MonoBehaviour
         SetAllSubPanelsActive(false);
         currentComponent.gameObject.SetActive(true);
         cookingPanel.SetActive(true);
+        GameAudio.Play(SoundCue.PanelOpen);
 
         currentComponent.OnMiniGameEnd += OnMiniGameEnded;
         currentComponent.InitCooking();

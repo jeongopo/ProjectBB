@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using DataEnumDefines;
+using GamePlay;
 
 // 담기(Plating) 미니게임.
 // ② 주문서 선택 → ③ 격자에서 주문에 필요한 재료를 제한 시간 안에 모두 선택 → 성공/실패
@@ -606,6 +607,7 @@ public class PlatingComponent : CookingComponent
 
     private void Succeed()
     {
+        GameAudio.Play(SoundCue.CookingSuccess);
         BeginEnding();
 
         ConsumeIngredients(nowRecipe);
@@ -619,6 +621,7 @@ public class PlatingComponent : CookingComponent
 
     private void Fail()
     {
+        GameAudio.Play(SoundCue.CookingMiss);
         BeginEnding();
 
         SystemMessageUI.Show(GetText("STR_UI_Plating_Fail"));

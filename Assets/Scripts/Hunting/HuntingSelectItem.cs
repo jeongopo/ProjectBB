@@ -1,4 +1,5 @@
 using System;
+using GamePlay;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -75,6 +76,7 @@ public class HuntingSelectItem : MonoBehaviour
 
     private void HandleClick()
     {
+        GameAudio.Play(SoundCue.Select);
         onSelected?.Invoke(huntingID);
     }
 }

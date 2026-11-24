@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using GameEnumDefines;
+using GamePlay;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -92,15 +93,21 @@ public class InventoryManager : MonoBehaviour
         RefreshSlots();
 
         if (inventoryPanel != null)
+        {
             inventoryPanel.SetActive(true);
+            GameAudio.Play(SoundCue.PanelOpen);
+        }
         if (inputManager != null)
             inputManager.SwitchInputState(InputState.Popup);
     }
 
     public void CloseInventory()
     {
-        if (inventoryPanel != null)
+        if (inventoryPanel != null && inventoryPanel.activeSelf)
+        {
             inventoryPanel.SetActive(false);
+            GameAudio.Play(SoundCue.PanelClose);
+        }
         if (inputManager != null)
             inputManager.SwitchInputState(InputState.Default);
     }

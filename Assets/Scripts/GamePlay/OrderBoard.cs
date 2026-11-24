@@ -124,6 +124,7 @@ namespace GamePlay
             }
 
             RemoveOrder(order);
+            GameAudio.Play(SoundCue.Served);
             return ServeResult.Success;
         }
 

@@ -76,6 +76,14 @@ namespace GamePlay
             {
                 transform.position = groundTilemap.GetCellCenterWorld(groundTilemap.WorldToCell(transform.position));
             }
+
+            if (!TryGetComponent(out PlayerFootsteps footsteps))
+            {
+                footsteps = gameObject.AddComponent<PlayerFootsteps>();
+            }
+
+            footsteps.Initialize(groundTilemap, rb);
+            GameAudio.StartMusic();
         }
         
         private void Update()

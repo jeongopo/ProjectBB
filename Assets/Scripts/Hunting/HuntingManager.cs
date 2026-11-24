@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using GameEnumDefines;
+using GamePlay;
 
 public class HuntingManager : MonoBehaviour
 {
@@ -68,7 +69,10 @@ public class HuntingManager : MonoBehaviour
         ShowSelectPanel();
 
         if (huntingPanel != null)
+        {
             huntingPanel.SetActive(true);
+            GameAudio.Play(SoundCue.PanelOpen);
+        }
 
         if (inputManager != null)
             inputManager.SwitchInputState(InputState.UI);
@@ -78,8 +82,11 @@ public class HuntingManager : MonoBehaviour
     {
         StopBattlePhase();
 
-        if (huntingPanel != null)
+        if (huntingPanel != null && huntingPanel.activeSelf)
+        {
             huntingPanel.SetActive(false);
+            GameAudio.Play(SoundCue.PanelClose);
+        }
 
         if (inputManager != null)
             inputManager.SwitchInputState(InputState.Default);
@@ -99,6 +106,7 @@ public class HuntingManager : MonoBehaviour
 
     private void ReturnToSelect()
     {
+        GameAudio.Play(SoundCue.PanelClose);
         StopBattlePhase();
         ShowSelectPanel();
     }
@@ -256,6 +264,7 @@ public class HuntingManager : MonoBehaviour
 
     private void PlayProgressHitEffect()
     {
+        GameAudio.Play(SoundCue.HuntHit);
         if (progressImage == null || progressHitSprite == null)
             return;
 

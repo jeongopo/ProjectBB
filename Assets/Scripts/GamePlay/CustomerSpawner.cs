@@ -154,6 +154,7 @@ namespace GamePlay
             customer.OnLeft += HandleCustomerLeft;
             _activeCustomers.Add(customer);
             customer.Init(data, seat, _entrance.position, _clock, _orderBoard);
+            GameAudio.Play(SoundCue.CustomerArrival);
         }
 
         private void HandleCustomerLeft(CustomerController customer)
