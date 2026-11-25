@@ -895,4 +895,8 @@
     <ID>STR_ItemName_120003</ID>
     <BODY>세계수 수액</BODY>
   </Row>
+  <Row>
+    <ID>STR_Cooking_Complete</ID>
+    <BODY>조리 완료</BODY>
+  </Row>
 </Rows>

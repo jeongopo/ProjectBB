@@ -13,6 +13,35 @@ public static class TavernLayoutSetup
     private const string ScenePath = "Assets/Maps/TestScene.unity";
     private const string LayoutName = "주점 목업 (2안)";
     private const string ArtPath = "Assets/Resources/Art/Map/enviroment.png";
+    private const string SupplyShelfName = "SupplyShelf";
+    private const string LegacySupplyShelfName = "창고 선반";
+
+    private static readonly Dictionary<string, string> LegacyNames = new Dictionary<string, string>
+    {
+        { "01 주방 · 보급 → 조리 → 담기", "Kitchen" },
+        { "02 카운터 · 서빙", "ServingCounter" },
+        { "03 홀 · 입장과 단골석", "DiningHall" },
+        { LegacySupplyShelfName, SupplyShelfName },
+        { "장작더미 · 임시", "FirewoodStack" },
+        { "화로", "Hearth" },
+        { "Obj_Cook_Cutting", "CuttingStation" },
+        { "Obj_Cook_Boiling", "BoilingStation" },
+        { "Obj_Cook_Plating", "PlatingStation" },
+        { "Furn_enviroment_217", "SideHearth" },
+        { "Obj_Hunting", "HuntingStation" },
+        { "카운터 조각 1", "CounterSection_01" },
+        { "카운터 조각 4", "CounterSection_02" },
+        { "카운터 조각 7", "CounterSection_03" },
+        { "Furn_enviroment_10", "CounterStool_01" },
+        { "카운터 의자 2", "CounterStool_02" },
+        { "화로 앞 특별석 · 임시", "HearthStool" },
+        { "단골 테이블", "DiningTable" },
+        { "단골 의자 1", "DiningChair_01" },
+        { "단골 의자 2", "DiningChair_02" },
+        { "단골 의자 3", "DiningChair_03" },
+        { "단골 의자 4", "DiningChair_04" },
+        { "출입문 · 아래쪽", "EntranceDoor" },
+    };
 
     [MenuItem("Tools/Tavern/Place Layout 2 In TestScene")]
     public static void Apply()
@@ -24,20 +53,63 @@ public static class TavernLayoutSetup
         }
 
         Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
-        if (GameObject.Find(LayoutName) != null)
+        if (GameObject.Find(SupplyShelfName) == null && GameObject.Find(LegacySupplyShelfName) == null)
         {
-            ConnectSupplies(scene);
-            return;
+            new Layout().Build();
         }
-
-        new Layout().Build();
+        RemoveLayoutWrapper();
+        NormalizeLayoutNames();
         ConnectSupplies(scene);
         Debug.Log("[Tavern] 2안 목업과 주문·서빙 연결을 TestScene에 저장했습니다.");
     }
 
+    private static void NormalizeLayoutNames()
+    {
+        Grid grid = UnityEngine.Object.FindFirstObjectByType<Grid>();
+        if (grid == null)
+        {
+            throw new InvalidOperationException("주점 가구가 배치된 Grid가 없습니다.");
+        }
+
+        foreach (Transform child in grid.GetComponentsInChildren<Transform>(true))
+        {
+            if (LegacyNames.TryGetValue(child.name, out string name))
+            {
+                Rename(child.gameObject, name);
+            }
+        }
+    }
+
+    private static void Rename(GameObject obj, string name)
+    {
+        Undo.RecordObject(obj, "Rename Tavern Object");
+        obj.name = name;
+        PrefabUtility.RecordPrefabInstancePropertyModifications(obj);
+    }
+
+    private static void RemoveLayoutWrapper()
+    {
+        GameObject wrapper = GameObject.Find(LayoutName);
+        if (wrapper == null)
+        {
+            return;
+        }
+
+        Grid grid = UnityEngine.Object.FindFirstObjectByType<Grid>();
+        if (grid == null)
+        {
+            throw new InvalidOperationException("주점 가구를 옮길 Grid가 없습니다.");
+        }
+        while (wrapper.transform.childCount > 0)
+        {
+            Undo.SetTransformParent(wrapper.transform.GetChild(0), grid.transform, "Organize Tavern Furniture");
+        }
+        Undo.DestroyObjectImmediate(wrapper);
+    }
+
     private static void ConnectSupplies(Scene scene)
     {
-        GameObject shelf = GameObject.Find("창고 선반");
+        GameObject shelf = GameObject.Find(SupplyShelfName);
         if (shelf == null)
         {
             throw new InvalidOperationException("창고 선반이 없습니다.");
@@ -104,25 +176,25 @@ public static class TavernLayoutSetup
                 throw new InvalidOperationException("CustomerEntrance가 없습니다.");
             }
 
-            Transform root = NewObject(LayoutName, null);
-            Transform kitchen = NewObject("01 주방 · 보급 → 조리 → 담기", root);
-            Transform counter = NewObject("02 카운터 · 서빙", root);
-            Transform hall = NewObject("03 홀 · 입장과 단골석", root);
+            Transform root = Require<Grid>().transform;
+            Transform kitchen = NewObject("Kitchen", root);
+            Transform counter = NewObject("ServingCounter", root);
+            Transform hall = NewObject("DiningHall", root);
 
-            MakeFurniture("창고 선반", kitchen, -7, 3, 2, 1, 20, 2.2f).gameObject.AddComponent<SupplyShelf>();
-            MakeFurniture("장작더미 · 임시", kitchen, -7, 2, 1, 1, 101, 1f);
+            MakeFurniture(SupplyShelfName, kitchen, -7, 3, 2, 1, 20, 2.2f).gameObject.AddComponent<SupplyShelf>();
+            MakeFurniture("FirewoodStack", kitchen, -7, 2, 1, 1, 101, 1f);
             MoveFurniture(cutting, kitchen, -5, 3);
             MoveFurniture(boiling, kitchen, -1, 3);
             MoveFurniture(plating, kitchen, 2, 3);
             MoveFurniture(shelf, kitchen, 5, 4);
-            Transform hearth = NewObject("화로", kitchen);
+            Transform hearth = NewObject("Hearth", kitchen);
             hearth.position = boiling.transform.position + Vector3.up * 0.75f;
             AddVisual(hearth, 215, 2.6f, -450);
             MoveFurniture(hunting, hall, -7, -4);
 
             for (int x = -5; x <= 1; x += 3)
             {
-                MakeFurniture($"카운터 조각 {x + 6}", counter, x, 0, 3, 1, 37, 3f);
+                MakeFurniture($"CounterSection_{(x + 5) / 3 + 1:00}", counter, x, 0, 3, 1, 37, 3f);
             }
 
             Furniture chair = existingSeat.GetComponent<Furniture>();
@@ -133,18 +205,18 @@ public static class TavernLayoutSetup
             SetFootprint(chair, Vector2Int.one);
             MoveFurniture(chair, counter, -4, -1);
             ConfigureSeat(existingSeat);
-            MakeSeat("카운터 의자 2", counter, -1, -1, 16);
-            MakeSeat("화로 앞 특별석 · 임시", counter, 2, -1, 17);
+            MakeSeat("CounterStool_02", counter, -1, -1, 16);
+            MakeSeat("HearthStool", counter, 2, -1, 17);
 
-            MakeFurniture("단골 테이블", hall, 6, -3, 4, 2, 37, 4f);
-            MakeSeat("단골 의자 1", hall, 6, -4, 16);
-            MakeSeat("단골 의자 2", hall, 8, -4, 16);
-            MakeSeat("단골 의자 3", hall, 6, -1, 17);
-            MakeSeat("단골 의자 4", hall, 8, -1, 17);
+            MakeFurniture("DiningTable", hall, 6, -3, 4, 2, 37, 4f);
+            MakeSeat("DiningChair_01", hall, 6, -4, 16);
+            MakeSeat("DiningChair_02", hall, 8, -4, 16);
+            MakeSeat("DiningChair_03", hall, 6, -1, 17);
+            MakeSeat("DiningChair_04", hall, 8, -1, 17);
 
             entrance.position = _floor.GetCellCenterWorld(new Vector3Int(0, -6, 0));
             PrefabUtility.RecordPrefabInstancePropertyModifications(entrance);
-            Transform door = NewObject("출입문 · 아래쪽", hall);
+            Transform door = NewObject("EntranceDoor", hall);
             door.position = entrance.position + Vector3.down * 1.9f;
             AddVisual(door, 0, 1.15f, -1000);
 

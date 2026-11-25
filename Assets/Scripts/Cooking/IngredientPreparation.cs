@@ -47,23 +47,24 @@ internal sealed class IngredientPreparation
         return true;
     }
 
-    internal void Complete(ENUMGRADE grade)
+    internal string Complete(ENUMGRADE grade)
     {
         DataStorage.Recipe_Interaction recipe = _active;
         Cancel();
         if (recipe == null || grade < ENUMGRADE.GOOD)
         {
-            return;
+            return null;
         }
 
         if (_inventory.TryConvertOne(recipe.INPUT_ITEM_ID, _inputGrade, recipe.OUTPUT_ITEM_ID, (int)grade))
         {
-            SystemMessageUI.Show(string.Format(_data.GetBBStringText("STR_Prep_Completed"), _data.GetBBStringText(recipe.DESC)));
+            return recipe.OUTPUT_ITEM_ID;
         }
         else
         {
             SystemMessageUI.Show(_data.GetBBStringText("STR_Prep_CannotStore"));
         }
+        return null;
     }
 
     internal void Cancel() => _active = null;

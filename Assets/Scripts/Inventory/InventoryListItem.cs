@@ -6,15 +6,19 @@ using UnityEngine.UI;
 public class InventoryListItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private ItemIcon itemIcon;
+    [SerializeField] private Image _dimOverlay;
     private Button _button;
     private Image _background;
     private Sprite _normal;
     private Sprite _outline;
     private Action<InventoryListItem> _clicked;
-    private Action<InventoryListItem, PointerEventData> _hovered;
+    private Action<InventoryListItem> _hovered;
     private Action<InventoryListItem> _exited;
 
     internal SavedItemStack Stack { get; private set; }
+    internal RectTransform TooltipAnchor => itemIcon != null && itemIcon.ImageRect != null
+        ? itemIcon.ImageRect
+        : (RectTransform)transform;
 
     private void Awake()
     {
@@ -33,7 +37,7 @@ public class InventoryListItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
     }
 
     internal void Bind(Sprite outline, Action<InventoryListItem> clicked,
-        Action<InventoryListItem, PointerEventData> hovered, Action<InventoryListItem> exited)
+        Action<InventoryListItem> hovered, Action<InventoryListItem> exited)
     {
         _outline = outline;
         _clicked = clicked;
@@ -41,7 +45,7 @@ public class InventoryListItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
         _exited = exited;
     }
 
-    internal void SetItem(SavedItemStack stack, bool selectable, bool selected)
+    internal void SetItem(SavedItemStack stack, bool selectable, bool selected, bool dimmed)
     {
         bool changedItem = Stack.ItemId != stack.ItemId || Stack.Grade != stack.Grade;
         bool refreshIcon = changedItem || Stack.Count != stack.Count;
@@ -50,7 +54,7 @@ public class InventoryListItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
             _exited?.Invoke(this);
         }
         Stack = stack;
-        SetSelection(selectable, selected);
+        SetSelection(selectable, selected, dimmed);
         if (itemIcon == null || !refreshIcon)
             return;
 
@@ -63,14 +67,14 @@ public class InventoryListItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
     {
         _exited?.Invoke(this);
         Stack = default;
-        SetSelection(false, false);
+        SetSelection(false, false, false);
         if (itemIcon == null)
             return;
 
         itemIcon.Hide();
     }
 
-    private void SetSelection(bool selectable, bool selected)
+    private void SetSelection(bool selectable, bool selected, bool dimmed)
     {
         if (_button != null)
         {
@@ -80,6 +84,10 @@ public class InventoryListItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
         {
             _background.sprite = selected && _outline != null ? _outline : _normal;
         }
+        if (_dimOverlay != null)
+        {
+            _dimOverlay.enabled = dimmed;
+        }
     }
 
     private void Click() => _clicked?.Invoke(this);
@@ -88,7 +96,7 @@ public class InventoryListItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
     {
         if (Stack.Count > 0)
         {
-            _hovered?.Invoke(this, eventData);
+            _hovered?.Invoke(this);
         }
     }
 

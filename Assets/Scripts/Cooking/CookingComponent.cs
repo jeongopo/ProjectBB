@@ -154,8 +154,8 @@ public abstract class CookingComponent : MonoBehaviour
 
         if (cookingManager != null)
         {
-            cookingManager.CompletePreparation(grade);
-            cookingManager.ShowResult(grade, OnGameEnd);
+            string itemId = cookingManager.CompletePreparation(grade);
+            cookingManager.ShowResult(grade, OnGameEnd, itemId);
         }
         else
         {

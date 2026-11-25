@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using GameEnumDefines;
@@ -156,7 +155,22 @@ public class InventoryManager : MonoBehaviour
             closeButton.interactable = false;
         }
         RefreshSlots();
-        inventoryPanel.SetActive(true);
+        SetCookingInventoryVisible(true);
+    }
+
+    internal void SetCookingInventoryVisible(bool visible)
+    {
+        if (!_inCooking || inventoryPanel == null)
+        {
+            return;
+        }
+
+        if (!visible)
+        {
+            HideTooltip(_hoveredSlot);
+        }
+
+        inventoryPanel.SetActive(visible);
     }
 
     internal void SetCookingSelectionLocked(bool locked)
@@ -206,7 +220,7 @@ public class InventoryManager : MonoBehaviour
         GameAudio.Play(SoundCue.Select);
     }
 
-    private void ShowTooltip(InventoryListItem slot, PointerEventData pointer)
+    private void ShowTooltip(InventoryListItem slot)
     {
         if (_tooltip == null)
         {
@@ -220,7 +234,7 @@ public class InventoryManager : MonoBehaviour
 
         _hoveredSlot = slot;
         string name = GetItemName(slot.Stack.ItemId);
-        _tooltip.Show(name, pointer.position, pointer.enterEventCamera);
+        _tooltip.Show(name, slot.TooltipAnchor);
     }
 
     private void HideTooltip(InventoryListItem slot)
@@ -464,8 +478,9 @@ public class InventoryManager : MonoBehaviour
                 ItemStack item = itemStacks[i];
                 SavedItemStack stack = new SavedItemStack { ItemId = item.ItemID, Grade = item.Grade, Count = item.Count };
                 bool selected = _ingredient?.ItemId == stack.ItemId && _ingredient?.Grade == stack.Grade;
-                bool selectable = _inCooking && !_selectionLocked && _ingredientFilter?.Invoke(stack) == true;
-                slots[i].SetItem(stack, selectable, selected);
+                bool hasFilter = _inCooking && _ingredientFilter != null;
+                bool canPrepare = hasFilter && _ingredientFilter(stack);
+                slots[i].SetItem(stack, canPrepare && !_selectionLocked, selected, hasFilter && !canPrepare);
             }
             else
             {

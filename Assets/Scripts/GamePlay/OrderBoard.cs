@@ -161,8 +161,7 @@ namespace GamePlay
 
         public Sprite GetOrderIcon(CustomerOrder order)
         {
-            // 요리 아이템은 Item 테이블에 아이콘이 없어서, 대표 재료(첫 번째 재료)의 아이콘으로 대신한다.
-            string itemId = order.Recipe.COMPONENT_1;
+            string itemId = order.Recipe.PRODUCT_DISH_ID;
             if (string.IsNullOrEmpty(itemId))
             {
                 return null;
@@ -173,14 +172,12 @@ namespace GamePlay
                 return cached;
             }
 
-            Sprite sprite = null;
-            Dictionary<string, DataStorage.Item> items = _dataManager != null ? _dataManager.dataStorage?.ItemData : null;
-            if (items != null && items.TryGetValue(itemId, out DataStorage.Item item))
+            Sprite sprite = ItemIcon.ResolveIcon(_dataManager != null ? _dataManager.dataStorage : null, itemId);
+            if (sprite != null)
             {
-                sprite = ItemIcon.LoadIconSprite(item.ICONPATH);
+                _iconCache[itemId] = sprite;
             }
 
-            _iconCache[itemId] = sprite;
             return sprite;
         }
 

@@ -359,6 +359,8 @@ public class PlatingComponent : CookingComponent
             timeGaugeImage.gameObject.SetActive(false);
 
         RebuildOrderRows();
+        SetVisible(orderListRoot, true);
+        inventory?.SetCookingInventoryVisible(true);
     }
 
     private void MoveAim(Vector2Int dir)
@@ -482,11 +484,13 @@ public class PlatingComponent : CookingComponent
         timeRemaining = nowRecipe.timeLimit;
         holding = false;
 
+        phase = Phase.Select;
+        SetVisible(orderListRoot, false);
+        inventory?.SetCookingInventoryVisible(false);
         SetVisible(plateGridRoot, true);
         if (timeGaugeImage != null)
             timeGaugeImage.gameObject.SetActive(nowRecipe.timeLimit > 0f);
 
-        phase = Phase.Select;
         RefreshGridUI();
         RefreshTimeUI();
     }
@@ -639,7 +643,10 @@ public class PlatingComponent : CookingComponent
         BeginEnding();
 
         nowOrder.servable = true;
-        SystemMessageUI.Show(GetText("STR_UI_Plating_Success"));
+        if (cookingManager?.ShowCompletedItem(nowRecipe.outputItemID, nowRecipe.DisplayText) != true)
+        {
+            SystemMessageUI.Show(GetText("STR_UI_Plating_Success"));
+        }
         endingRoutine = StartCoroutine(EndingRoutine());
     }
 

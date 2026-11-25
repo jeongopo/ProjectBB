@@ -112,6 +112,7 @@ public class DataStorage
 			public string DESC_BODY;
 			public string DISPLAY_NAME;
 			public int PRICE;
+			public string ICONPATH;
 	}
 	public class Recipe_Interaction
 	{

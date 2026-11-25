@@ -3,10 +3,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Item.xml 데이터를 아이콘으로 보여주는 공용 UI 컴포넌트. 사냥/인벤토리 등에서 공용으로 사용.
 public class ItemIcon : MonoBehaviour
 {
     private const string ArtResourceRoot = "Art/";
+    private const string DishFallbackPath = "UI/Cooking/Plating/Plating_Plate.png";
 
     [SerializeField] private Image itemImage;
     [SerializeField] private TMP_Text countText;
@@ -18,6 +18,7 @@ public class ItemIcon : MonoBehaviour
 
     public string ItemID => itemID;
     public int Count => count;
+    internal RectTransform ImageRect => itemImage != null ? itemImage.rectTransform : null;
 
     public bool CountVisible
     {
@@ -52,32 +53,38 @@ public class ItemIcon : MonoBehaviour
         if (dataManager == null)
             dataManager = FindFirstObjectByType<DataManager>();
 
-        if (dataManager == null)
-        {
-            // 비활성 오브젝트까지 포함해서 다시 찾아보면 "아예 없음"과 "있는데 꺼져있음"을 구분할 수 있음
-            var inactiveDataManager = FindFirstObjectByType<DataManager>(FindObjectsInactive.Include);
-            if (inactiveDataManager != null)
-                Debug.LogWarning($"ItemIcon: DataManager found but inactive/disabled on '{inactiveDataManager.gameObject.name}'. Enable it in the scene.");
-            else
-                Debug.LogWarning("ItemIcon: No DataManager exists in the currently loaded scene(s) at all.");
-            return;
-        }
-
-        if (dataManager.dataStorage?.ItemData == null)
-        {
-            Debug.LogWarning("ItemIcon: dataStorage.ItemData is null - DataManager.Start() (XML load) hasn't run yet, or Resources/XML/Item.xml failed to load.");
-            return;
-        }
-
-        if (!dataManager.dataStorage.ItemData.TryGetValue(itemID, out var itemRow))
-        {
-            string knownIDs = string.Join(", ", dataManager.dataStorage.ItemData.Keys);
-            Debug.LogWarning($"ItemIcon: Item data not found for ID '{itemID}'. Known IDs=[{knownIDs}]");
-            return;
-        }
-
         if (itemImage != null)
-            itemImage.sprite = LoadIconSprite(itemRow.ICONPATH);
+        {
+            itemImage.sprite = ResolveIcon(dataManager != null ? dataManager.dataStorage : null, itemID);
+            itemImage.enabled = itemImage.sprite != null;
+        }
+    }
+
+    internal static Sprite ResolveIcon(DataStorage data, string itemId)
+    {
+        if (data == null || string.IsNullOrEmpty(itemId))
+        {
+            return null;
+        }
+
+        if (data.ItemData != null && data.ItemData.TryGetValue(itemId, out var item) &&
+            !string.IsNullOrEmpty(item.ICONPATH))
+        {
+            return LoadIconSprite(item.ICONPATH);
+        }
+
+        if (data.Recipe_CombineData != null)
+        {
+            foreach (DataStorage.Recipe_Combine recipe in data.Recipe_CombineData.Values)
+            {
+                if (recipe.PRODUCT_DISH_ID == itemId)
+                {
+                    return LoadIconSprite(recipe.ICONPATH) ?? LoadIconSprite(DishFallbackPath);
+                }
+            }
+        }
+
+        return null;
     }
 
     public void Show()
