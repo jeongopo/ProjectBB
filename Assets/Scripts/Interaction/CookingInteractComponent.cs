@@ -7,6 +7,13 @@ public class CookingInteractComponent : InteractComponent
     [SerializeField] private CookingType cookingType;
 
     private CookingManager cookingManager;
+    public override bool CanInteract => base.CanInteract && cookingManager != null;
+    public override string PromptKey => cookingType switch
+    {
+        CookingType.Boiling => "STR_Interact_Boil",
+        CookingType.Cutting => "STR_Interact_Cut",
+        _ => "STR_Interact_Plate",
+    };
 
     protected override void Start()
     {

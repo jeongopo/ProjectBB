@@ -52,6 +52,11 @@ public abstract class CookingComponent : MonoBehaviour
     //미니게임 실행 직전
     public virtual void PreStartMiniGame()
     {
+        if (cookingManager != null && !cookingManager.TryBeginPreparation())
+        {
+            return;
+        }
+
         if (CookingStartButton != null)
         {
             CookingStartButton.gameObject.SetActive(false);
@@ -66,6 +71,14 @@ public abstract class CookingComponent : MonoBehaviour
         else
         {
             StartMiniGame();
+        }
+    }
+
+    internal void SetIngredientReady(bool ready)
+    {
+        if (CookingStartButton != null)
+        {
+            CookingStartButton.interactable = ready;
         }
     }
 
@@ -141,7 +154,8 @@ public abstract class CookingComponent : MonoBehaviour
 
         if (cookingManager != null)
         {
-            cookingManager.ShowResult(grade, OnGameEnd);
+            string itemId = cookingManager.CompletePreparation(grade);
+            cookingManager.ShowResult(grade, OnGameEnd, itemId);
         }
         else
         {
@@ -153,6 +167,7 @@ public abstract class CookingComponent : MonoBehaviour
     protected virtual void OnGameEnd()
     {
         isPlaying = false;
+        cookingManager?.FinishPreparationRound();
         if (CookingStartButton != null)
         {
             CookingStartButton.gameObject.SetActive(true);
@@ -163,6 +178,11 @@ public abstract class CookingComponent : MonoBehaviour
     //요리 자체가 끝남
     public virtual void OnCookingEnd()
     {
+        isPlaying = false;
+        if (CookingStartButton != null)
+        {
+            CookingStartButton.gameObject.SetActive(true);
+        }
         if (interactAction != null)
         {
             interactAction.started -= OnInteractStarted;

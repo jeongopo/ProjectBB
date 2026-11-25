@@ -619,4 +619,284 @@
     <ID>STR_UI_Plating_ShortageMulti</ID>
     <BODY>재료 부족: {0} {1}개 외 {2}종</BODY>
   </Row>
+  <Row>
+    <ID>STR_Options_Title</ID>
+    <BODY>옵션</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Options_Music</ID>
+    <BODY>배경 음악</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Options_World</ID>
+    <BODY>게임 효과음</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Options_UI</ID>
+    <BODY>UI 효과음</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Options_Preview</ID>
+    <BODY>듣기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Options_Close</ID>
+    <BODY>닫기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Lobby_Title</ID>
+    <BODY>잿불 주점</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Lobby_Subtitle</ID>
+    <BODY>아홉 세계의 식탁</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Lobby_NewGame</ID>
+    <BODY>새로 시작</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Lobby_Continue</ID>
+    <BODY>이어하기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Lobby_Quit</ID>
+    <BODY>게임 종료</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Lobby_Replace</ID>
+    <BODY>새로 시작하면 기존 저장을 덮어씁니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Lobby_Cancel</ID>
+    <BODY>취소</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Lobby_LoadFailed</ID>
+    <BODY>저장 데이터를 읽을 수 없습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Lobby_SceneFailed</ID>
+    <BODY>게임을 열 수 없습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Lobby_SaveFailed</ID>
+    <BODY>진행 상황을 저장할 수 없습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Interact_Default</ID>
+    <BODY>상호작용</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Interact_Boil</ID>
+    <BODY>끓이기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Interact_Cut</ID>
+    <BODY>썰기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Interact_Plate</ID>
+    <BODY>담기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Interact_Hunt</ID>
+    <BODY>사냥</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Interact_Serve</ID>
+    <BODY>서빙</BODY>
+  </Row>
+  <Row>
+    <ID>STR_SupplyShelf_Prompt</ID>
+    <BODY>보급 받기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_SupplyShelf_Received</ID>
+    <BODY>창고에서 재료 {0}개를 가져왔습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_SupplyShelf_Full</ID>
+    <BODY>인벤토리가 가득 찼습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_SupplyShelf_Empty</ID>
+    <BODY>오늘 보급 재료를 모두 가져갔습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Prep_Unavailable</ID>
+    <BODY>지금 손질할 주문 재료가 없어요. 재고와 주문서를 확인하세요.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Prep_Target</ID>
+    <BODY>준비할 재료 · {0}</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Prep_Completed</ID>
+    <BODY>{0}을(를) 준비했습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Prep_CannotStore</ID>
+    <BODY>손질한 재료를 넣을 인벤토리 칸이 없습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Title</ID>
+    <BODY>{0}일차 마감</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Orders</ID>
+    <BODY>받은 주문  {0}건</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Served</ID>
+    <BODY>서빙 완료  {0}건</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Missed</ID>
+    <BODY>놓친 주문  {0}건</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Earned</ID>
+    <BODY>오늘 매출  {0} 골드</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Next</ID>
+    <BODY>다음 날</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Lobby</ID>
+    <BODY>로비로</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Date</ID>
+    <BODY>{0}일차</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_101001</ID>
+    <BODY>신선한 우유</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_101002</ID>
+    <BODY>숙성 치즈</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_101003</ID>
+    <BODY>버터</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_102001</ID>
+    <BODY>야생 베리</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_102002</ID>
+    <BODY>이끼 버섯</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_102003</ID>
+    <BODY>사과</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_102004</ID>
+    <BODY>바다새 알</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_103001</ID>
+    <BODY>거친 보리</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_103002</ID>
+    <BODY>호밀</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_104001</ID>
+    <BODY>파슬리</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_104002</ID>
+    <BODY>야생 마늘</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105001</ID>
+    <BODY>멧돼지 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105002</ID>
+    <BODY>양 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105003</ID>
+    <BODY>순록 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105004</ID>
+    <BODY>토끼 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105005</ID>
+    <BODY>바다새 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105006</ID>
+    <BODY>곰 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_106001</ID>
+    <BODY>헤이즐넛</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_106002</ID>
+    <BODY>호두</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_107001</ID>
+    <BODY>말린 청어</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_107002</ID>
+    <BODY>말린 대구</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_107003</ID>
+    <BODY>홍합</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_108001</ID>
+    <BODY>순무</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_108002</ID>
+    <BODY>양배추</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_108003</ID>
+    <BODY>콩</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_108004</ID>
+    <BODY>당근</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_110001</ID>
+    <BODY>숲의 벌꿀</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_110002</ID>
+    <BODY>소금</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_120001</ID>
+    <BODY>정체불명의 말린고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_120002</ID>
+    <BODY>태양석 가루</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_120003</ID>
+    <BODY>세계수 수액</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Cooking_Complete</ID>
+    <BODY>조리 완료</BODY>
+  </Row>
 </Rows>

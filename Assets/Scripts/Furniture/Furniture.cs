@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GamePlay
@@ -8,6 +9,7 @@ namespace GamePlay
     public class Furniture : MonoBehaviour
     {
         private const int SortingOrderPerUnit = YSorter.OrderPerUnit;
+        private static readonly List<Furniture> ActiveInstances = new List<Furniture>();
 
         [Header("Data")]
         [SerializeField] private string _furnitureId;
@@ -21,6 +23,18 @@ namespace GamePlay
         public string FurnitureId => _furnitureId;
         public Vector2Int Size => _size;
         public Vector3Int Origin { get; private set; }
+        internal static IReadOnlyList<Furniture> ActiveFurniture => ActiveInstances;
+        internal IReadOnlyList<SpriteRenderer> Renderers => _renderers;
+
+        private void OnEnable()
+        {
+            ActiveInstances.Add(this);
+        }
+
+        private void OnDisable()
+        {
+            ActiveInstances.Remove(this);
+        }
 
         private void Awake()
         {

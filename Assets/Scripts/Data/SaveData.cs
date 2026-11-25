@@ -7,6 +7,14 @@ using UnityEngine;
 /// Can be considered as a save file structure or format.
 /// </summary>
 [Serializable]
+public struct SavedItemStack
+{
+    public string ItemId;
+    public int Grade;
+    public int Count;
+}
+
+[Serializable]
 public class SaveData
 {
 	// This is test data, written according to TestScript.cs class
@@ -17,6 +25,8 @@ public class SaveData
 	public List<string> _playerInventory;
 	public int _currentDay;
 	public int _currentTime;
+    public List<SavedItemStack> ItemStacks;
+    public List<CurrencyAmount> Balances;
 
 	public string ToJson()
 	{

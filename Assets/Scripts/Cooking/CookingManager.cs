@@ -1,4 +1,5 @@
 using UnityEngine;
+using GamePlay;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
 using GameEnumDefines;
@@ -16,6 +17,7 @@ public class CookingManager : MonoBehaviour
     [SerializeField] private BoilingComponent boilingComponent;
     [SerializeField] private CuttingComponent cuttingComponent;
     [SerializeField] private PlatingComponent platingComponent;
+    [SerializeField] private float _platingHorizontalOffset = -12f;
 
     [Header("Shared Timer UI")]
     [SerializeField] private CookingTimerComponent cookingTimer;
@@ -31,14 +33,35 @@ public class CookingManager : MonoBehaviour
     private CookingComponent currentComponent;
     private GamePlay.InputManager inputManager;
     private Coroutine resultCoroutine;
+    private IngredientPreparation _preparation;
+    private CookingType _openType;
+    private InventoryManager _inventory;
+    private SavedItemStack? _ingredient;
+    private bool _requiresSelection;
+    private CookingResultUI _completedItem;
+    private DataManager _dataManager;
 
     private void Awake()
     {
         inputManager = FindFirstObjectByType<GamePlay.InputManager>();
+        _dataManager = FindFirstObjectByType<DataManager>();
         if (cookingPanel != null)
+        {
+            _completedItem = cookingPanel.GetComponentInChildren<CookingResultUI>(true);
             cookingPanel.SetActive(false);
+        }
+        if (platingComponent != null && platingComponent.transform is RectTransform platingRect)
+        {
+            platingRect.anchoredPosition += Vector2.right * _platingHorizontalOffset;
+        }
         if (closeButton != null)
-            closeButton.onClick.AddListener(CloseCooking);
+        {
+            closeButton.onClick.AddListener(() =>
+            {
+                GameAudio.Play(SoundCue.PanelClose);
+                CloseCooking();
+            });
+        }
 
         if (cookingTimer != null)
             cookingTimer.gameObject.SetActive(false);
@@ -61,6 +84,7 @@ public class CookingManager : MonoBehaviour
     //1회 판정마다 짧게 보여주는 이미지
     public void ShowRoundResult(ENUMGRADE grade)
     {
+        GameAudio.Play(grade >= ENUMGRADE.GOOD ? SoundCue.CookingSuccess : SoundCue.CookingMiss, 0.45f);
         int spriteIndex = (int)grade - 1;
         Sprite sprite = (roundResultSprites != null && spriteIndex >= 0 && spriteIndex < roundResultSprites.Length)
             ? roundResultSprites[spriteIndex]
@@ -86,14 +110,16 @@ public class CookingManager : MonoBehaviour
     }
 
     //미니게임 최종 결과 표시 후 onHidden 콜백 호출
-    public void ShowResult(ENUMGRADE grade, Action onHidden)
+    public void ShowResult(ENUMGRADE grade, Action onHidden, string outputItemId = null)
     {
+        GameAudio.Play(grade >= ENUMGRADE.GOOD ? SoundCue.CookingSuccess : SoundCue.CookingMiss);
         int spriteIndex = (int)grade - 1;
         Sprite sprite = (finalResultSprites != null && spriteIndex >= 0 && spriteIndex < finalResultSprites.Length)
             ? finalResultSprites[spriteIndex]
             : null;
 
-        if (resultImage == null || sprite == null)
+        bool showCompleted = !string.IsNullOrEmpty(outputItemId) && ShowCompletedItem(outputItemId, grade: sprite);
+        if (!showCompleted && (resultImage == null || sprite == null))
         {
             onHidden?.Invoke();
             return;
@@ -102,8 +128,11 @@ public class CookingManager : MonoBehaviour
         if (resultCoroutine != null)
             StopCoroutine(resultCoroutine);
 
-        resultImage.sprite = sprite;
-        resultImage.gameObject.SetActive(true);
+        if (resultImage != null)
+        {
+            resultImage.sprite = sprite;
+            resultImage.gameObject.SetActive(!showCompleted && sprite != null);
+        }
         resultCoroutine = StartCoroutine(HideResultThenInvoke(onHidden));
     }
 
@@ -111,7 +140,11 @@ public class CookingManager : MonoBehaviour
     {
         yield return new WaitForSeconds(resultDisplayDuration);
 
-        resultImage.gameObject.SetActive(false);
+        if (resultImage != null)
+        {
+            resultImage.gameObject.SetActive(false);
+        }
+        _completedItem?.Hide();
         resultCoroutine = null;
 
         onHidden?.Invoke();
@@ -119,6 +152,7 @@ public class CookingManager : MonoBehaviour
 
     public void OpenCooking(CookingType type)
     {
+        _openType = type;
         currentComponent = GetCookingComponent(type);
         if (currentComponent == null)
         {
@@ -129,22 +163,98 @@ public class CookingManager : MonoBehaviour
         SetAllSubPanelsActive(false);
         currentComponent.gameObject.SetActive(true);
         cookingPanel.SetActive(true);
+        GameAudio.Play(SoundCue.PanelOpen);
 
-        currentComponent.OnMiniGameEnd += OnMiniGameEnded;
         currentComponent.InitCooking();
+        OpenIngredientInventory(type);
     }
 
-    private void OnMiniGameEnded()
+    private void OpenIngredientInventory(CookingType type)
     {
-        // 보상 처리
+        if (_inventory == null)
+        {
+            _inventory = FindFirstObjectByType<InventoryManager>();
+        }
+
+        _ingredient = null;
+        _requiresSelection = type == CookingType.Cutting || type == CookingType.Boiling;
+        if (_requiresSelection && _preparation == null)
+        {
+            DataManager data = FindFirstObjectByType<DataManager>();
+            if (data != null && _inventory != null)
+            {
+                _preparation = new IngredientPreparation(data.dataStorage, _inventory);
+            }
+        }
+
+        currentComponent.SetIngredientReady(!_requiresSelection);
+        _inventory?.OpenForCooking(_requiresSelection ? IsValidIngredient : null, OnIngredientChanged);
+    }
+
+    private bool IsValidIngredient(SavedItemStack item) => _preparation?.CanPrepare(_openType, item) == true;
+
+    private void OnIngredientChanged(SavedItemStack? item)
+    {
+        _ingredient = item;
+        currentComponent?.SetIngredientReady(!_requiresSelection || item.HasValue);
+    }
+
+    internal bool TryBeginPreparation()
+    {
+        if (!_requiresSelection)
+        {
+            return true;
+        }
+        if (!_ingredient.HasValue || _preparation?.TryStart(_openType, _ingredient.Value) != true)
+        {
+            return false;
+        }
+
+        _inventory.SetCookingSelectionLocked(true);
+        return true;
+    }
+
+    internal string CompletePreparation(ENUMGRADE grade) => _preparation?.Complete(grade);
+
+    internal bool ShowCompletedItem(string itemId, string fallbackName = null, Sprite grade = null)
+    {
+        if (_completedItem == null || _dataManager == null)
+        {
+            return false;
+        }
+
+        _completedItem.Show(_dataManager.dataStorage, itemId, fallbackName, grade);
+        return true;
+    }
+
+    internal void FinishPreparationRound()
+    {
+        _inventory?.SetCookingSelectionLocked(false);
     }
 
     public void CloseCooking()
     {
+        _completedItem?.Hide();
+        _preparation?.Cancel();
+        _inventory?.CloseAfterCooking();
+        _ingredient = null;
+        _requiresSelection = false;
+        if (cookingTimer != null)
+        {
+            cookingTimer.StopCountdown();
+        }
+        if (resultCoroutine != null)
+        {
+            StopCoroutine(resultCoroutine);
+            resultCoroutine = null;
+        }
+        if (resultImage != null)
+        {
+            resultImage.gameObject.SetActive(false);
+        }
         if (currentComponent != null)
         {
             currentComponent.OnCookingEnd();
-            currentComponent.OnMiniGameEnd -= OnMiniGameEnded;
             currentComponent = null;
         }
 

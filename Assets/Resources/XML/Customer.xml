@@ -1,0 +1,18 @@
+<Rows>
+  <Info>
+    <ID>string</ID>
+    <PATIENCE_MINUTES>int</PATIENCE_MINUTES>
+  </Info>
+  <Row>
+    <ID>customer1</ID>
+    <PATIENCE_MINUTES>40</PATIENCE_MINUTES>
+  </Row>
+  <Row>
+    <ID>customer2</ID>
+    <PATIENCE_MINUTES>30</PATIENCE_MINUTES>
+  </Row>
+  <Row>
+    <ID>customer3</ID>
+    <PATIENCE_MINUTES>20</PATIENCE_MINUTES>
+  </Row>
+</Rows>

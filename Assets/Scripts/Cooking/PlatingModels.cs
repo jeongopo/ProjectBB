@@ -15,6 +15,7 @@ public class PlatingIngredient
 public class PlatingRecipe
 {
     private const int MaxTotalIngredients = 5;
+    private const string NoneId = "NONE";
 
     public string name;
     public string displayName; // 주문서 등에 보이는 이름. 비어 있으면 name 을 쓴다
@@ -26,6 +27,33 @@ public class PlatingRecipe
     public float mistakePenalty = 3f;    // 오답 1회당 줄어드는 제한 시간(초)
 
     public string DisplayText => string.IsNullOrEmpty(displayName) ? name : displayName;
+
+    // time_limit / mistake_penalty 는 데이터에 아직 없어서 호출하는 쪽이 값을 넘긴다
+    public static PlatingRecipe FromRecipeRow(DataStorage.Recipe_Combine row, float timeLimit, float mistakePenalty)
+    {
+        PlatingRecipe recipe = new PlatingRecipe
+        {
+            name = row.NAME,
+            displayName = row.DISPLAY_NAME,
+            outputItemID = row.PRODUCT_DISH_ID,
+            timeLimit = timeLimit,
+            mistakePenalty = mistakePenalty,
+        };
+
+        string[] components = { row.COMPONENT_1, row.COMPONENT_2, row.COMPONENT_3, row.COMPONENT_4, row.COMPONENT_5 };
+        foreach (string itemID in components)
+        {
+            if (string.IsNullOrEmpty(itemID) || itemID == NoneId)
+                continue;
+
+            PlatingIngredient existing = recipe.ingredients.Find(i => i.itemID == itemID);
+            if (existing != null)
+                existing.count++;
+            else
+                recipe.ingredients.Add(new PlatingIngredient { itemID = itemID, count = 1 });
+        }
+        return recipe;
+    }
 
     public int TotalIngredientCount => ingredients.Sum(i => i.count);
 
@@ -65,7 +93,22 @@ public class PlatingRecipe
 public class PlatingOrder
 {
     public PlatingRecipe recipe;
-    public bool servable; // 완성 후 서빙 전
+    private bool _servable;
+    public event Action<bool> OnReadyChanged;
+
+    public bool servable
+    {
+        get => _servable;
+        set
+        {
+            if (_servable == value)
+            {
+                return;
+            }
+            _servable = value;
+            OnReadyChanged?.Invoke(value);
+        }
+    }
 
     public PlatingOrder(PlatingRecipe recipe)
     {

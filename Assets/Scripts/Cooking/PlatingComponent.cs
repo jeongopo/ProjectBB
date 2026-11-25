@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using DataEnumDefines;
+using GamePlay;
 
 // 담기(Plating) 미니게임.
 // ② 주문서 선택 → ③ 격자에서 주문에 필요한 재료를 제한 시간 안에 모두 선택 → 성공/실패
@@ -35,7 +36,6 @@ public class PlatingComponent : CookingComponent
     private static readonly Color RowTextColor = new Color(0.25f, 0.15f, 0.08f, 1f);
     private static readonly Color RowAimedTextColor = new Color(0.8f, 0.2f, 0.1f, 1f);
 
-    private const string NoneID = "NONE";
     private const float PickedIconAlpha = 0.6f;
     private const float HoldMinScale = 0.85f;
     private const float ReadyRefreshInterval = 0.2f;
@@ -74,6 +74,7 @@ public class PlatingComponent : CookingComponent
 
     private DataManager dataManager;
     private InventoryManager inventory;
+    private GamePlay.OrderBoard orderBoard;
 
     private Phase phase = Phase.None;
     private readonly List<PlatingOrder> orders = new List<PlatingOrder>();
@@ -151,6 +152,27 @@ public class PlatingComponent : CookingComponent
         RebuildOrderRows();
     }
 
+    // 미니게임이 열려 있는 동안 새로 발행된 주문을 목록에 추가한다.
+    private void HandleOrderAdded(PlatingOrder order)
+    {
+        if (orders.Contains(order))
+            return;
+
+        orders.Add(order);
+        if (phase == Phase.OrderSelect)
+            RebuildOrderRows();
+    }
+
+    private void UnsubscribeOrderBoard()
+    {
+        if (orderBoard == null)
+            return;
+
+        orderBoard.OnOrderAdded -= HandleOrderAdded;
+        orderBoard.OnOrderRemoved -= NotifyCustomerLeft;
+        orderBoard = null;
+    }
+
     // ───────────────────────── 생명주기 ─────────────────────────
 
     public override void InitCooking()
@@ -164,8 +186,20 @@ public class PlatingComponent : CookingComponent
         if (plateGridRoot != null)
             boardImage = plateGridRoot.GetComponent<Image>();
 
-        if (orders.Count == 0)
+        // 식당 운영(OrderBoard)이 있으면 손님 주문을 쓰고, 없을 때만 임시 테스트 주문을 쓴다
+        UnsubscribeOrderBoard();
+        orderBoard = FindFirstObjectByType<GamePlay.OrderBoard>();
+        if (orderBoard != null)
+        {
+            SetOrders(orderBoard.PlatingOrders);
+            orderBoard.OnOrderAdded += HandleOrderAdded;
+            orderBoard.OnOrderRemoved += NotifyCustomerLeft;
+        }
+        else if (orders.Count == 0)
+        {
             LoadTestOrders();
+        }
+
         if (grantTestIngredientsOnOpen)
             GrantTestIngredients();
 
@@ -180,6 +214,7 @@ public class PlatingComponent : CookingComponent
 
     public override void OnCookingEnd()
     {
+        UnsubscribeOrderBoard();
         ResetPlayState();
         StopAllCoroutines();
         endingRoutine = null;
@@ -324,6 +359,8 @@ public class PlatingComponent : CookingComponent
             timeGaugeImage.gameObject.SetActive(false);
 
         RebuildOrderRows();
+        SetVisible(orderListRoot, true);
+        inventory?.SetCookingInventoryVisible(true);
     }
 
     private void MoveAim(Vector2Int dir)
@@ -447,11 +484,13 @@ public class PlatingComponent : CookingComponent
         timeRemaining = nowRecipe.timeLimit;
         holding = false;
 
+        phase = Phase.Select;
+        SetVisible(orderListRoot, false);
+        inventory?.SetCookingInventoryVisible(false);
         SetVisible(plateGridRoot, true);
         if (timeGaugeImage != null)
             timeGaugeImage.gameObject.SetActive(nowRecipe.timeLimit > 0f);
 
-        phase = Phase.Select;
         RefreshGridUI();
         RefreshTimeUI();
     }
@@ -468,10 +507,29 @@ public class PlatingComponent : CookingComponent
                 list.Add(new GridSlot { itemID = ingredient.itemID, isAnswer = true });
         }
 
-        List<string> neededIDs = nowRecipe.DistinctItemIDs.ToList();
+        HashSet<string> neededIDs = new HashSet<string>(nowRecipe.DistinctItemIDs);
         List<string> baitPool = new List<string>();
-        if (dataManager != null && dataManager.dataStorage?.ItemData != null)
-            baitPool.AddRange(dataManager.dataStorage.ItemData.Keys.Where(id => !neededIDs.Contains(id) && id != waterItemID));
+        Dictionary<string, DataStorage.Item> itemRows = dataManager != null ? dataManager.dataStorage?.ItemData : null;
+        if (itemRows != null)
+        {
+            HashSet<string> answerIcons = new HashSet<string>();
+            foreach (string itemId in neededIDs)
+            {
+                if (itemRows.TryGetValue(itemId, out DataStorage.Item item) && !string.IsNullOrEmpty(item.ICONPATH))
+                {
+                    answerIcons.Add(item.ICONPATH);
+                }
+            }
+
+            // 원재료 아이콘을 재사용하는 손질 재료와 원재료를 한 격자에 내면 구분할 수 없다.
+            foreach (KeyValuePair<string, DataStorage.Item> row in itemRows)
+            {
+                if (!neededIDs.Contains(row.Key) && row.Key != waterItemID && !answerIcons.Contains(row.Value.ICONPATH))
+                {
+                    baitPool.Add(row.Key);
+                }
+            }
+        }
         Shuffle(baitPool);
 
         foreach (string baitID in baitPool)
@@ -572,19 +630,29 @@ public class PlatingComponent : CookingComponent
 
     private void Succeed()
     {
+        if (inventory == null || !inventory.TryCraft(nowRecipe))
+        {
+            GameAudio.Play(SoundCue.CookingMiss);
+            BeginEnding();
+            SystemMessageUI.Show(GetText("STR_Prep_CannotStore"));
+            endingRoutine = StartCoroutine(EndingRoutine());
+            return;
+        }
+
+        GameAudio.Play(SoundCue.CookingSuccess);
         BeginEnding();
 
-        ConsumeIngredients(nowRecipe);
-        if (inventory != null && !string.IsNullOrEmpty(nowRecipe.outputItemID))
-            inventory.AddItem(nowRecipe.outputItemID, 1);
-
         nowOrder.servable = true;
-        SystemMessageUI.Show(GetText("STR_UI_Plating_Success"));
+        if (cookingManager?.ShowCompletedItem(nowRecipe.outputItemID, nowRecipe.DisplayText) != true)
+        {
+            SystemMessageUI.Show(GetText("STR_UI_Plating_Success"));
+        }
         endingRoutine = StartCoroutine(EndingRoutine());
     }
 
     private void Fail()
     {
+        GameAudio.Play(SoundCue.CookingMiss);
         BeginEnding();
 
         SystemMessageUI.Show(GetText("STR_UI_Plating_Fail"));
@@ -607,28 +675,8 @@ public class PlatingComponent : CookingComponent
         yield return new WaitForSeconds(resultDisplayDuration);
         endingRoutine = null;
 
-        // TODO: [마무리] 서빙 절차(손님 지목 → 서빙) 연동. 현재는 서빙 가능 상태로 표시만 하고 식당으로 복귀한다
         ResetPlayState();
         cookingManager?.CloseCooking();
-    }
-
-    // 성공했을 때만 재료를 소모한다. 등급이 낮은 것부터 사용
-    private void ConsumeIngredients(PlatingRecipe recipe)
-    {
-        if (inventory == null)
-            return;
-
-        foreach (string itemID in recipe.DistinctItemIDs)
-        {
-            int remaining = recipe.GetRequiredCount(itemID);
-            List<int> grades = inventory.GetOwnedGrades(itemID); // 등급 내림차순
-            for (int i = grades.Count - 1; i >= 0 && remaining > 0; i--)
-            {
-                int take = Mathf.Min(remaining, inventory.GetCount(itemID, grades[i]));
-                if (inventory.RemoveItem(itemID, grades[i], take))
-                    remaining -= take;
-            }
-        }
     }
 
     private void ResetPlayState()
@@ -754,6 +802,12 @@ public class PlatingComponent : CookingComponent
     {
         if (itemID == waterItemID)
             return "물";
+
+        if (IngredientPreparation.TryGetRecipe(dataManager != null ? dataManager.dataStorage : null, itemID,
+            out DataStorage.Recipe_Interaction preparation))
+        {
+            return GetText(preparation.DESC);
+        }
 
         if (dataManager != null && dataManager.dataStorage?.ItemData != null
             && dataManager.dataStorage.ItemData.TryGetValue(itemID, out DataStorage.Item item))
@@ -910,31 +964,9 @@ public class PlatingComponent : CookingComponent
         return recipes;
     }
 
-    // time_limit / mistake_penalty 는 데이터에 아직 없어서 기본값을 쓴다
     private PlatingRecipe ToPlatingRecipe(DataStorage.Recipe_Combine row)
     {
-        PlatingRecipe recipe = new PlatingRecipe
-        {
-            name = row.NAME,
-            displayName = row.DISPLAY_NAME,
-            outputItemID = row.PRODUCT_DISH_ID,
-            timeLimit = defaultTimeLimit,
-            mistakePenalty = defaultMistakePenalty,
-        };
-
-        string[] components = { row.COMPONENT_1, row.COMPONENT_2, row.COMPONENT_3, row.COMPONENT_4, row.COMPONENT_5 };
-        foreach (string itemID in components)
-        {
-            if (string.IsNullOrEmpty(itemID) || itemID == NoneID)
-                continue;
-
-            PlatingIngredient existing = recipe.ingredients.Find(i => i.itemID == itemID);
-            if (existing != null)
-                existing.count++;
-            else
-                recipe.ingredients.Add(new PlatingIngredient { itemID = itemID, count = 1 });
-        }
-        return recipe;
+        return PlatingRecipe.FromRecipeRow(row, defaultTimeLimit, defaultMistakePenalty);
     }
 
     // 테스트용: 주문에 필요한 재료를 인벤토리에 지급

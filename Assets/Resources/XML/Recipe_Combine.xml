@@ -12,6 +12,8 @@
     <TRASH_DISH_ID>string</TRASH_DISH_ID>
     <DESC_BODY>string</DESC_BODY>
     <DISPLAY_NAME>string</DISPLAY_NAME>
+    <PRICE>int</PRICE>
+    <ICONPATH>string</ICONPATH>
   </Info>
   <Row>
     <ID>210500101</ID>
@@ -26,6 +28,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_boar_stew</DESC_BODY>
     <DISPLAY_NAME>멧돼지 스튜</DISPLAY_NAME>
+    <PRICE>250</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210500102</ID>
@@ -40,6 +45,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_berry_boar_steak</DESC_BODY>
     <DISPLAY_NAME>베리 멧돼지 스테이크</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210500201</ID>
@@ -54,6 +62,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_herb_mutton_roast</DESC_BODY>
     <DISPLAY_NAME>허브 양고기 구이</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210500202</ID>
@@ -68,6 +79,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_mutton_cabbage_stew</DESC_BODY>
     <DISPLAY_NAME>양고기 양배추 스튜</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210500301</ID>
@@ -82,6 +96,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_reindeer_mushroom_stew</DESC_BODY>
     <DISPLAY_NAME>순록 버섯 스튜</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210500302</ID>
@@ -96,6 +113,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_honey_roasted_reindeer</DESC_BODY>
     <DISPLAY_NAME>꿀바른 순록 구이</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210500401</ID>
@@ -110,6 +130,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_rabbit_bean_soup</DESC_BODY>
     <DISPLAY_NAME>토끼 고기 콩 수프</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210500501</ID>
@@ -124,6 +147,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_seabird_barley_porridge</DESC_BODY>
     <DISPLAY_NAME>바다새 보리죽</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210500601</ID>
@@ -138,6 +164,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_hearty_bear_stew</DESC_BODY>
     <DISPLAY_NAME>든든한 곰 고기 스튜</DISPLAY_NAME>
+    <PRICE>250</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210500602</ID>
@@ -152,6 +181,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_cheese_bear_steak</DESC_BODY>
     <DISPLAY_NAME>치즈 곰 고기 스테이크</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210100101</ID>
@@ -166,6 +198,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_milk_pudding</DESC_BODY>
     <DISPLAY_NAME>우유 푸딩</DISPLAY_NAME>
+    <PRICE>150</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210100201</ID>
@@ -180,6 +215,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_herb_cheese_bake</DESC_BODY>
     <DISPLAY_NAME>허브 치즈구이</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210200101</ID>
@@ -194,6 +232,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_berry_pie</DESC_BODY>
     <DISPLAY_NAME>베리 파이</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210200201</ID>
@@ -208,6 +249,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_sauteed_mushroom</DESC_BODY>
     <DISPLAY_NAME>버섯 볶음</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210200301</ID>
@@ -222,6 +266,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_baked_apple</DESC_BODY>
     <DISPLAY_NAME>구운 사과</DISPLAY_NAME>
+    <PRICE>150</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210200401</ID>
@@ -236,6 +283,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_steamed_seabird_egg</DESC_BODY>
     <DISPLAY_NAME>바다새 알찜</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210300101</ID>
@@ -250,6 +300,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_barley_bread</DESC_BODY>
     <DISPLAY_NAME>보리빵</DISPLAY_NAME>
+    <PRICE>150</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210300201</ID>
@@ -264,6 +317,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_rye_pancake</DESC_BODY>
     <DISPLAY_NAME>호밀전</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210400101</ID>
@@ -278,6 +334,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_parsley_salad</DESC_BODY>
     <DISPLAY_NAME>파슬리 무침</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210400201</ID>
@@ -292,6 +351,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_pickled_garlic</DESC_BODY>
     <DISPLAY_NAME>마늘 절임</DISPLAY_NAME>
+    <PRICE>100</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210600101</ID>
@@ -306,6 +368,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_hazelnut_cookie</DESC_BODY>
     <DISPLAY_NAME>헤이즐넛 과자</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210600201</ID>
@@ -320,6 +385,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_candied_walnut</DESC_BODY>
     <DISPLAY_NAME>호두 정과</DISPLAY_NAME>
+    <PRICE>150</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210700101</ID>
@@ -334,6 +402,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_smoked_herring</DESC_BODY>
     <DISPLAY_NAME>훈제 청어</DISPLAY_NAME>
+    <PRICE>100</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210700201</ID>
@@ -348,6 +419,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_fried_cod</DESC_BODY>
     <DISPLAY_NAME>대구 튀김</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210700301</ID>
@@ -362,6 +436,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_mussel_skewer</DESC_BODY>
     <DISPLAY_NAME>홍합 꼬치구이</DISPLAY_NAME>
+    <PRICE>150</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210800101</ID>
@@ -376,6 +453,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_braised_turnip</DESC_BODY>
     <DISPLAY_NAME>순무 조림</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210800201</ID>
@@ -390,20 +470,25 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_pickled_cabbage</DESC_BODY>
     <DISPLAY_NAME>양배추 절임</DISPLAY_NAME>
+    <PRICE>100</PRICE>
+    <ICONPATH>Cooking/Food/PickledCabbage.png</ICONPATH>
   </Row>
   <Row>
     <ID>210800301</ID>
     <_DEV_NAME>콩 스튜</_DEV_NAME>
     <NAME>bean_stew</NAME>
     <PRODUCT_DISH_ID>310800301</PRODUCT_DISH_ID>
-    <COMPONENT_1>108003</COMPONENT_1>
-    <COMPONENT_2>108004</COMPONENT_2>
+    <COMPONENT_1>10800303</COMPONENT_1>
+    <COMPONENT_2>10800401</COMPONENT_2>
     <COMPONENT_3>108001</COMPONENT_3>
     <COMPONENT_4>110002</COMPONENT_4>
     <COMPONENT_5>NONE</COMPONENT_5>
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_bean_stew</DESC_BODY>
     <DISPLAY_NAME>콩 스튜</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>210800401</ID>
@@ -418,6 +503,9 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_glazed_carrot</DESC_BODY>
     <DISPLAY_NAME>당근 조림</DISPLAY_NAME>
+    <PRICE>150</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
   <Row>
     <ID>211000101</ID>
@@ -432,5 +520,8 @@
     <TRASH_DISH_ID>999999</TRASH_DISH_ID>
     <DESC_BODY>STR_Body_honey_cake</DESC_BODY>
     <DISPLAY_NAME>벌꿀 케이크</DISPLAY_NAME>
+    <PRICE>200</PRICE>
+    <ICONPATH>
+    </ICONPATH>
   </Row>
 </Rows>

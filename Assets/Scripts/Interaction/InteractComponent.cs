@@ -1,6 +1,5 @@
 using UnityEngine;
 using GamePlay;
-using UnityEngine.InputSystem;
 
 namespace Interaction
 {
@@ -15,6 +14,9 @@ namespace Interaction
         }
 
         private Collider2D _bodyCollider;
+        public SpriteRenderer[] InteractionVisuals { get; private set; }
+        public virtual bool CanInteract => isActiveAndEnabled;
+        public virtual string PromptKey => "STR_Interact_Default";
 
         /// <summary>플레이어 기준으로 이 오브젝트 몸체에서 가장 가까운 점. 콜라이더가 없으면 위치를 쓴다.</summary>
         public Vector2 GetClosestPoint(Vector2 from)
@@ -25,6 +27,7 @@ namespace Interaction
         protected virtual void Awake()
         {
             TryGetComponent(out _bodyCollider);
+            InteractionVisuals = GetComponentsInChildren<SpriteRenderer>(true);
 
             var child = new GameObject("InteractionRange");
             child.transform.SetParent(transform, false);
@@ -61,7 +64,13 @@ namespace Interaction
             OnPlayerExit();
         }
 
-        public void Interact() => OnInteract();
+        public void Interact()
+        {
+            if (CanInteract)
+            {
+                OnInteract();
+            }
+        }
 
         protected abstract void OnInteract();
 

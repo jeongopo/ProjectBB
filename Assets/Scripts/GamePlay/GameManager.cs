@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private GameState _previousGameState = default;
 
     [Header("Managers")]
-    [SerializeField] private SaveSystem _saveSystem = default;
     [SerializeField] private GameObject _sceneManager = default;
     [SerializeField] private GameObject _inputManager = default;
     [SerializeField] private GameObject _audioManager = default;
@@ -23,32 +22,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _dataManager = default;
 
     [SerializeField] private GameObject _timelineHandler = default;    
-
-    private bool _hasSaveData = false;
-
-    private void Start()
-	{
-		StartGame();
-	}
-
-    void StartGame()
-	{
-		_hasSaveData = false;
-		
-		_saveSystem.WriteEmptySaveFile();
-		_saveSystem.SetNewGameData();
-	}
-
-	private void StartNewGame()
-	{
-		_hasSaveData = false;
-		
-		_saveSystem.WriteEmptySaveFile();
-		_saveSystem.SetNewGameData();
-    }
-    private void ContinuePreviousGame()
-	{
-    }
 
     public void UpdateGameState(GameState newGameState)
 	{

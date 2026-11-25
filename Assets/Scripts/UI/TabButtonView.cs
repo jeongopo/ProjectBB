@@ -1,4 +1,5 @@
 using System;
+using GamePlay;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,7 +17,11 @@ public class TabButtonView : MonoBehaviour
     {
         _label.text = label;
         _button.onClick.RemoveAllListeners();
-        _button.onClick.AddListener(() => onClick?.Invoke());
+        _button.onClick.AddListener(() =>
+        {
+            GameAudio.Play(SoundCue.Select);
+            onClick?.Invoke();
+        });
     }
 
     public void SetSelected(bool selected, Sprite normalSprite, Sprite selectedSprite)

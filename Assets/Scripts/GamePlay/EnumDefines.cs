@@ -31,4 +31,20 @@ public enum DayPhase
     Hunting,
     Business,
 }
+
+public enum CustomerState
+{
+    Entering,
+    Seated,
+    Eating,
+    Leaving,
+}
+
+public enum ServeResult
+{
+    Success,
+    NoOrder,
+    NotCooked,
+    NoDish,
+}
 }

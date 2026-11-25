@@ -8,6 +8,8 @@ using DataEnumDefines;
 public class DataStorage
 {
 	public Dictionary<string,BBString> BBStringData;
+	public Dictionary<string,Currency> CurrencyData;
+	public Dictionary<string,Customer> CustomerData;
 	public Dictionary<string,Drop> DropData;
 	public Dictionary<string,Hunting> HuntingData;
 	public Dictionary<string,Item> ItemData;
@@ -21,6 +23,8 @@ public class DataStorage
 	public void LoadData()
 	{
 		BBStringData = DataManager.LoadDefineData<BBString>("BBString");
+		CurrencyData = DataManager.LoadDefineData<Currency>("Currency");
+		CustomerData = DataManager.LoadDefineData<Customer>("Customer");
 		DropData = DataManager.LoadDefineData<Drop>("Drop");
 		HuntingData = DataManager.LoadDefineData<Hunting>("Hunting");
 		ItemData = DataManager.LoadDefineData<Item>("Item");
@@ -37,6 +41,16 @@ public class DataStorage
 	{
 			public string ID;
 			public string BODY;
+	}
+	public class Currency
+	{
+			public string ID;
+			public string ICONPATH;
+	}
+	public class Customer
+	{
+			public string ID;
+			public int PATIENCE_MINUTES;
 	}
 	public class Drop
 	{
@@ -61,6 +75,7 @@ public class DataStorage
 			public string NAME;
 			public string DESC;
 			public string ICONPATH;
+			public string DISPLAY_NAME;
 	}
 	public class Minigame_Boiling
 	{
@@ -96,6 +111,8 @@ public class DataStorage
 			public string TRASH_DISH_ID;
 			public string DESC_BODY;
 			public string DISPLAY_NAME;
+			public int PRICE;
+			public string ICONPATH;
 	}
 	public class Recipe_Interaction
 	{

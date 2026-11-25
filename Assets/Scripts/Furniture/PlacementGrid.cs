@@ -134,6 +134,12 @@ namespace GamePlay
             return furniture;
         }
 
+        /// <summary>손님이 지나갈 수 있는 칸인지. 설치 가능 영역(바닥)에 속하고 가구가 없어야 한다.</summary>
+        public bool IsWalkable(Vector3Int cell)
+        {
+            return IsBuildable(cell) && !_occupied.ContainsKey(cell);
+        }
+
         private bool IsBuildable(Vector3Int cell)
         {
             if (_buildableTilemap != null && !_buildableTilemap.HasTile(cell))

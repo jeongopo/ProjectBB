@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using GameEnumDefines;
+using GamePlay;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -29,10 +31,20 @@ public class InventoryManager : MonoBehaviour
 
     private GamePlay.InputManager inputManager;
     private InputAction toggleAction;
+    private DataManager _dataManager;
+    private InventoryTooltip _tooltip;
+    private InventoryListItem _hoveredSlot;
+    private bool _inCooking;
+    private bool _selectionLocked;
+    private float _normalPanelX;
+    private Predicate<SavedItemStack> _ingredientFilter;
+    private Action<SavedItemStack?> _ingredientChanged;
+    private SavedItemStack? _ingredient;
 
     private void Awake()
     {
         inputManager = FindFirstObjectByType<GamePlay.InputManager>();
+        _dataManager = FindFirstObjectByType<DataManager>();
 
         if (inventoryPanel != null)
             inventoryPanel.SetActive(false);
@@ -45,6 +57,7 @@ public class InventoryManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        _tooltip?.Destroy();
         if (toggleAction != null)
             toggleAction.started -= OnToggleInventory;
     }
@@ -54,9 +67,11 @@ public class InventoryManager : MonoBehaviour
         if (slotParent == null || slotPrefab == null)
             return;
 
+        Sprite outline = Resources.Load<Sprite>("Art/UI/Common/UI_Slot_Selected");
         for (int i = 0; i < MaxSlots; i++)
         {
             InventoryListItem slot = Instantiate(slotPrefab, slotParent);
+            slot.Bind(outline, SelectIngredient, ShowTooltip, HideTooltip);
             slot.Clear();
             slots.Add(slot);
         }
@@ -89,26 +104,180 @@ public class InventoryManager : MonoBehaviour
 
     public void OpenInventory()
     {
+        if (_inCooking)
+        {
+            return;
+        }
         RefreshSlots();
 
         if (inventoryPanel != null)
+        {
             inventoryPanel.SetActive(true);
+            GameAudio.Play(SoundCue.PanelOpen);
+        }
         if (inputManager != null)
             inputManager.SwitchInputState(InputState.Popup);
     }
 
     public void CloseInventory()
     {
-        if (inventoryPanel != null)
+        if (_inCooking)
+        {
+            return;
+        }
+        HideTooltip(_hoveredSlot);
+        if (inventoryPanel != null && inventoryPanel.activeSelf)
+        {
             inventoryPanel.SetActive(false);
+            GameAudio.Play(SoundCue.PanelClose);
+        }
         if (inputManager != null)
             inputManager.SwitchInputState(InputState.Default);
     }
 
+    internal void OpenForCooking(Predicate<SavedItemStack> filter, Action<SavedItemStack?> changed)
+    {
+        if (_inCooking || inventoryPanel == null)
+        {
+            return;
+        }
+
+        _inCooking = true;
+        _ingredientFilter = filter;
+        _ingredientChanged = changed;
+        if (inventoryPanel.transform is RectTransform rect)
+        {
+            _normalPanelX = rect.anchoredPosition.x;
+            rect.anchoredPosition = new Vector2(250f, rect.anchoredPosition.y);
+        }
+        if (closeButton != null)
+        {
+            closeButton.interactable = false;
+        }
+        RefreshSlots();
+        SetCookingInventoryVisible(true);
+    }
+
+    internal void SetCookingInventoryVisible(bool visible)
+    {
+        if (!_inCooking || inventoryPanel == null)
+        {
+            return;
+        }
+
+        if (!visible)
+        {
+            HideTooltip(_hoveredSlot);
+        }
+
+        inventoryPanel.SetActive(visible);
+    }
+
+    internal void SetCookingSelectionLocked(bool locked)
+    {
+        if (!_inCooking)
+        {
+            return;
+        }
+        _selectionLocked = locked;
+        RefreshSlots();
+    }
+
+    internal void CloseAfterCooking()
+    {
+        if (!_inCooking)
+        {
+            return;
+        }
+
+        HideTooltip(_hoveredSlot);
+        _inCooking = false;
+        _selectionLocked = false;
+        _ingredient = null;
+        _ingredientFilter = null;
+        _ingredientChanged = null;
+        if (inventoryPanel.transform is RectTransform rect)
+        {
+            rect.anchoredPosition = new Vector2(_normalPanelX, rect.anchoredPosition.y);
+        }
+        if (closeButton != null)
+        {
+            closeButton.interactable = true;
+        }
+        inventoryPanel.SetActive(false);
+    }
+
+    private void SelectIngredient(InventoryListItem slot)
+    {
+        if (!_inCooking || _selectionLocked || slot.Stack.Count <= 0 || _ingredientFilter?.Invoke(slot.Stack) != true)
+        {
+            return;
+        }
+
+        _ingredient = slot.Stack;
+        _ingredientChanged?.Invoke(_ingredient);
+        RefreshSlots();
+        GameAudio.Play(SoundCue.Select);
+    }
+
+    private void ShowTooltip(InventoryListItem slot)
+    {
+        if (_tooltip == null)
+        {
+            Canvas canvas = inventoryPanel.GetComponentInParent<Canvas>();
+            if (canvas == null)
+            {
+                return;
+            }
+            _tooltip = new InventoryTooltip(canvas);
+        }
+
+        _hoveredSlot = slot;
+        string name = GetItemName(slot.Stack.ItemId);
+        _tooltip.Show(name, slot.TooltipAnchor);
+    }
+
+    private void HideTooltip(InventoryListItem slot)
+    {
+        if (_hoveredSlot == slot)
+        {
+            _hoveredSlot = null;
+            _tooltip?.Hide();
+        }
+    }
+
+    private string GetItemName(string itemId)
+    {
+        DataStorage data = _dataManager != null ? _dataManager.dataStorage : null;
+        if (data?.ItemData != null && data.ItemData.TryGetValue(itemId, out DataStorage.Item item))
+        {
+            return string.IsNullOrEmpty(item.DISPLAY_NAME) ? item.NAME : data.GetBBStringText(item.DISPLAY_NAME);
+        }
+
+        if (data?.Recipe_CombineData != null)
+        {
+            foreach (DataStorage.Recipe_Combine recipe in data.Recipe_CombineData.Values)
+            {
+                if (recipe.PRODUCT_DISH_ID == itemId)
+                {
+                    return recipe.DISPLAY_NAME;
+                }
+            }
+        }
+        return itemId;
+    }
+
     public void AddItem(string itemID, int count, int grade = 0)
     {
+        TryAddItem(itemID, count, grade);
+    }
+
+    public bool TryAddItem(string itemID, int count, int grade = 0)
+    {
         if (string.IsNullOrEmpty(itemID) || count <= 0)
-            return;
+        {
+            return false;
+        }
 
         ItemStack stack = itemStacks.Find(s => s.ItemID == itemID && s.Grade == grade);
         if (stack != null)
@@ -122,14 +291,130 @@ public class InventoryManager : MonoBehaviour
         else
         {
             Debug.LogWarning($"InventoryManager: Inventory full ({MaxSlots}/{MaxSlots}), cannot add new item '{itemID}'");
-            return;
+            return false;
         }
 
         if (inventoryPanel != null && inventoryPanel.activeSelf)
             RefreshSlots();
+
+        return true;
     }
 
     // 등급 구분 없이 합산한 보유 수량
+    internal List<SavedItemStack> CaptureStacks()
+    {
+        List<SavedItemStack> stacks = new List<SavedItemStack>(itemStacks.Count);
+        foreach (ItemStack stack in itemStacks)
+        {
+            stacks.Add(new SavedItemStack { ItemId = stack.ItemID, Grade = stack.Grade, Count = stack.Count });
+        }
+
+        return stacks;
+    }
+
+    internal void RestoreStacks(SaveData data)
+    {
+        itemStacks.Clear();
+        if (data.ItemStacks != null)
+        {
+            foreach (SavedItemStack stack in data.ItemStacks)
+            {
+                AddItem(stack.ItemId, stack.Count, stack.Grade);
+            }
+        }
+        else if (data._playerInventory != null)
+        {
+            foreach (string itemId in data._playerInventory)
+            {
+                AddItem(itemId, 1);
+            }
+        }
+
+        RefreshSlots();
+    }
+
+    internal bool TryConvertOne(string inputId, int inputGrade, string outputId, int outputGrade)
+    {
+        ItemStack input = itemStacks.Find(stack => stack.ItemID == inputId && stack.Grade == inputGrade);
+        if (input == null || input.Count <= 0 || string.IsNullOrEmpty(outputId))
+        {
+            return false;
+        }
+
+        ItemStack output = itemStacks.Find(stack => stack.ItemID == outputId && stack.Grade == outputGrade);
+        if (output == input)
+        {
+            return true;
+        }
+        if (output == null && itemStacks.Count >= MaxSlots && input.Count > 1)
+        {
+            return false;
+        }
+
+        input.Count--;
+        if (input.Count == 0)
+        {
+            itemStacks.Remove(input);
+        }
+        if (output == null)
+        {
+            itemStacks.Add(new ItemStack { ItemID = outputId, Grade = outputGrade, Count = 1 });
+        }
+        else
+        {
+            output.Count++;
+        }
+        if (inventoryPanel != null && inventoryPanel.activeSelf)
+        {
+            RefreshSlots();
+        }
+        return true;
+    }
+
+    internal bool TryCraft(PlatingRecipe recipe)
+    {
+        List<SavedItemStack> consumed = new List<SavedItemStack>();
+        int freed = 0;
+        foreach (string itemId in recipe.DistinctItemIDs)
+        {
+            int remaining = recipe.GetRequiredCount(itemId);
+            List<int> grades = GetOwnedGrades(itemId);
+            for (int i = grades.Count - 1; i >= 0 && remaining > 0; i--)
+            {
+                int grade = grades[i];
+                int owned = GetCount(itemId, grade);
+                int take = Mathf.Min(remaining, owned);
+                if (take == owned)
+                {
+                    freed++;
+                }
+                consumed.Add(new SavedItemStack { ItemId = itemId, Grade = grade, Count = take });
+                remaining -= take;
+            }
+
+            if (remaining > 0)
+            {
+                return false;
+            }
+        }
+
+        bool hasOutput = !string.IsNullOrEmpty(recipe.outputItemID);
+        if (hasOutput && itemStacks.Count - freed >= MaxSlots && GetCount(recipe.outputItemID, 0) == 0)
+        {
+            return false;
+        }
+
+        foreach (SavedItemStack stack in consumed)
+        {
+            RemoveItem(stack.ItemId, stack.Grade, stack.Count);
+        }
+        if (hasOutput)
+        {
+            AddItem(recipe.outputItemID, 1);
+        }
+        return true;
+    }
+
     public int GetCount(string itemID)
     {
         int total = 0;
@@ -180,12 +465,27 @@ public class InventoryManager : MonoBehaviour
 
     private void RefreshSlots()
     {
+        if (_ingredient.HasValue && GetCount(_ingredient.Value.ItemId, _ingredient.Value.Grade) == 0)
+        {
+            _ingredient = null;
+            _ingredientChanged?.Invoke(null);
+        }
+
         for (int i = 0; i < slots.Count; i++)
         {
             if (i < itemStacks.Count)
-                slots[i].SetItem(itemStacks[i].ItemID, itemStacks[i].Count);
+            {
+                ItemStack item = itemStacks[i];
+                SavedItemStack stack = new SavedItemStack { ItemId = item.ItemID, Grade = item.Grade, Count = item.Count };
+                bool selected = _ingredient?.ItemId == stack.ItemId && _ingredient?.Grade == stack.Grade;
+                bool hasFilter = _inCooking && _ingredientFilter != null;
+                bool canPrepare = hasFilter && _ingredientFilter(stack);
+                slots[i].SetItem(stack, canPrepare && !_selectionLocked, selected, hasFilter && !canPrepare);
+            }
             else
+            {
                 slots[i].Clear();
+            }
         }
     }
 }

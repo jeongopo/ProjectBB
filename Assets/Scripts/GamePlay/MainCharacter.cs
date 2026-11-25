@@ -23,10 +23,13 @@ namespace GamePlay
         
         [Header("Sprite Settings")]
         [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private Color _occlusionColor = new Color(1f, 0.92f, 0.76f, 0.45f);
 
         private Rigidbody2D rb;
         private Animator animator;
         private InputAction moveAction;
+        private PhysicsMaterial2D _movementMaterial;
+        private Vector2 _desiredVelocity;
         private float lastMoveX = 0f;
         private float lastMoveY = 0f;
 
@@ -48,10 +51,22 @@ namespace GamePlay
             
             rb.gravityScale = 0f;
             rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+            if (TryGetComponent(out Collider2D bodyCollider))
+            {
+                // 발 콜라이더가 벽에 비스듬히 닿을 때 접선 방향의 이동을 마찰로 잃지 않는다.
+                _movementMaterial = new PhysicsMaterial2D("Player Slide") { friction = 0f, bounciness = 0f };
+                bodyCollider.sharedMaterial = _movementMaterial;
+            }
         }
         
         private void Start()
         {
+            if (spriteRenderer != null && _occlusionColor.a > 0f)
+            {
+                gameObject.AddComponent<CharacterOcclusionSilhouette>().Initialize(spriteRenderer, _occlusionColor);
+            }
+
             if (inputManager == null)
             {
                 inputManager = FindFirstObjectByType<InputManager>();
@@ -70,6 +85,15 @@ namespace GamePlay
             {
                 transform.position = groundTilemap.GetCellCenterWorld(groundTilemap.WorldToCell(transform.position));
             }
+
+            if (!TryGetComponent(out PlayerFootsteps footsteps))
+            {
+                footsteps = gameObject.AddComponent<PlayerFootsteps>();
+            }
+
+            footsteps.Initialize(groundTilemap, rb);
+            GameAudio.StartMusic();
+            gameObject.AddComponent<AudioOptionsUI>().Initialize(inputManager);
         }
         
         private void Update()
@@ -88,7 +112,7 @@ namespace GamePlay
 
         private void StopMovement()
         {
-            rb.linearVelocity = Vector2.zero;
+            _desiredVelocity = Vector2.zero;
 
             if (animator != null)
             {
@@ -110,7 +134,7 @@ namespace GamePlay
             Vector2 input = moveAction.ReadValue<Vector2>();
 
             Vector2 movement = input.normalized * moveSpeed;
-            rb.linearVelocity = movement;
+            _desiredVelocity = movement;
 
             // 마지막 방향 유지: 입력이 있을 때만 lastMoveX/Y 갱신
             if(input.x != 0f || input.y != 0f)
@@ -152,8 +176,31 @@ namespace GamePlay
                 UpdateCharacterState(CharacterState.Idle);
             }
         }
-        
-        
+
+        private void FixedUpdate()
+        {
+            rb.linearVelocity = inputManager != null && inputManager.CanCharacterMove
+                ? _desiredVelocity
+                : Vector2.zero;
+        }
+
+        private void OnDisable()
+        {
+            _desiredVelocity = Vector2.zero;
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_movementMaterial != null)
+            {
+                Destroy(_movementMaterial);
+            }
+        }
+
         private void FlipSprite(float directionX)
         {
             if (spriteRenderer == null) return;
@@ -173,7 +220,10 @@ namespace GamePlay
             if (CurrentPlayerState == newState) return;
 
             CurrentPlayerState = newState;
-            animator.SetInteger("State", (int) CurrentPlayerState);
+            if (animator != null)
+            {
+                animator.SetInteger("State", (int)CurrentPlayerState);
+            }
         }
     }
 }
