@@ -899,4 +899,36 @@
     <ID>STR_Cooking_Complete</ID>
     <BODY>조리 완료</BODY>
   </Row>
+  <Row>
+    <ID>STR_Interact_Talk</ID>
+    <BODY>대화</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Next</ID>
+    <BODY>다음</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Close</ID>
+    <BODY>닫기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Munin_Name</ID>
+    <BODY>무닌</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Munin_01</ID>
+    <BODY>나는 기억을 나르는 무닌. 주점에 오면 불가에서 날 찾게.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Munin_02</ID>
+    <BODY>들에서 가져온 재료는 주문에 맞게 썰거나 끓여 두게. 보급 선반의 재료로 먼저 연습해도 좋아.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Munin_03</ID>
+    <BODY>손님이 오면 담기에서 주문을 고르게. 접시를 완성한 뒤 손님에게 말을 걸면 음식을 내줄 수 있지.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Munin_04</ID>
+    <BODY>하루 장사가 끝나면 침대에서 쉬게. 정산을 마치고 나면 새 하루가 시작되지.</BODY>
+  </Row>
 </Rows>
