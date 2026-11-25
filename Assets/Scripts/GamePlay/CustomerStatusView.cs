@@ -14,6 +14,7 @@ namespace GamePlay
 
         private static Sprite _squareSprite;
         private static Sprite _barSprite;
+        private static Sprite _readyCheck;
 
         [Header("Layout")]
         [SerializeField] private Vector2 _offset = new Vector2(0f, 1.8f);
@@ -41,6 +42,8 @@ namespace GamePlay
         private SpriteRenderer _barFill;
         private SpriteRenderer _icon;
         private SpriteRenderer _iconBack;
+        private SpriteRenderer _ready;
+        private PlatingOrder _watchedOrder;
         private Tween _barTween;
         private Tween _popTween;
 
@@ -57,6 +60,7 @@ namespace GamePlay
 
         private void OnDisable()
         {
+            UnwatchOrder();
             _customer.OnStateChanged -= HandleStateChanged;
             _customer.OnPatienceChanged -= HandlePatienceChanged;
             _barTween?.Kill();
@@ -70,12 +74,35 @@ namespace GamePlay
 
             if (state != CustomerState.Seated)
             {
+                UnwatchOrder();
                 _statusRoot.gameObject.SetActive(false);
                 return;
             }
 
             ApplyOrderIcon();
+            UnwatchOrder();
+            _watchedOrder = _customer.Order?.PlatingOrder;
+            if (_watchedOrder != null)
+            {
+                _watchedOrder.OnReadyChanged += ShowReady;
+            }
+            ShowReady(_watchedOrder?.servable == true);
             ShowWithPop();
+        }
+
+        private void UnwatchOrder()
+        {
+            if (_watchedOrder != null)
+            {
+                _watchedOrder.OnReadyChanged -= ShowReady;
+                _watchedOrder = null;
+            }
+        }
+
+        private void ShowReady(bool ready)
+        {
+            _ready.gameObject.SetActive(ready && _ready.sprite != null);
+            _iconBack.color = ready ? new Color32(255, 214, 121, 255) : _iconBackColor;
         }
 
         private void HandlePatienceChanged(float ratio)
@@ -134,6 +161,17 @@ namespace GamePlay
             _iconBack = CreateRenderer("IconBack", new Vector3(0f, _iconOffsetY, 0f), Vector2.one, _iconBackColor, 0, false);
             _iconBack.sprite = GetSquareSprite();
             _icon = CreateRenderer("Icon", new Vector3(0f, _iconOffsetY, 0f), Vector2.one, Color.white, 1, false);
+            if (_readyCheck == null)
+            {
+                _readyCheck = Resources.Load<Sprite>("Art/UI/Cooking/Plating/Plating_Check");
+            }
+            _ready = CreateRenderer("Ready", new Vector3(0.28f, _iconOffsetY + 0.24f, 0f), Vector2.one, Color.white, 2, false);
+            _ready.sprite = _readyCheck;
+            if (_readyCheck != null)
+            {
+                _ready.transform.localScale = Vector3.one * (0.39f / _readyCheck.bounds.size.x);
+            }
+            _ready.gameObject.SetActive(false);
 
             _statusRoot.gameObject.SetActive(false);
         }

@@ -191,4 +191,16 @@
     <DESC>STR_worldtree_sap</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_worldtree_sap.png</ICONPATH>
   </Row>
+  <Row>
+    <ID>10800303</ID>
+    <NAME>boiled_bean</NAME>
+    <DESC>STR_Body_bean_boil</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_bean.png</ICONPATH>
+  </Row>
+  <Row>
+    <ID>10800401</ID>
+    <NAME>chopped_carrot</NAME>
+    <DESC>STR_Body_carrot_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_carrot.png</ICONPATH>
+  </Row>
 </Rows>

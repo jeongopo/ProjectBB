@@ -707,4 +707,68 @@
     <ID>STR_Interact_Serve</ID>
     <BODY>서빙</BODY>
   </Row>
+  <Row>
+    <ID>STR_SupplyShelf_Prompt</ID>
+    <BODY>보급 받기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_SupplyShelf_Received</ID>
+    <BODY>창고에서 재료 {0}개를 가져왔습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_SupplyShelf_Full</ID>
+    <BODY>인벤토리가 가득 찼습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_SupplyShelf_Empty</ID>
+    <BODY>오늘 보급 재료를 모두 가져갔습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Prep_Unavailable</ID>
+    <BODY>지금 손질할 주문 재료가 없어요. 재고와 주문서를 확인하세요.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Prep_Target</ID>
+    <BODY>준비할 재료 · {0}</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Prep_Completed</ID>
+    <BODY>{0}을(를) 준비했습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Prep_CannotStore</ID>
+    <BODY>손질한 재료를 넣을 인벤토리 칸이 없습니다.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Title</ID>
+    <BODY>{0}일차 마감</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Orders</ID>
+    <BODY>받은 주문  {0}건</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Served</ID>
+    <BODY>서빙 완료  {0}건</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Missed</ID>
+    <BODY>놓친 주문  {0}건</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Earned</ID>
+    <BODY>오늘 매출  {0} 골드</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Next</ID>
+    <BODY>다음 날</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Lobby</ID>
+    <BODY>로비로</BODY>
+  </Row>
+  <Row>
+    <ID>STR_DaySummary_Date</ID>
+    <BODY>{0}일차</BODY>
+  </Row>
 </Rows>

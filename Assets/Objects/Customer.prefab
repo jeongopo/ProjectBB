@@ -102,6 +102,7 @@ GameObject:
   - component: {fileID: 3535180853543027749}
   - component: {fileID: 8867036649731999323}
   - component: {fileID: 4576450908305242851}
+  - component: {fileID: 2609850282696515727}
   m_Layer: 0
   m_Name: Customer
   m_TagString: Untagged
@@ -137,8 +138,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2be28ab1ef1b9d742ba6650017143145, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GamePlay.CustomerController
+  interactSize: {x: 2.5, y: 2.5}
+  interactMargin: {x: 0.5, y: 0.5}
   _moveSpeed: 3
-  _moveEase: 1
+  _personalSpace: 0.8
+  _repathAfterSeconds: 0.4
+  _maxWaitSeconds: 4
+  _eatDuration: 1
+  _servedPunchScale: 0.2
+  _servedPunchDuration: 0.3
+  _rejectShakeStrength: 0.1
+  _rejectShakeDuration: 0.25
 --- !u!114 &4576450908305242851
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,3 +163,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GamePlay.YSorter
   _footCollider: {fileID: 0}
   _footOffsetY: 0
+--- !u!114 &2609850282696515727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6005269113454315158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23b51470c96f43b38d4a33c64235a475, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GamePlay.CustomerStatusView
+  _offset: {x: 0, y: 1.8}
+  _barSize: {x: 0.9, y: 0.12}
+  _iconOffsetY: 0.55
+  _iconSize: 0.6
+  _sortingLayerName: Object
+  _sortingOrder: 5000
+  _barBackColor: {r: 0, g: 0, b: 0, a: 0.6}
+  _barFullColor: {r: 0.45, g: 0.9, b: 0.4, a: 1}
+  _barLowColor: {r: 0.95, g: 0.3, b: 0.25, a: 1}
+  _iconBackColor: {r: 1, g: 1, b: 1, a: 0.9}
+  _barTweenDuration: 0.3
+  _popDuration: 0.25
+  _popEase: 27

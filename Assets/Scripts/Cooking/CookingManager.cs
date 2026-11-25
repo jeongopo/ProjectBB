@@ -1,5 +1,6 @@
 using UnityEngine;
 using GamePlay;
+using Interaction;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
 using GameEnumDefines;
@@ -32,6 +33,8 @@ public class CookingManager : MonoBehaviour
     private CookingComponent currentComponent;
     private GamePlay.InputManager inputManager;
     private Coroutine resultCoroutine;
+    private IngredientPreparation _preparation;
+    private CookingType _openType;
 
     private void Awake()
     {
@@ -128,6 +131,7 @@ public class CookingManager : MonoBehaviour
 
     public void OpenCooking(CookingType type)
     {
+        _openType = type;
         currentComponent = GetCookingComponent(type);
         if (currentComponent == null)
         {
@@ -140,21 +144,53 @@ public class CookingManager : MonoBehaviour
         cookingPanel.SetActive(true);
         GameAudio.Play(SoundCue.PanelOpen);
 
-        currentComponent.OnMiniGameEnd += OnMiniGameEnded;
         currentComponent.InitCooking();
     }
 
-    private void OnMiniGameEnded()
+    internal bool TryBeginPreparation()
     {
-        // 보상 처리
+        if (_openType != CookingType.Cutting && _openType != CookingType.Boiling)
+        {
+            return true;
+        }
+
+        if (_preparation == null)
+        {
+            SupplyShelf shelf = FindFirstObjectByType<SupplyShelf>();
+            DataManager data = FindFirstObjectByType<DataManager>();
+            InventoryManager inventory = FindFirstObjectByType<InventoryManager>();
+            if (shelf == null || data == null || inventory == null)
+            {
+                return true;
+            }
+
+            _preparation = new IngredientPreparation(data.dataStorage, inventory, FindFirstObjectByType<OrderBoard>(), shelf);
+        }
+
+        return _preparation.TryStart(_openType);
     }
+
+    internal void CompletePreparation(ENUMGRADE grade) => _preparation?.Complete(grade);
 
     public void CloseCooking()
     {
+        _preparation?.Cancel();
+        if (cookingTimer != null)
+        {
+            cookingTimer.StopCountdown();
+        }
+        if (resultCoroutine != null)
+        {
+            StopCoroutine(resultCoroutine);
+            resultCoroutine = null;
+        }
+        if (resultImage != null)
+        {
+            resultImage.gameObject.SetActive(false);
+        }
         if (currentComponent != null)
         {
             currentComponent.OnCookingEnd();
-            currentComponent.OnMiniGameEnd -= OnMiniGameEnded;
             currentComponent = null;
         }
 

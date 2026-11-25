@@ -154,13 +154,13 @@ namespace GamePlay
             if (reachedEnd)
             {
                 _totalMinutes = endMinutes;
+                _isDayEnded = true;
             }
 
             NotifyTimeChanged();
 
             if (reachedEnd)
             {
-                _isDayEnded = true;
                 OnDayEnded?.Invoke(_day);
             }
         }
@@ -228,6 +228,13 @@ namespace GamePlay
             if (keyboard != null && keyboard.f1Key.wasPressedThisFrame)
             {
                 _speedMultiplier = Mathf.Approximately(_speedMultiplier, 1f) ? _debugFastForwardMultiplier : 1f;
+            }
+            if (keyboard != null && keyboard.f2Key.wasPressedThisFrame && IsRunning && Time.timeScale > 0f &&
+                (_inputManager == null || _inputManager.CurrentInputState == InputState.Default))
+            {
+                float remaining = _dayEndHour * MinutesPerHour - _totalMinutes;
+                _totalMinutes += Mathf.Max(0f, remaining);
+                AdvanceTime(0f);
             }
 #endif
         }

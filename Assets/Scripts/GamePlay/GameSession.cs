@@ -8,11 +8,13 @@ namespace GamePlay
     public sealed class GameSession : MonoBehaviour
     {
         private const string GameplayPath = "Assets/Maps/TestScene.unity";
+        private const string LobbyPath = "Assets/Scenes/MainLobby.unity";
         private static bool _enteringFromLobby;
         private static SaveData _pendingSave;
         private GameClock _clock;
         private InventoryManager _inventory;
         private CurrencyWallet _wallet;
+        private bool _nextDaySaved;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void RegisterSceneHandler()
@@ -91,10 +93,22 @@ namespace GamePlay
 
         private void HandleDayEnded(int day)
         {
-            SaveCheckpoint(true);
+            _nextDaySaved = SaveCheckpoint(true);
         }
 
-        private void SaveCheckpoint(bool nextDay)
+        internal bool TryReturnToLobby()
+        {
+            int buildIndex = SceneUtility.GetBuildIndexByScenePath(LobbyPath);
+            if (buildIndex < 0 || (!_nextDaySaved && !SaveCheckpoint(true)))
+            {
+                return false;
+            }
+
+            UnitySceneManager.LoadScene(buildIndex);
+            return true;
+        }
+
+        private bool SaveCheckpoint(bool nextDay)
         {
             SaveData data = new SaveData
             {
@@ -113,10 +127,12 @@ namespace GamePlay
                 _clock.WriteTo(data);
             }
 
-            if (!SaveSystem.Save(data))
+            bool saved = SaveSystem.Save(data);
+            if (!saved)
             {
                 SystemMessageUI.Show(GetComponentText("STR_Lobby_SaveFailed"));
             }
+            return saved;
         }
 
         private string GetComponentText(string id)

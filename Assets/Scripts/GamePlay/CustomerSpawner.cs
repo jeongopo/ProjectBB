@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GameEnumDefines;
@@ -21,6 +22,8 @@ namespace GamePlay
         [Header("Test")]
         [Tooltip("0 이상이면 영업 구간과 상관없이 이 시각부터 스폰한다. 테스트용이라 실제 빌드에서는 -1로 끈다.")]
         [SerializeField] private int _testSpawnStartHour = 1;
+        [Tooltip("TestScene의 첫 손님을 진입 직후 입장시킨다. 에디터와 개발 빌드에서만 적용한다.")]
+        [SerializeField] private bool _spawnImmediatelyForTesting = true;
 
         private readonly List<CustomerController> _activeCustomers = new List<CustomerController>();
         private readonly List<CustomerSeat> _freeSeats = new List<CustomerSeat>();
@@ -29,10 +32,11 @@ namespace GamePlay
         private List<DataStorage.Customer> _customerPool;
         private bool _isBusinessOpen;
         private bool _wasOpen;
+        private bool _ready;
         private int _minutesUntilSpawn;
         private int _lastMinute;
 
-        private void Start()
+        private IEnumerator Start()
         {
             _seats = FindObjectsByType<CustomerSeat>(FindObjectsSortMode.None);
             _dataManager = FindFirstObjectByType<DataManager>();
@@ -40,6 +44,22 @@ namespace GamePlay
             if (_orderBoard == null)
             {
                 _orderBoard = FindFirstObjectByType<OrderBoard>();
+            }
+
+            // 데이터 로드와 이어하기의 시계 복원이 끝난 뒤 처음 입장시킨다.
+            yield return null;
+            if (_clock == null || !_clock.isActiveAndEnabled)
+            {
+                yield break;
+            }
+
+            _ready = true;
+            _lastMinute = _clock.TotalMinutes;
+            if (IsImmediateTestEnabled() && IsOpen())
+            {
+                _wasOpen = true;
+                _minutesUntilSpawn = Mathf.Max(1, _spawnIntervalMinutes);
+                TrySpawn();
             }
         }
 
@@ -100,6 +120,11 @@ namespace GamePlay
         {
             int elapsed = totalMinutes - _lastMinute;
             _lastMinute = totalMinutes;
+            if (!_ready)
+            {
+                return;
+            }
+
             bool isOpen = IsOpen();
             if (isOpen && !_wasOpen)
             {
@@ -122,12 +147,30 @@ namespace GamePlay
 
         private bool IsOpen()
         {
+            if (_clock.IsDayEnded)
+            {
+                return false;
+            }
+
             if (_isBusinessOpen)
             {
                 return true;
             }
 
-            return _testSpawnStartHour >= 0 && !_clock.IsDayEnded && _clock.Hour >= _testSpawnStartHour;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            return _testSpawnStartHour >= 0 && (IsImmediateTestEnabled() || _clock.Hour >= _testSpawnStartHour);
+#else
+            return false;
+#endif
+        }
+
+        private bool IsImmediateTestEnabled()
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            return _spawnImmediatelyForTesting && _testSpawnStartHour >= 0 && gameObject.scene.name == "TestScene";
+#else
+            return false;
+#endif
         }
 
         private void TrySpawn()

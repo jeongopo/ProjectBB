@@ -93,7 +93,22 @@ public class PlatingRecipe
 public class PlatingOrder
 {
     public PlatingRecipe recipe;
-    public bool servable; // 완성 후 서빙 전
+    private bool _servable;
+    public event Action<bool> OnReadyChanged;
+
+    public bool servable
+    {
+        get => _servable;
+        set
+        {
+            if (_servable == value)
+            {
+                return;
+            }
+            _servable = value;
+            OnReadyChanged?.Invoke(value);
+        }
+    }
 
     public PlatingOrder(PlatingRecipe recipe)
     {

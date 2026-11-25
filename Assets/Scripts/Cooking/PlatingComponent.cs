@@ -503,10 +503,29 @@ public class PlatingComponent : CookingComponent
                 list.Add(new GridSlot { itemID = ingredient.itemID, isAnswer = true });
         }
 
-        List<string> neededIDs = nowRecipe.DistinctItemIDs.ToList();
+        HashSet<string> neededIDs = new HashSet<string>(nowRecipe.DistinctItemIDs);
         List<string> baitPool = new List<string>();
-        if (dataManager != null && dataManager.dataStorage?.ItemData != null)
-            baitPool.AddRange(dataManager.dataStorage.ItemData.Keys.Where(id => !neededIDs.Contains(id) && id != waterItemID));
+        Dictionary<string, DataStorage.Item> itemRows = dataManager != null ? dataManager.dataStorage?.ItemData : null;
+        if (itemRows != null)
+        {
+            HashSet<string> answerIcons = new HashSet<string>();
+            foreach (string itemId in neededIDs)
+            {
+                if (itemRows.TryGetValue(itemId, out DataStorage.Item item) && !string.IsNullOrEmpty(item.ICONPATH))
+                {
+                    answerIcons.Add(item.ICONPATH);
+                }
+            }
+
+            // 원재료 아이콘을 재사용하는 손질 재료와 원재료를 한 격자에 내면 구분할 수 없다.
+            foreach (KeyValuePair<string, DataStorage.Item> row in itemRows)
+            {
+                if (!neededIDs.Contains(row.Key) && row.Key != waterItemID && !answerIcons.Contains(row.Value.ICONPATH))
+                {
+                    baitPool.Add(row.Key);
+                }
+            }
+        }
         Shuffle(baitPool);
 
         foreach (string baitID in baitPool)
@@ -607,12 +626,17 @@ public class PlatingComponent : CookingComponent
 
     private void Succeed()
     {
+        if (inventory == null || !inventory.TryCraft(nowRecipe))
+        {
+            GameAudio.Play(SoundCue.CookingMiss);
+            BeginEnding();
+            SystemMessageUI.Show(GetText("STR_Prep_CannotStore"));
+            endingRoutine = StartCoroutine(EndingRoutine());
+            return;
+        }
+
         GameAudio.Play(SoundCue.CookingSuccess);
         BeginEnding();
-
-        ConsumeIngredients(nowRecipe);
-        if (inventory != null && !string.IsNullOrEmpty(nowRecipe.outputItemID))
-            inventory.AddItem(nowRecipe.outputItemID, 1);
 
         nowOrder.servable = true;
         SystemMessageUI.Show(GetText("STR_UI_Plating_Success"));
@@ -644,28 +668,8 @@ public class PlatingComponent : CookingComponent
         yield return new WaitForSeconds(resultDisplayDuration);
         endingRoutine = null;
 
-        // TODO: [마무리] 서빙 절차(손님 지목 → 서빙) 연동. 현재는 서빙 가능 상태로 표시만 하고 식당으로 복귀한다
         ResetPlayState();
         cookingManager?.CloseCooking();
-    }
-
-    // 성공했을 때만 재료를 소모한다. 등급이 낮은 것부터 사용
-    private void ConsumeIngredients(PlatingRecipe recipe)
-    {
-        if (inventory == null)
-            return;
-
-        foreach (string itemID in recipe.DistinctItemIDs)
-        {
-            int remaining = recipe.GetRequiredCount(itemID);
-            List<int> grades = inventory.GetOwnedGrades(itemID); // 등급 내림차순
-            for (int i = grades.Count - 1; i >= 0 && remaining > 0; i--)
-            {
-                int take = Mathf.Min(remaining, inventory.GetCount(itemID, grades[i]));
-                if (inventory.RemoveItem(itemID, grades[i], take))
-                    remaining -= take;
-            }
-        }
     }
 
     private void ResetPlayState()
@@ -791,6 +795,12 @@ public class PlatingComponent : CookingComponent
     {
         if (itemID == waterItemID)
             return "물";
+
+        if (IngredientPreparation.TryGetRecipe(dataManager != null ? dataManager.dataStorage : null, itemID,
+            out DataStorage.Recipe_Interaction preparation))
+        {
+            return GetText(preparation.DESC);
+        }
 
         if (dataManager != null && dataManager.dataStorage?.ItemData != null
             && dataManager.dataStorage.ItemData.TryGetValue(itemID, out DataStorage.Item item))

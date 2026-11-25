@@ -114,8 +114,15 @@ public class InventoryManager : MonoBehaviour
 
     public void AddItem(string itemID, int count, int grade = 0)
     {
+        TryAddItem(itemID, count, grade);
+    }
+
+    public bool TryAddItem(string itemID, int count, int grade = 0)
+    {
         if (string.IsNullOrEmpty(itemID) || count <= 0)
-            return;
+        {
+            return false;
+        }
 
         ItemStack stack = itemStacks.Find(s => s.ItemID == itemID && s.Grade == grade);
         if (stack != null)
@@ -129,11 +136,13 @@ public class InventoryManager : MonoBehaviour
         else
         {
             Debug.LogWarning($"InventoryManager: Inventory full ({MaxSlots}/{MaxSlots}), cannot add new item '{itemID}'");
-            return;
+            return false;
         }
 
         if (inventoryPanel != null && inventoryPanel.activeSelf)
             RefreshSlots();
+
+        return true;
     }
 
     // 등급 구분 없이 합산한 보유 수량
@@ -167,6 +176,73 @@ public class InventoryManager : MonoBehaviour
         }
 
         RefreshSlots();
+    }
+
+    internal bool TryConvertOne(string inputId, string outputId, int outputGrade)
+    {
+        List<int> grades = GetOwnedGrades(inputId);
+        if (grades.Count == 0)
+        {
+            return false;
+        }
+
+        int inputGrade = grades[grades.Count - 1];
+        if (!RemoveItem(inputId, inputGrade))
+        {
+            return false;
+        }
+
+        if (TryAddItem(outputId, 1, outputGrade))
+        {
+            return true;
+        }
+
+        AddItem(inputId, 1, inputGrade);
+        return false;
+    }
+
+    internal bool TryCraft(PlatingRecipe recipe)
+    {
+        List<SavedItemStack> consumed = new List<SavedItemStack>();
+        int freed = 0;
+        foreach (string itemId in recipe.DistinctItemIDs)
+        {
+            int remaining = recipe.GetRequiredCount(itemId);
+            List<int> grades = GetOwnedGrades(itemId);
+            for (int i = grades.Count - 1; i >= 0 && remaining > 0; i--)
+            {
+                int grade = grades[i];
+                int owned = GetCount(itemId, grade);
+                int take = Mathf.Min(remaining, owned);
+                if (take == owned)
+                {
+                    freed++;
+                }
+                consumed.Add(new SavedItemStack { ItemId = itemId, Grade = grade, Count = take });
+                remaining -= take;
+            }
+
+            if (remaining > 0)
+            {
+                return false;
+            }
+        }
+
+        bool hasOutput = !string.IsNullOrEmpty(recipe.outputItemID);
+        if (hasOutput && itemStacks.Count - freed >= MaxSlots && GetCount(recipe.outputItemID, 0) == 0)
+        {
+            return false;
+        }
+
+        foreach (SavedItemStack stack in consumed)
+        {
+            RemoveItem(stack.ItemId, stack.Grade, stack.Count);
+        }
+        if (hasOutput)
+        {
+            AddItem(recipe.outputItemID, 1);
+        }
+        return true;
     }
 
     public int GetCount(string itemID)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using GameEnumDefines;
+using Interaction;
 
 namespace GamePlay
 {
@@ -39,6 +40,9 @@ namespace GamePlay
         private readonly Dictionary<string, Sprite> _iconCache = new Dictionary<string, Sprite>();
         private DataManager _dataManager;
         private InventoryManager _inventory;
+        private MainCharacter _player;
+        private ServeFeedback _serveFeedback;
+        private SupplyShelf _supplyShelf;
         private List<DataStorage.Recipe_Combine> _recipePool;
 
         public IReadOnlyList<PlatingOrder> PlatingOrders => _platingOrders;
@@ -51,6 +55,12 @@ namespace GamePlay
         {
             _dataManager = FindFirstObjectByType<DataManager>();
             _inventory = FindFirstObjectByType<InventoryManager>();
+            _player = FindFirstObjectByType<MainCharacter>();
+            _supplyShelf = FindFirstObjectByType<SupplyShelf>();
+            if (!TryGetComponent(out _serveFeedback))
+            {
+                _serveFeedback = gameObject.AddComponent<ServeFeedback>();
+            }
 
             if (_wallet == null)
             {
@@ -112,19 +122,23 @@ namespace GamePlay
                 return ServeResult.NoDish;
             }
 
-            int price = order.Recipe.PRICE;
+            int paid = 0;
             if (_wallet != null)
             {
-                _wallet.Add(CurrencyIds.Gold, price);
+                int previousGold = _wallet.Get(CurrencyIds.Gold);
+                _wallet.Add(CurrencyIds.Gold, order.Recipe.PRICE);
+                paid = _wallet.Get(CurrencyIds.Gold) - previousGold;
             }
 
             if (_dayStats != null)
             {
-                _dayStats.RecordServed(price);
+                _dayStats.RecordServed(paid);
             }
 
             RemoveOrder(order);
-            GameAudio.Play(SoundCue.Served);
+            Vector3 destination = customer.transform.position;
+            Vector3 origin = _player != null ? _player.transform.position : destination;
+            _serveFeedback.Play(origin, destination, paid);
             return ServeResult.Success;
         }
 
@@ -179,6 +193,15 @@ namespace GamePlay
 
         private DataStorage.Recipe_Combine PickRecipe()
         {
+            if (_supplyShelf != null && _supplyShelf.isActiveAndEnabled)
+            {
+                IReadOnlyList<DataStorage.Recipe_Combine> starter = _supplyShelf.GetStarterRecipes();
+                if (starter.Count > 0)
+                {
+                    return starter[UnityEngine.Random.Range(0, starter.Count)];
+                }
+            }
+
             if (_recipePool == null)
             {
                 Dictionary<string, DataStorage.Recipe_Combine> table = _dataManager != null ? _dataManager.dataStorage?.Recipe_CombineData : null;
