@@ -4,203 +4,391 @@
     <NAME>string</NAME>
     <DESC>string</DESC>
     <ICONPATH>string</ICONPATH>
+    <DISPLAY_NAME>string</DISPLAY_NAME>
   </Info>
   <Row>
     <ID>101001</ID>
     <NAME>fresh_milk</NAME>
     <DESC>STR_fresh_milk</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_fresh_milk.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_101001</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>101002</ID>
     <NAME>aged_cheese</NAME>
     <DESC>STR_aged_cheese</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_aged_cheese.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_101002</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>101003</ID>
     <NAME>butter</NAME>
     <DESC>STR_butter</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_butter.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_101003</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>102001</ID>
     <NAME>wild_berry</NAME>
     <DESC>STR_wild_berry</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_wild_berry.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_102001</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>102002</ID>
     <NAME>moss_mushroom</NAME>
     <DESC>STR_moss_mushroom</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_moss_mushroom.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_102002</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>102003</ID>
     <NAME>apple</NAME>
     <DESC>STR_apple</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_apple.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_102003</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>102004</ID>
     <NAME>seabird_egg</NAME>
     <DESC>STR_seabird_egg</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_seabird_egg.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_102004</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>103001</ID>
     <NAME>coarse_barley</NAME>
     <DESC>STR_coarse_barley</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_coarse_barley.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_103001</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>103002</ID>
     <NAME>rye</NAME>
     <DESC>STR_rye</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_rye.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_103002</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>104001</ID>
     <NAME>parsley</NAME>
     <DESC>STR_parsley</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_parsley.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_104001</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>104002</ID>
     <NAME>wild_garlic</NAME>
     <DESC>STR_wild_garlic</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_wild_garlic.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_104002</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>105001</ID>
     <NAME>boar_meat</NAME>
     <DESC>STR_boar_meat</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_boar_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_105001</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>105002</ID>
     <NAME>mutton</NAME>
     <DESC>STR_mutton</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_mutton.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_105002</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>105003</ID>
     <NAME>reindeer_meat</NAME>
     <DESC>STR_reindeer_meat</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_reindeer_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_105003</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>105004</ID>
     <NAME>rabbit_meat</NAME>
     <DESC>STR_rabbit_meat</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_rabbit_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_105004</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>105005</ID>
     <NAME>seabird_meat</NAME>
     <DESC>STR_seabird_meat</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_seabird_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_105005</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>105006</ID>
     <NAME>bear_meat</NAME>
     <DESC>STR_bear_meat</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_bear_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_105006</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>106001</ID>
     <NAME>hazelnut</NAME>
     <DESC>STR_hazelnut</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_hazelnut.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_106001</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>106002</ID>
     <NAME>walnut</NAME>
     <DESC>STR_walnut</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_walnut.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_106002</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>107001</ID>
     <NAME>dried_herring</NAME>
     <DESC>STR_dried_herring</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_dried_herring.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_107001</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>107002</ID>
     <NAME>dried_cod</NAME>
     <DESC>STR_dried_cod</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_dried_cod.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_107002</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>107003</ID>
     <NAME>mussel</NAME>
     <DESC>STR_mussel</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_mussel.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_107003</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>108001</ID>
     <NAME>turnip</NAME>
     <DESC>STR_turnip</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_turnip.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_108001</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>108002</ID>
     <NAME>cabbage</NAME>
     <DESC>STR_cabbage</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_cabbage.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_108002</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>108003</ID>
     <NAME>bean</NAME>
     <DESC>STR_bean</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_bean.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_108003</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>108004</ID>
     <NAME>carrot</NAME>
     <DESC>STR_carrot</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_carrot.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_108004</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>110001</ID>
     <NAME>forest_honey</NAME>
     <DESC>STR_forest_honey</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_forest_honey.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_110001</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>110002</ID>
     <NAME>salt</NAME>
     <DESC>STR_salt</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_salt.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_110002</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>120001</ID>
     <NAME>unidentified_dried_meat</NAME>
     <DESC>STR_unidentified_dried_meat</DESC>
-    <ICONPATH>Cooking/Ingredients/item_recipe_bear_meat_chop.png</ICONPATH>
+    <ICONPATH>Cooking/Ingredients/item_recipe_bear_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_120001</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>120002</ID>
     <NAME>sunstone_powder</NAME>
     <DESC>STR_sunstone_powder</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_sunstone_powder.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_120002</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>120003</ID>
     <NAME>worldtree_sap</NAME>
     <DESC>STR_worldtree_sap</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_worldtree_sap.png</ICONPATH>
+    <DISPLAY_NAME>STR_ItemName_120003</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>10800303</ID>
     <NAME>boiled_bean</NAME>
     <DESC>STR_Body_bean_boil</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_bean.png</ICONPATH>
+    <DISPLAY_NAME>STR_bean_boil</DISPLAY_NAME>
   </Row>
   <Row>
     <ID>10800401</ID>
     <NAME>chopped_carrot</NAME>
     <DESC>STR_Body_carrot_chop</DESC>
     <ICONPATH>Cooking/Ingredients/item_recipe_carrot.png</ICONPATH>
+    <DISPLAY_NAME>STR_carrot_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10100103</ID>
+    <NAME>boiled_fresh_milk</NAME>
+    <DESC>STR_Body_fresh_milk_boil</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_fresh_milk.png</ICONPATH>
+    <DISPLAY_NAME>STR_fresh_milk_boil</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10100201</ID>
+    <NAME>chopped_aged_cheese</NAME>
+    <DESC>STR_Body_aged_cheese_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_aged_cheese.png</ICONPATH>
+    <DISPLAY_NAME>STR_aged_cheese_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10200101</ID>
+    <NAME>chopped_wild_berry</NAME>
+    <DESC>STR_Body_wild_berry_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_wild_berry.png</ICONPATH>
+    <DISPLAY_NAME>STR_wild_berry_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10200201</ID>
+    <NAME>chopped_moss_mushroom</NAME>
+    <DESC>STR_Body_moss_mushroom_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_moss_mushroom.png</ICONPATH>
+    <DISPLAY_NAME>STR_moss_mushroom_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10200203</ID>
+    <NAME>boiled_moss_mushroom</NAME>
+    <DESC>STR_Body_moss_mushroom_boil</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_moss_mushroom.png</ICONPATH>
+    <DISPLAY_NAME>STR_moss_mushroom_boil</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10200301</ID>
+    <NAME>chopped_apple</NAME>
+    <DESC>STR_Body_apple_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_apple.png</ICONPATH>
+    <DISPLAY_NAME>STR_apple_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10200403</ID>
+    <NAME>boiled_seabird_egg</NAME>
+    <DESC>STR_Body_seabird_egg_boil</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_seabird_egg.png</ICONPATH>
+    <DISPLAY_NAME>STR_seabird_egg_boil</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10400101</ID>
+    <NAME>chopped_parsley</NAME>
+    <DESC>STR_Body_parsley_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_parsley.png</ICONPATH>
+    <DISPLAY_NAME>STR_parsley_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10400201</ID>
+    <NAME>chopped_wild_garlic</NAME>
+    <DESC>STR_Body_wild_garlic_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_wild_garlic.png</ICONPATH>
+    <DISPLAY_NAME>STR_wild_garlic_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10500101</ID>
+    <NAME>chopped_boar_meat</NAME>
+    <DESC>STR_Body_boar_meat_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_boar_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_boar_meat_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10500103</ID>
+    <NAME>boiled_boar_meat</NAME>
+    <DESC>STR_Body_boar_meat_boil</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_boar_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_boar_meat_boil</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10500201</ID>
+    <NAME>chopped_mutton</NAME>
+    <DESC>STR_Body_mutton_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_mutton.png</ICONPATH>
+    <DISPLAY_NAME>STR_mutton_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10500203</ID>
+    <NAME>boiled_mutton</NAME>
+    <DESC>STR_Body_mutton_boil</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_mutton.png</ICONPATH>
+    <DISPLAY_NAME>STR_mutton_boil</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10500301</ID>
+    <NAME>chopped_reindeer_meat</NAME>
+    <DESC>STR_Body_reindeer_meat_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_reindeer_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_reindeer_meat_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10500401</ID>
+    <NAME>chopped_rabbit_meat</NAME>
+    <DESC>STR_Body_rabbit_meat_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_rabbit_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_rabbit_meat_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10500501</ID>
+    <NAME>chopped_seabird_meat</NAME>
+    <DESC>STR_Body_seabird_meat_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_seabird_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_seabird_meat_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10500601</ID>
+    <NAME>chopped_bear_meat</NAME>
+    <DESC>STR_Body_bear_meat_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_bear_meat.png</ICONPATH>
+    <DISPLAY_NAME>STR_bear_meat_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10700203</ID>
+    <NAME>boiled_dried_cod</NAME>
+    <DESC>STR_Body_dried_cod_boil</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_dried_cod.png</ICONPATH>
+    <DISPLAY_NAME>STR_dried_cod_boil</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10700303</ID>
+    <NAME>boiled_mussel</NAME>
+    <DESC>STR_Body_mussel_boil</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_mussel.png</ICONPATH>
+    <DISPLAY_NAME>STR_mussel_boil</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10800101</ID>
+    <NAME>chopped_turnip</NAME>
+    <DESC>STR_Body_turnip_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_turnip.png</ICONPATH>
+    <DISPLAY_NAME>STR_turnip_chop</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10800103</ID>
+    <NAME>boiled_turnip</NAME>
+    <DESC>STR_Body_turnip_boil</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_turnip.png</ICONPATH>
+    <DISPLAY_NAME>STR_turnip_boil</DISPLAY_NAME>
+  </Row>
+  <Row>
+    <ID>10800201</ID>
+    <NAME>chopped_cabbage</NAME>
+    <DESC>STR_Body_cabbage_chop</DESC>
+    <ICONPATH>Cooking/Ingredients/item_recipe_cabbage.png</ICONPATH>
+    <DISPLAY_NAME>STR_cabbage_chop</DISPLAY_NAME>
   </Row>
 </Rows>

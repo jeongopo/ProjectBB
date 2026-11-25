@@ -74,6 +74,14 @@ public abstract class CookingComponent : MonoBehaviour
         }
     }
 
+    internal void SetIngredientReady(bool ready)
+    {
+        if (CookingStartButton != null)
+        {
+            CookingStartButton.interactable = ready;
+        }
+    }
+
     //실제 미니게임 시작
     protected virtual void StartMiniGame()
     {
@@ -159,6 +167,7 @@ public abstract class CookingComponent : MonoBehaviour
     protected virtual void OnGameEnd()
     {
         isPlaying = false;
+        cookingManager?.FinishPreparationRound();
         if (CookingStartButton != null)
         {
             CookingStartButton.gameObject.SetActive(true);

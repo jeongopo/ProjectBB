@@ -1,6 +1,5 @@
 using UnityEngine;
 using GamePlay;
-using Interaction;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
 using GameEnumDefines;
@@ -35,6 +34,9 @@ public class CookingManager : MonoBehaviour
     private Coroutine resultCoroutine;
     private IngredientPreparation _preparation;
     private CookingType _openType;
+    private InventoryManager _inventory;
+    private SavedItemStack? _ingredient;
+    private bool _requiresSelection;
 
     private void Awake()
     {
@@ -145,36 +147,67 @@ public class CookingManager : MonoBehaviour
         GameAudio.Play(SoundCue.PanelOpen);
 
         currentComponent.InitCooking();
+        OpenIngredientInventory(type);
+    }
+
+    private void OpenIngredientInventory(CookingType type)
+    {
+        if (_inventory == null)
+        {
+            _inventory = FindFirstObjectByType<InventoryManager>();
+        }
+
+        _ingredient = null;
+        _requiresSelection = type == CookingType.Cutting || type == CookingType.Boiling;
+        if (_requiresSelection && _preparation == null)
+        {
+            DataManager data = FindFirstObjectByType<DataManager>();
+            if (data != null && _inventory != null)
+            {
+                _preparation = new IngredientPreparation(data.dataStorage, _inventory);
+            }
+        }
+
+        currentComponent.SetIngredientReady(!_requiresSelection);
+        _inventory?.OpenForCooking(_requiresSelection ? IsValidIngredient : null, OnIngredientChanged);
+    }
+
+    private bool IsValidIngredient(SavedItemStack item) => _preparation?.CanPrepare(_openType, item) == true;
+
+    private void OnIngredientChanged(SavedItemStack? item)
+    {
+        _ingredient = item;
+        currentComponent?.SetIngredientReady(!_requiresSelection || item.HasValue);
     }
 
     internal bool TryBeginPreparation()
     {
-        if (_openType != CookingType.Cutting && _openType != CookingType.Boiling)
+        if (!_requiresSelection)
         {
             return true;
         }
-
-        if (_preparation == null)
+        if (!_ingredient.HasValue || _preparation?.TryStart(_openType, _ingredient.Value) != true)
         {
-            SupplyShelf shelf = FindFirstObjectByType<SupplyShelf>();
-            DataManager data = FindFirstObjectByType<DataManager>();
-            InventoryManager inventory = FindFirstObjectByType<InventoryManager>();
-            if (shelf == null || data == null || inventory == null)
-            {
-                return true;
-            }
-
-            _preparation = new IngredientPreparation(data.dataStorage, inventory, FindFirstObjectByType<OrderBoard>(), shelf);
+            return false;
         }
 
-        return _preparation.TryStart(_openType);
+        _inventory.SetCookingSelectionLocked(true);
+        return true;
     }
 
     internal void CompletePreparation(ENUMGRADE grade) => _preparation?.Complete(grade);
 
+    internal void FinishPreparationRound()
+    {
+        _inventory?.SetCookingSelectionLocked(false);
+    }
+
     public void CloseCooking()
     {
         _preparation?.Cancel();
+        _inventory?.CloseAfterCooking();
+        _ingredient = null;
+        _requiresSelection = false;
         if (cookingTimer != null)
         {
             cookingTimer.StopCountdown();

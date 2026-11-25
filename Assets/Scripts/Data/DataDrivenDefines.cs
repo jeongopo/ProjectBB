@@ -75,6 +75,7 @@ public class DataStorage
 			public string NAME;
 			public string DESC;
 			public string ICONPATH;
+			public string DISPLAY_NAME;
 	}
 	public class Minigame_Boiling
 	{

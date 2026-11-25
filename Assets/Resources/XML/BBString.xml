@@ -771,4 +771,128 @@
     <ID>STR_DaySummary_Date</ID>
     <BODY>{0}일차</BODY>
   </Row>
+  <Row>
+    <ID>STR_ItemName_101001</ID>
+    <BODY>신선한 우유</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_101002</ID>
+    <BODY>숙성 치즈</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_101003</ID>
+    <BODY>버터</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_102001</ID>
+    <BODY>야생 베리</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_102002</ID>
+    <BODY>이끼 버섯</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_102003</ID>
+    <BODY>사과</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_102004</ID>
+    <BODY>바다새 알</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_103001</ID>
+    <BODY>거친 보리</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_103002</ID>
+    <BODY>호밀</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_104001</ID>
+    <BODY>파슬리</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_104002</ID>
+    <BODY>야생 마늘</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105001</ID>
+    <BODY>멧돼지 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105002</ID>
+    <BODY>양 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105003</ID>
+    <BODY>순록 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105004</ID>
+    <BODY>토끼 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105005</ID>
+    <BODY>바다새 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_105006</ID>
+    <BODY>곰 고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_106001</ID>
+    <BODY>헤이즐넛</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_106002</ID>
+    <BODY>호두</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_107001</ID>
+    <BODY>말린 청어</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_107002</ID>
+    <BODY>말린 대구</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_107003</ID>
+    <BODY>홍합</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_108001</ID>
+    <BODY>순무</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_108002</ID>
+    <BODY>양배추</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_108003</ID>
+    <BODY>콩</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_108004</ID>
+    <BODY>당근</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_110001</ID>
+    <BODY>숲의 벌꿀</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_110002</ID>
+    <BODY>소금</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_120001</ID>
+    <BODY>정체불명의 말린고기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_120002</ID>
+    <BODY>태양석 가루</BODY>
+  </Row>
+  <Row>
+    <ID>STR_ItemName_120003</ID>
+    <BODY>세계수 수액</BODY>
+  </Row>
 </Rows>

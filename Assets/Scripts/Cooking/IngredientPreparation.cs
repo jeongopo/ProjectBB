@@ -1,66 +1,49 @@
 using System.Collections.Generic;
 using DataEnumDefines;
 using GameEnumDefines;
-using GamePlay;
-using Interaction;
 
 internal sealed class IngredientPreparation
 {
     private readonly DataStorage _data;
     private readonly InventoryManager _inventory;
-    private readonly OrderBoard _orders;
-    private readonly SupplyShelf _shelf;
+    private readonly Dictionary<(string ItemId, ENUMINTERACTIONTYPE Method), DataStorage.Recipe_Interaction> _recipes =
+        new Dictionary<(string, ENUMINTERACTIONTYPE), DataStorage.Recipe_Interaction>();
     private DataStorage.Recipe_Interaction _active;
+    private int _inputGrade;
 
-    internal IngredientPreparation(DataStorage data, InventoryManager inventory, OrderBoard orders, SupplyShelf shelf)
+    internal IngredientPreparation(DataStorage data, InventoryManager inventory)
     {
         _data = data;
         _inventory = inventory;
-        _orders = orders;
-        _shelf = shelf;
+        if (_data?.Recipe_InteractionData == null)
+        {
+            return;
+        }
+
+        foreach (DataStorage.Recipe_Interaction recipe in _data.Recipe_InteractionData.Values)
+        {
+            if (IsIngredient(recipe.INPUT_ITEM_ID) && IsIngredient(recipe.OUTPUT_ITEM_ID))
+            {
+                _recipes.TryAdd((recipe.INPUT_ITEM_ID, recipe.INTERACTION_TYPE), recipe);
+            }
+        }
     }
 
-    internal bool TryStart(CookingType type)
+    internal bool CanPrepare(CookingType type, SavedItemStack item) => Find(type, item.ItemId) != null;
+
+    internal bool TryStart(CookingType type, SavedItemStack item)
     {
         Cancel();
-        ENUMINTERACTIONTYPE method = type == CookingType.Cutting ? ENUMINTERACTIONTYPE.CHOP : ENUMINTERACTIONTYPE.BOIL;
-        bool hasPendingOrder = false;
-        if (_orders != null)
-        {
-            foreach (PlatingOrder order in _orders.PlatingOrders)
-            {
-                if (order.servable)
-                {
-                    continue;
-                }
-                hasPendingOrder = true;
-                _active = Find(order.recipe, method);
-                if (_active != null)
-                {
-                    break;
-                }
-            }
-        }
-
-        if (_active == null && !hasPendingOrder)
-        {
-            foreach (DataStorage.Recipe_Combine row in _shelf.GetStarterRecipes())
-            {
-                _active = Find(PlatingRecipe.FromRecipeRow(row, 0f, 0f), method);
-                if (_active != null)
-                {
-                    break;
-                }
-            }
-        }
-
-        if (_active == null)
+        DataStorage.Recipe_Interaction recipe = Find(type, item.ItemId);
+        if (recipe == null || _inventory.GetCount(item.ItemId, item.Grade) <= 0)
         {
             SystemMessageUI.Show(_data.GetBBStringText("STR_Prep_Unavailable"));
             return false;
         }
 
-        SystemMessageUI.Show(string.Format(_data.GetBBStringText("STR_Prep_Target"), _data.GetBBStringText(_active.DESC)));
+        _active = recipe;
+        _inputGrade = item.Grade;
+        SystemMessageUI.Show(string.Format(_data.GetBBStringText("STR_Prep_Target"), _data.GetBBStringText(recipe.DESC)));
         return true;
     }
 
@@ -73,7 +56,7 @@ internal sealed class IngredientPreparation
             return;
         }
 
-        if (_inventory.TryConvertOne(recipe.INPUT_ITEM_ID, recipe.OUTPUT_ITEM_ID, (int)grade))
+        if (_inventory.TryConvertOne(recipe.INPUT_ITEM_ID, _inputGrade, recipe.OUTPUT_ITEM_ID, (int)grade))
         {
             SystemMessageUI.Show(string.Format(_data.GetBBStringText("STR_Prep_Completed"), _data.GetBBStringText(recipe.DESC)));
         }
@@ -85,19 +68,10 @@ internal sealed class IngredientPreparation
 
     internal void Cancel() => _active = null;
 
-    private DataStorage.Recipe_Interaction Find(PlatingRecipe recipe, ENUMINTERACTIONTYPE method)
+    private DataStorage.Recipe_Interaction Find(CookingType type, string itemId)
     {
-        foreach (PlatingIngredient ingredient in recipe.ingredients)
-        {
-            if (_inventory.GetCount(ingredient.itemID) < ingredient.count &&
-                TryGetRecipe(_data, ingredient.itemID, out DataStorage.Recipe_Interaction preparation) &&
-                preparation.INTERACTION_TYPE == method && _inventory.GetCount(preparation.INPUT_ITEM_ID) > 0)
-            {
-                return preparation;
-            }
-        }
-
-        return null;
+        ENUMINTERACTIONTYPE method = type == CookingType.Cutting ? ENUMINTERACTIONTYPE.CHOP : ENUMINTERACTIONTYPE.BOIL;
+        return _recipes.TryGetValue((itemId, method), out DataStorage.Recipe_Interaction recipe) ? recipe : null;
     }
 
     internal static bool TryGetRecipe(DataStorage data, string outputId, out DataStorage.Recipe_Interaction recipe)
@@ -105,7 +79,8 @@ internal sealed class IngredientPreparation
         recipe = null;
         Dictionary<string, DataStorage.Recipe_Interaction> table = data?.Recipe_InteractionData;
         return table != null && table.TryGetValue(outputId, out recipe) &&
-            recipe.OUTPUT_ITEM_ID == outputId && !string.IsNullOrEmpty(recipe.INPUT_ITEM_ID) &&
-            recipe.INPUT_ITEM_ID != "NONE";
+            recipe.OUTPUT_ITEM_ID == outputId && IsIngredient(recipe.INPUT_ITEM_ID);
     }
+
+    private static bool IsIngredient(string id) => !string.IsNullOrEmpty(id) && id != "NONE";
 }
