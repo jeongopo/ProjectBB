@@ -987,4 +987,16 @@
     <ID>STR_Event_Munin_FirstOrder</ID>
     <BODY>첫 주문이 들어왔군. 담기에서 주문한 요리를 만들고 손님에게 직접 내주게.</BODY>
   </Row>
+  <Row>
+    <ID>STR_Inventory_Tab_All</ID>
+    <BODY>전체</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Inventory_Tab_Ingredients</ID>
+    <BODY>재료</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Inventory_Tab_Food</ID>
+    <BODY>음식</BODY>
+  </Row>
 </Rows>

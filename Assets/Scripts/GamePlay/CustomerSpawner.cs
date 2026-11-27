@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GameEnumDefines;
+using Interaction;
 
 namespace GamePlay
 {
@@ -40,6 +41,17 @@ namespace GamePlay
         {
             _seats = FindObjectsByType<CustomerSeat>(FindObjectsSortMode.None);
             _dataManager = FindFirstObjectByType<DataManager>();
+            MainCharacter player = FindFirstObjectByType<MainCharacter>();
+            if (player != null)
+            {
+                foreach (Furniture table in Furniture.ActiveFurniture)
+                {
+                    if (table.gameObject.scene == gameObject.scene && table.name.StartsWith("DiningTable", System.StringComparison.Ordinal))
+                    {
+                        TableServingPoint.Install(table, _seats, player.transform);
+                    }
+                }
+            }
 
             if (_orderBoard == null)
             {

@@ -48,6 +48,7 @@ public sealed class DialoguePanel : MonoBehaviour
         _navigate = map?.FindAction("Navigate");
         _bodyPosition = _body.rectTransform.anchoredPosition;
         _bodySize = _body.rectTransform.sizeDelta;
+        _body.richText = true;
         _canvasGroup = gameObject.AddComponent<CanvasGroup>();
         _backdrop = GetComponent<Image>();
         _next.onClick.AddListener(() => Advance(-1));

@@ -7,10 +7,8 @@ public class InventoryListItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
 {
     [SerializeField] private ItemIcon itemIcon;
     [SerializeField] private Image _dimOverlay;
+    [SerializeField] private GameObject _selectionOverlay;
     private Button _button;
-    private Image _background;
-    private Sprite _normal;
-    private Sprite _outline;
     private Action<InventoryListItem> _clicked;
     private Action<InventoryListItem> _hovered;
     private Action<InventoryListItem> _exited;
@@ -25,8 +23,6 @@ public class InventoryListItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (itemIcon == null)
             itemIcon = GetComponentInChildren<ItemIcon>(true);
         _button = GetComponent<Button>();
-        _background = GetComponent<Image>();
-        _normal = _background != null ? _background.sprite : null;
         if (_button != null)
         {
             ColorBlock colors = _button.colors;
@@ -36,10 +32,9 @@ public class InventoryListItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
         }
     }
 
-    internal void Bind(Sprite outline, Action<InventoryListItem> clicked,
+    internal void Bind(Action<InventoryListItem> clicked,
         Action<InventoryListItem> hovered, Action<InventoryListItem> exited)
     {
-        _outline = outline;
         _clicked = clicked;
         _hovered = hovered;
         _exited = exited;
@@ -80,9 +75,9 @@ public class InventoryListItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
         {
             _button.interactable = selectable;
         }
-        if (_background != null)
+        if (_selectionOverlay != null)
         {
-            _background.sprite = selected && _outline != null ? _outline : _normal;
+            _selectionOverlay.SetActive(selected && !dimmed);
         }
         if (_dimOverlay != null)
         {

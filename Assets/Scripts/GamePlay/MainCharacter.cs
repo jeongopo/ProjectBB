@@ -24,6 +24,8 @@ namespace GamePlay
         [Header("Sprite Settings")]
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Color _occlusionColor = new Color(1f, 0.92f, 0.76f, 0.45f);
+        [SerializeField] private CharacterPartStyle _headStyle;
+        [SerializeField] private CharacterPartStyle _outfitStyle;
 
         private Rigidbody2D rb;
         private Animator animator;
@@ -62,9 +64,14 @@ namespace GamePlay
         
         private void Start()
         {
-            if (spriteRenderer != null && _occlusionColor.a > 0f)
+            if (spriteRenderer != null)
             {
-                gameObject.AddComponent<CharacterOcclusionSilhouette>().Initialize(spriteRenderer, _occlusionColor);
+                CharacterAppearance appearance = gameObject.AddComponent<CharacterAppearance>();
+                appearance.Initialize(spriteRenderer, _headStyle, _outfitStyle);
+                if (_occlusionColor.a > 0f)
+                {
+                    gameObject.AddComponent<CharacterOcclusionSilhouette>().Initialize(spriteRenderer, _occlusionColor, appearance);
+                }
             }
 
             if (inputManager == null)

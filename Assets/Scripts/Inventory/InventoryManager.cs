@@ -41,11 +41,19 @@ public class InventoryManager : MonoBehaviour
     private Predicate<SavedItemStack> _ingredientFilter;
     private Action<SavedItemStack?> _ingredientChanged;
     private SavedItemStack? _ingredient;
+    private TabBar _tabs;
+    private readonly HashSet<string> _foodIds = new HashSet<string>();
+    private int _tab;
+    private bool _tabsReady;
 
     private void Awake()
     {
         inputManager = FindFirstObjectByType<GamePlay.InputManager>();
         _dataManager = FindFirstObjectByType<DataManager>();
+        if (inventoryPanel != null)
+        {
+            _tabs = inventoryPanel.GetComponentInChildren<TabBar>(true);
+        }
 
         if (inventoryPanel != null)
             inventoryPanel.SetActive(false);
@@ -56,9 +64,51 @@ public class InventoryManager : MonoBehaviour
         SubscribeToggleAction();
     }
 
+    private void EnsureTabs()
+    {
+        if (_tabsReady || _dataManager?.dataStorage?.BBStringData == null)
+        {
+            return;
+        }
+        _tabsReady = true;
+        var recipes = _dataManager?.dataStorage?.Recipe_CombineData;
+        if (recipes != null)
+        {
+            foreach (DataStorage.Recipe_Combine recipe in recipes.Values)
+            {
+                if (!string.IsNullOrEmpty(recipe.PRODUCT_DISH_ID))
+                {
+                    _foodIds.Add(recipe.PRODUCT_DISH_ID);
+                }
+            }
+        }
+        if (_tabs != null)
+        {
+            DataStorage data = _dataManager?.dataStorage;
+            _tabs.SetTabs(new[]
+            {
+                data.GetBBStringText("STR_Inventory_Tab_All"),
+                data.GetBBStringText("STR_Inventory_Tab_Ingredients"),
+                data.GetBBStringText("STR_Inventory_Tab_Food"),
+            });
+            _tabs.OnTabSelected += HandleTabSelected;
+        }
+    }
+
+    private void HandleTabSelected(int index)
+    {
+        _tab = index;
+        HideTooltip(_hoveredSlot);
+        RefreshSlots();
+    }
+
     private void OnDestroy()
     {
         _tooltip?.Destroy();
+        if (_tabs != null)
+        {
+            _tabs.OnTabSelected -= HandleTabSelected;
+        }
         if (toggleAction != null)
             toggleAction.started -= OnToggleInventory;
     }
@@ -68,11 +118,10 @@ public class InventoryManager : MonoBehaviour
         if (slotParent == null || slotPrefab == null)
             return;
 
-        Sprite outline = Resources.Load<Sprite>("Art/UI/Common/UI_Slot_Selected");
         for (int i = 0; i < MaxSlots; i++)
         {
             InventoryListItem slot = Instantiate(slotPrefab, slotParent);
-            slot.Bind(outline, SelectIngredient, ShowTooltip, HideTooltip);
+            slot.Bind(SelectIngredient, ShowTooltip, HideTooltip);
             slot.Clear();
             slots.Add(slot);
         }
@@ -109,6 +158,7 @@ public class InventoryManager : MonoBehaviour
         {
             return;
         }
+        EnsureTabs();
         RefreshSlots();
 
         if (inventoryPanel != null)
@@ -144,6 +194,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         _inCooking = true;
+        EnsureTabs();
         _ingredientFilter = filter;
         _ingredientChanged = changed;
         if (inventoryPanel.transform is RectTransform rect)
@@ -480,21 +531,34 @@ public class InventoryManager : MonoBehaviour
             _ingredientChanged?.Invoke(null);
         }
 
-        for (int i = 0; i < slots.Count; i++)
+        int visible = 0;
+        foreach (ItemStack item in itemStacks)
         {
-            if (i < itemStacks.Count)
+            if (visible >= slots.Count)
             {
-                ItemStack item = itemStacks[i];
-                SavedItemStack stack = new SavedItemStack { ItemId = item.ItemID, Grade = item.Grade, Count = item.Count };
-                bool selected = _ingredient?.ItemId == stack.ItemId && _ingredient?.Grade == stack.Grade;
-                bool hasFilter = _inCooking && _ingredientFilter != null;
-                bool canPrepare = hasFilter && _ingredientFilter(stack);
-                slots[i].SetItem(stack, canPrepare && !_selectionLocked, selected, hasFilter && !canPrepare);
+                break;
             }
-            else
+            bool isFood = _foodIds.Contains(item.ItemID);
+            if ((_tab == 1 && (isFood || !IsIngredient(item.ItemID))) || (_tab == 2 && !isFood))
             {
-                slots[i].Clear();
+                continue;
             }
+
+            SavedItemStack stack = new SavedItemStack { ItemId = item.ItemID, Grade = item.Grade, Count = item.Count };
+            bool selected = _ingredient?.ItemId == stack.ItemId && _ingredient?.Grade == stack.Grade;
+            bool hasFilter = _inCooking && _ingredientFilter != null;
+            bool canPrepare = hasFilter && _ingredientFilter(stack);
+            slots[visible++].SetItem(stack, canPrepare && !_selectionLocked, selected, hasFilter && !canPrepare);
         }
+
+        for (int i = visible; i < slots.Count; i++)
+        {
+            slots[i].Clear();
+        }
+    }
+
+    private bool IsIngredient(string itemId)
+    {
+        return _dataManager?.dataStorage?.ItemData?.ContainsKey(itemId) == true;
     }
 }

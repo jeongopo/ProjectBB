@@ -22,6 +22,8 @@ internal sealed class StoryEventEditor : Editor
     private float _previewHalfHeight;
     private bool _showAdvancedSettings;
     private StorySpeakerProfile[] _speakerProfiles;
+    private Color _inlineDialogueColor = Color.white;
+    private bool _showDialogueColor;
     internal int SelectedIndex => _selectedIndex;
     internal int StepCount => _steps.arraySize;
 
@@ -183,6 +185,15 @@ internal sealed class StoryEventEditor : Editor
                 SerializedProperty speaker = step.FindPropertyRelative("_speaker");
                 DrawSpeaker(speaker, "화자");
                 DrawExpression(step.FindPropertyRelative("_expression"), (StorySpeaker)speaker.intValue);
+                _showDialogueColor = EditorGUILayout.Foldout(_showDialogueColor, "대사 일부에 색상 넣기", true);
+                if (_showDialogueColor)
+                {
+                    _inlineDialogueColor = EditorGUILayout.ColorField("글자색", _inlineDialogueColor);
+                    if (GUILayout.Button("BBString용 색상 태그 복사"))
+                    {
+                        EditorGUIUtility.systemCopyBuffer = $"<color=#{ColorUtility.ToHtmlStringRGBA(_inlineDialogueColor)}>문구</color>";
+                    }
+                }
                 break;
             case EventStepKind.Move:
                 DrawSceneBinding(step.FindPropertyRelative("_targetId"), "이동 대상");

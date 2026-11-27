@@ -17,6 +17,7 @@ namespace Interaction
         public SpriteRenderer[] InteractionVisuals { get; private set; }
         public virtual bool CanInteract => isActiveAndEnabled;
         public virtual string PromptKey => "STR_Interact_Default";
+        protected virtual Vector2 InteractionRangeSize => interactSize;
 
         /// <summary>플레이어 기준으로 이 오브젝트 몸체에서 가장 가까운 점. 콜라이더가 없으면 위치를 쓴다.</summary>
         public Vector2 GetClosestPoint(Vector2 from)
@@ -43,7 +44,7 @@ namespace Interaction
             }
             else
             {
-                col.size = interactSize;
+                col.size = InteractionRangeSize;
             }
 
             var forwarder = child.AddComponent<TriggerForwarder>();

@@ -12,8 +12,9 @@ namespace GamePlay
         private SpriteRenderer _source;
         private SpriteRenderer _overlay;
         private Material _material;
+        private CharacterAppearance _appearance;
 
-        internal void Initialize(SpriteRenderer source, Color tint)
+        internal void Initialize(SpriteRenderer source, Color tint, CharacterAppearance appearance)
         {
             Shader shader = Resources.Load<Shader>("CharacterOcclusionSilhouette");
             if (shader == null || !shader.isSupported)
@@ -23,6 +24,7 @@ namespace GamePlay
             }
 
             _source = source;
+            _appearance = appearance;
             _material = new Material(shader);
             _material.SetColor("_SilhouetteColor", tint);
             GameObject overlayObject = new GameObject("Occlusion Silhouette");
@@ -68,7 +70,7 @@ namespace GamePlay
             }
 
             _overlay.enabled = false;
-            if (!IsVisibleSprite(_source))
+            if (!IsVisibleSprite(_source, _appearance != null && _appearance.IsLayered))
             {
                 return;
             }
@@ -103,10 +105,10 @@ namespace GamePlay
                 (layerValue == characterLayerValue && renderer.sortingOrder > _source.sortingOrder);
         }
 
-        private static bool IsVisibleSprite(SpriteRenderer renderer)
+        private static bool IsVisibleSprite(SpriteRenderer renderer, bool showLayeredSource = false)
         {
             return renderer != null && renderer.enabled && renderer.gameObject.activeInHierarchy &&
-                !renderer.forceRenderingOff && renderer.sprite != null && renderer.color.a > 0f;
+                (showLayeredSource || !renderer.forceRenderingOff) && renderer.sprite != null && renderer.color.a > 0f;
         }
 
         private static bool OverlapsInXY(Bounds a, Bounds b)

@@ -17,6 +17,7 @@ public class TabBar : MonoBehaviour
     [SerializeField] private List<string> _initialLabels = new List<string>();
 
     private readonly List<TabButtonView> _tabs = new List<TabButtonView>();
+    private bool _configured;
 
     public event Action<int> OnTabSelected;
 
@@ -30,7 +31,7 @@ public class TabBar : MonoBehaviour
             _container = (RectTransform)transform;
         }
 
-        if (_initialLabels.Count > 0)
+        if (!_configured && _initialLabels.Count > 0)
         {
             SetTabs(_initialLabels);
         }
@@ -38,6 +39,11 @@ public class TabBar : MonoBehaviour
 
     public void SetTabs(IReadOnlyList<string> labels)
     {
+        if (_container == null)
+        {
+            _container = (RectTransform)transform;
+        }
+        _configured = true;
         ClearTabs();
         for (int i = 0; i < labels.Count; i++)
         {
@@ -50,6 +56,7 @@ public class TabBar : MonoBehaviour
     {
         int index = _tabs.Count;
         TabButtonView tab = Instantiate(_tabPrefab, _container);
+        tab.name = $"Tab_{index + 1:00}";
         tab.Setup(label, () => Select(index));
         tab.SetSelected(false, _normalSprite, _selectedSprite);
         _tabs.Add(tab);
