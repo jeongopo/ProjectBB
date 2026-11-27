@@ -2,6 +2,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using GamePlay;
+using UnityEngine.UI;
 
 public class ClockUI : MonoBehaviour
 {
@@ -11,12 +12,38 @@ public class ClockUI : MonoBehaviour
     [SerializeField] private GameClock _clock = default;
     [SerializeField] private TMP_Text _timeText = default;
     [SerializeField] private RectTransform _arrow = default;
+    [SerializeField] private Button _advanceHourButton;
 
     [Header("Arrow")]
     [SerializeField] private float _arrowTweenDuration = 0.3f;
     [SerializeField] private Ease _arrowEase = Ease.OutQuad;
 
     private Tween _arrowTween;
+
+    private void Awake()
+    {
+        if (_advanceHourButton == null)
+        {
+            return;
+        }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        _advanceHourButton.gameObject.SetActive(true);
+        _advanceHourButton.onClick.AddListener(AdvanceOneHour);
+#else
+        _advanceHourButton.gameObject.SetActive(false);
+#endif
+    }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    private void AdvanceOneHour()
+    {
+        if (_clock != null)
+        {
+            _clock.AdvanceOneHourForTesting();
+        }
+    }
+#endif
 
     private void OnEnable()
     {
@@ -58,6 +85,12 @@ public class ClockUI : MonoBehaviour
         }
 
         RotateArrow(totalMinutes, animate);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if (_advanceHourButton != null)
+        {
+            _advanceHourButton.interactable = !_clock.IsDayEnded;
+        }
+#endif
     }
 
     // 0시가 12시 방향이고 시계 방향으로 하루에 한 바퀴 돈다.

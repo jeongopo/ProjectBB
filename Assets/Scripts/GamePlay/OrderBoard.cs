@@ -55,6 +55,10 @@ namespace GamePlay
         {
             _dataManager = FindFirstObjectByType<DataManager>();
             _inventory = FindFirstObjectByType<InventoryManager>();
+            if (_inventory != null)
+            {
+                _inventory.OnQuantityChanged += RefreshDishAvailability;
+            }
             _player = FindFirstObjectByType<MainCharacter>();
             _supplyShelf = FindFirstObjectByType<SupplyShelf>();
             if (!TryGetComponent(out _serveFeedback))
@@ -73,9 +77,43 @@ namespace GamePlay
             }
         }
 
-        public CustomerOrder IssueOrder(CustomerController customer)
+        private void OnDestroy()
         {
-            DataStorage.Recipe_Combine recipe = PickRecipe();
+            if (_inventory != null)
+            {
+                _inventory.OnQuantityChanged -= RefreshDishAvailability;
+            }
+        }
+
+        private void RefreshDishAvailability(string itemId)
+        {
+            foreach (CustomerOrder order in _orders)
+            {
+                string dishId = order.Recipe.PRODUCT_DISH_ID;
+                if (itemId == null || itemId == dishId)
+                {
+                    order.PlatingOrder.servable = _inventory.GetCount(dishId, 0) > 0;
+                }
+            }
+        }
+
+        public CustomerOrder IssueOrder(CustomerController customer, string recipeId = null)
+        {
+            if (TryGetOrder(customer, out CustomerOrder existing))
+            {
+                return existing;
+            }
+
+            DataStorage.Recipe_Combine recipe;
+            if (string.IsNullOrEmpty(recipeId))
+            {
+                recipe = PickRecipe();
+            }
+            else
+            {
+                var recipes = _dataManager?.dataStorage?.Recipe_CombineData;
+                recipe = recipes != null && recipes.TryGetValue(recipeId, out var selected) ? selected : null;
+            }
             if (recipe == null)
             {
                 return null;
@@ -86,6 +124,7 @@ namespace GamePlay
 
             _orders.Add(order);
             _platingOrders.Add(order.PlatingOrder);
+            order.PlatingOrder.servable = _inventory != null && _inventory.GetCount(recipe.PRODUCT_DISH_ID, 0) > 0;
             if (_dayStats != null)
             {
                 _dayStats.RecordOrdered();
@@ -109,11 +148,6 @@ namespace GamePlay
             if (!TryGetOrder(customer, out CustomerOrder order))
             {
                 return ServeResult.NoOrder;
-            }
-
-            if (!order.PlatingOrder.servable)
-            {
-                return ServeResult.NotCooked;
             }
 
             // 담기가 요리를 등급 0으로 인벤토리에 넣는다.

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
@@ -15,6 +16,33 @@ namespace GamePlay
         private InventoryManager _inventory;
         private CurrencyWallet _wallet;
         private bool _nextDaySaved;
+        private EventRunner _eventRunner;
+        private readonly HashSet<string> _completedDialogues = new HashSet<string>();
+        private readonly Dictionary<string, int> _guestAffinities = new Dictionary<string, int>();
+
+        internal int GetGuestAffinity(string guestId) =>
+            _guestAffinities.TryGetValue(guestId, out int affinity) ? affinity : 0;
+
+        internal int IncreaseGuestAffinity(string guestId)
+        {
+            int affinity = GetGuestAffinity(guestId);
+            if (affinity < int.MaxValue)
+            {
+                _guestAffinities[guestId] = ++affinity;
+                _nextDaySaved = false;
+            }
+            return affinity;
+        }
+
+        internal bool HasCompletedDialogue(string id) => _completedDialogues.Contains(id);
+
+        internal void CompleteDialogue(string id)
+        {
+            if (_completedDialogues.Add(id))
+            {
+                _nextDaySaved = false;
+            }
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void RegisterSceneHandler()
@@ -60,6 +88,7 @@ namespace GamePlay
 
         private void Start()
         {
+            _eventRunner = FindFirstObjectByType<EventRunner>();
             SaveData save = _pendingSave;
             _pendingSave = null;
             _enteringFromLobby = false;
@@ -75,6 +104,21 @@ namespace GamePlay
             }
             else
             {
+                _eventRunner?.Restore(save.EventProgress, save.CompletedDialogueIds);
+                if (save.CompletedDialogueIds != null)
+                {
+                    _completedDialogues.UnionWith(save.CompletedDialogueIds);
+                }
+                if (save.GuestAffinities != null)
+                {
+                    foreach (SavedGuestAffinity guest in save.GuestAffinities)
+                    {
+                        if (!string.IsNullOrEmpty(guest.GuestId))
+                        {
+                            _guestAffinities[guest.GuestId] = Mathf.Max(0, guest.Value);
+                        }
+                    }
+                }
                 _inventory.RestoreStacks(save);
                 _wallet.RestoreBalances(save);
                 _clock.ReadFrom(save);
@@ -110,11 +154,20 @@ namespace GamePlay
 
         private bool SaveCheckpoint(bool nextDay)
         {
+            List<SavedGuestAffinity> guestAffinities = new List<SavedGuestAffinity>(_guestAffinities.Count);
+            foreach (var guest in _guestAffinities)
+            {
+                guestAffinities.Add(new SavedGuestAffinity { GuestId = guest.Key, Value = guest.Value });
+            }
+
             SaveData data = new SaveData
             {
                 _locationId = "TestScene",
                 ItemStacks = _inventory.CaptureStacks(),
                 Balances = _wallet.CaptureBalances(),
+                CompletedDialogueIds = new List<string>(_completedDialogues),
+                EventProgress = _eventRunner?.Capture(),
+                GuestAffinities = guestAffinities,
                 coin = _wallet.Get(CurrencyIds.Gold),
             };
 
@@ -134,6 +187,8 @@ namespace GamePlay
             }
             return saved;
         }
+
+        internal void MarkEventProgressChanged() => _nextDaySaved = false;
 
         private string GetComponentText(string id)
         {

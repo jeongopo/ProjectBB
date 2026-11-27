@@ -227,7 +227,7 @@ namespace GamePlay
             _freeSeats.Clear();
             foreach (CustomerSeat seat in _seats)
             {
-                if (seat != null && !seat.IsOccupied)
+                if (seat != null && !seat.IsOccupied && !seat.ReservedForRegulars)
                 {
                     _freeSeats.Add(seat);
                 }

@@ -56,19 +56,22 @@ namespace GamePlay
         private int _remainingPatienceMinutes;
         private int _lastMinute;
         private Vector3 _baseScale;
+        private RegularGuestSchedule _regular;
 
         public CustomerState State { get; private set; }
         public string CustomerId { get; private set; }
         public CustomerSeat Seat => _seat;
         public CustomerOrder Order { get; private set; }
-        public override bool CanInteract => base.CanInteract && State == CustomerState.Seated && Order != null;
-        public override string PromptKey => "STR_Interact_Serve";
+        public bool IsRegular => _regular != null;
+        public override bool CanInteract => base.CanInteract && State == CustomerState.Seated && (Order != null || _regular?.CanTalk == true);
+        public override string PromptKey => Order != null ? "STR_Interact_Serve" : "STR_Interact_Talk";
         public float PatienceRatio => _maxPatienceMinutes > 0 ? (float)_remainingPatienceMinutes / _maxPatienceMinutes : 0f;
         public Sprite OrderIcon => _orderBoard != null && Order != null ? _orderBoard.GetOrderIcon(Order) : null;
 
         public event Action<CustomerController> OnLeft;
         public event Action<CustomerState> OnStateChanged;
         public event Action<float> OnPatienceChanged;
+        public event Action OnOrderChanged;
 
         protected override void Awake()
         {
@@ -96,17 +99,53 @@ namespace GamePlay
 
         public void Init(DataStorage.Customer data, CustomerSeat seat, Vector3 exitPosition, GameClock clock, OrderBoard orderBoard)
         {
-            CustomerId = data.ID;
-            _orderBoard = orderBoard;
             _maxPatienceMinutes = Mathf.Max(1, data.PATIENCE_MINUTES);
             _remainingPatienceMinutes = _maxPatienceMinutes;
+            BeginVisit(data.ID, seat, exitPosition, clock, orderBoard, false);
+        }
+
+        internal void InitRegular(RegularGuestSchedule regular, string id, CustomerSeat seat, Vector3 entrance, GameClock clock, OrderBoard orderBoard, bool alreadyArrived)
+        {
+            _regular = regular;
+            BeginVisit(id, seat, entrance, clock, orderBoard, alreadyArrived);
+        }
+
+        private void BeginVisit(string id, CustomerSeat seat, Vector3 exitPosition, GameClock clock, OrderBoard orderBoard, bool alreadyArrived)
+        {
+            CustomerId = id;
+            _orderBoard = orderBoard;
             _seat = seat;
             _exitPosition = exitPosition;
             _clock = clock;
             _priority = _nextPriority++;
 
             SetState(CustomerState.Entering);
-            BeginMove(_seat.SitPosition, Sit);
+            if (alreadyArrived)
+            {
+                transform.position = _seat.SitPosition;
+                Sit();
+            }
+            else
+            {
+                BeginMove(_seat.SitPosition, Sit);
+            }
+        }
+
+        internal bool TryIssueRegularOrder(string recipeId)
+        {
+            if (!IsRegular || State != CustomerState.Seated || Order != null || _orderBoard == null)
+            {
+                return false;
+            }
+
+            Order = _orderBoard.IssueOrder(this, recipeId);
+            if (Order == null)
+            {
+                return false;
+            }
+
+            OnOrderChanged?.Invoke();
+            return true;
         }
 
         public void Leave()
@@ -131,9 +170,17 @@ namespace GamePlay
                 return;
             }
 
+            if (Order == null)
+            {
+                _regular?.Talk();
+                return;
+            }
+
             if (_orderBoard.TryServe(this) == ServeResult.Success)
             {
                 Order = null;
+                OnOrderChanged?.Invoke();
+                _regular?.RecordServed();
                 BeginEating();
                 return;
             }
@@ -151,12 +198,11 @@ namespace GamePlay
 
         private void Sit()
         {
-            _lastMinute = _clock.TotalMinutes;
-            _clock.OnMinuteChanged += HandleMinuteChanged;
-
-            if (_orderBoard != null)
+            if (!IsRegular)
             {
-                Order = _orderBoard.IssueOrder(this);
+                _lastMinute = _clock.TotalMinutes;
+                _clock.OnMinuteChanged += HandleMinuteChanged;
+                Order = _orderBoard?.IssueOrder(this);
             }
 
             SetState(CustomerState.Seated);
@@ -172,8 +218,20 @@ namespace GamePlay
             _eatSequence = DOTween.Sequence()
                 .Append(transform.DOPunchScale(Vector3.one * _servedPunchScale, _servedPunchDuration))
                 .AppendInterval(_eatDuration)
-                .OnComplete(Leave)
+                .OnComplete(FinishEating)
                 .SetLink(gameObject);
+        }
+
+        private void FinishEating()
+        {
+            if (IsRegular)
+            {
+                SetState(CustomerState.Seated);
+            }
+            else
+            {
+                Leave();
+            }
         }
 
         private void PlayRejectFeedback()
@@ -388,6 +446,7 @@ namespace GamePlay
             {
                 _orderBoard.CancelOrder(this);
                 Order = null;
+                OnOrderChanged?.Invoke();
             }
         }
 

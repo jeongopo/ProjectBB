@@ -78,11 +78,11 @@ public class PlatingComponent : CookingComponent
 
     private Phase phase = Phase.None;
     private readonly List<PlatingOrder> orders = new List<PlatingOrder>();
+    private readonly List<PlatingOrder> _menuOrders = new List<PlatingOrder>();
     private readonly List<PlatingCellView> orderRows = new List<PlatingCellView>();
     private int aimIndex;
     private float readyRefreshTimer;
 
-    private PlatingOrder nowOrder;
     private PlatingRecipe nowRecipe; // 시작한 레시피. 미니게임이 끝날 때까지 고정
 
     private GridSlot[] slots;
@@ -121,10 +121,9 @@ public class PlatingComponent : CookingComponent
         if (index < 0)
             return;
 
-        bool wasPlaying = order == nowOrder && phase == Phase.Select;
         orders.RemoveAt(index);
 
-        if (wasPlaying)
+        if (phase == Phase.Select && IsSameDish(order.recipe, nowRecipe) && CountOrdersFor(nowRecipe) == 0)
         {
             SystemMessageUI.Show(GetText("STR_UI_Plating_CustomerLeft"));
             ResetPlayState();
@@ -143,11 +142,6 @@ public class PlatingComponent : CookingComponent
             cookingManager?.CloseCooking();
             return;
         }
-
-        if (index == aimIndex)
-            aimIndex = 0;
-        else if (index < aimIndex)
-            aimIndex--;
 
         RebuildOrderRows();
     }
@@ -351,7 +345,6 @@ public class PlatingComponent : CookingComponent
     private void EnterOrderSelect()
     {
         phase = Phase.OrderSelect;
-        aimIndex = Mathf.Clamp(aimIndex, 0, Mathf.Max(0, orders.Count - 1));
         readyRefreshTimer = ReadyRefreshInterval;
 
         SetVisible(plateGridRoot, false);
@@ -365,24 +358,24 @@ public class PlatingComponent : CookingComponent
 
     private void MoveAim(Vector2Int dir)
     {
-        if (orders.Count <= 1)
+        if (_menuOrders.Count <= 1)
             return;
 
         int step = (dir == Vector2Int.right || dir == Vector2Int.down) ? 1 : -1;
-        aimIndex = (aimIndex + step + orders.Count) % orders.Count;
+        aimIndex = (aimIndex + step + _menuOrders.Count) % _menuOrders.Count;
         RefreshOrderRows();
     }
 
     private void TryFire()
     {
-        if (orders.Count == 0)
+        if (_menuOrders.Count == 0)
         {
             SystemMessageUI.Show(GetText("STR_UI_Plating_NoOrder"));
             return;
         }
 
-        PlatingOrder order = orders[aimIndex];
-        if (order.servable)
+        PlatingOrder order = _menuOrders[aimIndex];
+        if (GetFinishedDishCount(order.recipe) >= CountOrdersFor(order.recipe))
             return;
 
         if (!order.recipe.Validate(gridSize * gridSize, out string error))
@@ -420,6 +413,19 @@ public class PlatingComponent : CookingComponent
 
     private void RebuildOrderRows()
     {
+        PlatingRecipe previous = aimIndex < _menuOrders.Count ? _menuOrders[aimIndex].recipe : null;
+        _menuOrders.Clear();
+        foreach (PlatingOrder order in orders)
+        {
+            if (!_menuOrders.Exists(menu => IsSameDish(menu.recipe, order.recipe)))
+            {
+                _menuOrders.Add(order);
+            }
+        }
+
+        int previousIndex = _menuOrders.FindIndex(menu => IsSameDish(menu.recipe, previous));
+        aimIndex = previousIndex >= 0 ? previousIndex : Mathf.Clamp(aimIndex, 0, Mathf.Max(0, _menuOrders.Count - 1));
+
         foreach (PlatingCellView row in orderRows)
             Destroy(row.gameObject);
         orderRows.Clear();
@@ -427,7 +433,7 @@ public class PlatingComponent : CookingComponent
         if (orderListRoot == null)
             return;
 
-        for (int i = 0; i < orders.Count; i++)
+        for (int i = 0; i < _menuOrders.Count; i++)
         {
             PlatingCellView row = CreateCell(orderListRoot, orderRowPrefab);
             if (orderRowPrefab == null)
@@ -451,14 +457,16 @@ public class PlatingComponent : CookingComponent
 
     private void RefreshOrderRows()
     {
-        for (int i = 0; i < orderRows.Count && i < orders.Count; i++)
+        string quantityFormat = GetText("STR_UI_Plating_DishQuantity");
+        for (int i = 0; i < orderRows.Count && i < _menuOrders.Count; i++)
         {
-            PlatingOrder order = orders[i];
+            PlatingRecipe recipe = _menuOrders[i].recipe;
             bool aimed = i == aimIndex;
-            bool ready = !order.servable && GetShortages(order.recipe).Count == 0;
+            int finished = GetFinishedDishCount(recipe);
+            int requested = CountOrdersFor(recipe);
+            bool ready = finished < requested && GetShortages(recipe).Count == 0;
 
-            string text = order.recipe.DisplayText;
-            if (order.servable) text += " [서빙 가능]";
+            string text = string.Format(quantityFormat, recipe.DisplayText, finished, requested);
             if (aimed) text = "▶ " + text;
 
             orderRows[i].Label.text = text;
@@ -467,13 +475,40 @@ public class PlatingComponent : CookingComponent
         }
     }
 
+    private static bool IsSameDish(PlatingRecipe first, PlatingRecipe second)
+    {
+        return ReferenceEquals(first, second) ||
+            (first != null && second != null && !string.IsNullOrEmpty(first.outputItemID) &&
+                first.outputItemID == second.outputItemID);
+    }
+
+    private int CountOrdersFor(PlatingRecipe recipe)
+    {
+        int count = 0;
+        foreach (PlatingOrder order in orders)
+        {
+            if (IsSameDish(order.recipe, recipe))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private int GetFinishedDishCount(PlatingRecipe recipe)
+    {
+        return !string.IsNullOrEmpty(recipe.outputItemID) && inventory != null
+            ? inventory.GetCount(recipe.outputItemID, 0)
+            : 0;
+    }
+
     // ───────────────────────── ③ 재료 선택 ─────────────────────────
 
     private void StartPlating(PlatingOrder order)
     {
         ResetPlayState();
 
-        nowOrder = order;
         nowRecipe = order.recipe;
 
         slots = BuildSlots();
@@ -642,7 +677,6 @@ public class PlatingComponent : CookingComponent
         GameAudio.Play(SoundCue.CookingSuccess);
         BeginEnding();
 
-        nowOrder.servable = true;
         if (cookingManager?.ShowCompletedItem(nowRecipe.outputItemID, nowRecipe.DisplayText) != true)
         {
             SystemMessageUI.Show(GetText("STR_UI_Plating_Success"));
@@ -683,7 +717,6 @@ public class PlatingComponent : CookingComponent
     {
         KillFeedbackTweens();
 
-        nowOrder = null;
         nowRecipe = null;
         slots = null;
         holding = false;

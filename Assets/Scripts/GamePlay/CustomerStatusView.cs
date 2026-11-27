@@ -56,6 +56,7 @@ namespace GamePlay
         {
             _customer.OnStateChanged += HandleStateChanged;
             _customer.OnPatienceChanged += HandlePatienceChanged;
+            _customer.OnOrderChanged += HandleOrderChanged;
         }
 
         private void OnDisable()
@@ -63,6 +64,7 @@ namespace GamePlay
             UnwatchOrder();
             _customer.OnStateChanged -= HandleStateChanged;
             _customer.OnPatienceChanged -= HandlePatienceChanged;
+            _customer.OnOrderChanged -= HandleOrderChanged;
             _barTween?.Kill();
             _popTween?.Kill();
         }
@@ -72,7 +74,7 @@ namespace GamePlay
             // YSorter가 Awake 때 자식 렌더러를 모으므로, 그보다 늦은 이 시점에 만들어야 정렬 순서를 덮어쓰지 않는다.
             EnsureBuilt();
 
-            if (state != CustomerState.Seated)
+            if (state != CustomerState.Seated || (_customer.IsRegular && _customer.Order == null))
             {
                 UnwatchOrder();
                 _statusRoot.gameObject.SetActive(false);
@@ -88,6 +90,14 @@ namespace GamePlay
             }
             ShowReady(_watchedOrder?.servable == true);
             ShowWithPop();
+        }
+
+        private void HandleOrderChanged()
+        {
+            if (_customer.IsRegular)
+            {
+                HandleStateChanged(_customer.State);
+            }
         }
 
         private void UnwatchOrder()
@@ -155,8 +165,10 @@ namespace GamePlay
             _statusRoot.localPosition = _offset;
 
             float barLeft = -_barSize.x * 0.5f;
-            CreateRenderer("BarBack", new Vector3(barLeft, 0f, 0f), _barSize, _barBackColor, 0, true);
+            SpriteRenderer barBack = CreateRenderer("BarBack", new Vector3(barLeft, 0f, 0f), _barSize, _barBackColor, 0, true);
             _barFill = CreateRenderer("BarFill", new Vector3(barLeft, 0f, 0f), _barSize, _barFullColor, 1, true);
+            barBack.enabled = !_customer.IsRegular;
+            _barFill.enabled = !_customer.IsRegular;
 
             _iconBack = CreateRenderer("IconBack", new Vector3(0f, _iconOffsetY, 0f), Vector2.one, _iconBackColor, 0, false);
             _iconBack.sprite = GetSquareSprite();

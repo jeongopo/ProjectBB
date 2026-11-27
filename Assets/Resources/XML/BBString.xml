@@ -931,4 +931,60 @@
     <ID>STR_Dialogue_Munin_04</ID>
     <BODY>하루 장사가 끝나면 침대에서 쉬게. 정산을 마치고 나면 새 하루가 시작되지.</BODY>
   </Row>
+  <Row>
+    <ID>STR_Dialogue_Munin_Questions</ID>
+    <BODY>어떤 이야기가 궁금한가?</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Munin_AskIngredients</ID>
+    <BODY>재료는 어떻게 준비해?</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Munin_AskService</ID>
+    <BODY>요리는 어떻게 내줘?</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Munin_AskDay</ID>
+    <BODY>하루는 어떻게 마쳐?</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Munin_Leave</ID>
+    <BODY>그만 듣기</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Dialogue_Munin_Look</ID>
+    <BODY>저쪽을 보게. 처음이라면 보급 선반의 재료로 연습해도 좋지.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_RegularGuest_Sven</ID>
+    <BODY>스벤</BODY>
+  </Row>
+  <Row>
+    <ID>STR_RegularGuest_Sven_Talk</ID>
+    <BODY>오늘은 바람이 사납군. 따뜻한 주점에 앉아 있으니 한결 낫네.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_RegularGuest_Affinity</ID>
+    <BODY>호감도 {0}</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Clock_TestAdvanceHour</ID>
+    <BODY>+1시간</BODY>
+  </Row>
+  <Row>
+    <ID>STR_UI_Plating_DishQuantity</ID>
+    <BODY>{0}  {1}/{2}</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Event_Munin_WaitForSupplies</ID>
+    <BODY>보급 선반에서 재료를 받아 보게. 준비가 되면 이야기를 이어가지.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Event_Munin_SuppliesDone</ID>
+    <BODY>좋아. 이제 손님이 오기 전에 재료를 손질해 두게.</BODY>
+  </Row>
+  <Row>
+    <ID>STR_Event_Munin_FirstOrder</ID>
+    <BODY>첫 주문이 들어왔군. 담기에서 주문한 요리를 만들고 손님에게 직접 내주게.</BODY>
+  </Row>
 </Rows>

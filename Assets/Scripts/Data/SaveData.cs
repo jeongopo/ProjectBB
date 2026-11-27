@@ -15,6 +15,13 @@ public struct SavedItemStack
 }
 
 [Serializable]
+public struct SavedGuestAffinity
+{
+    public string GuestId;
+    public int Value;
+}
+
+[Serializable]
 public class SaveData
 {
 	// This is test data, written according to TestScript.cs class
@@ -27,6 +34,9 @@ public class SaveData
 	public int _currentTime;
     public List<SavedItemStack> ItemStacks;
     public List<CurrencyAmount> Balances;
+    public List<string> CompletedDialogueIds;
+    public List<SavedGuestAffinity> GuestAffinities;
+    public EventProgressData EventProgress;
 
 	public string ToJson()
 	{

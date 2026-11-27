@@ -159,12 +159,12 @@ namespace GamePlay
 
         private void ClearOutline()
         {
+            // 트리거가 비활성화되는 도중에는 계층을 바꿀 수 없으므로 다음 외곽선을 그릴 때 옮긴다.
             foreach (SpriteRenderer copy in _outline)
             {
-                if (copy != null && copy.enabled)
+                if (copy != null)
                 {
                     copy.enabled = false;
-                    copy.transform.SetParent(transform, false);
                 }
             }
         }

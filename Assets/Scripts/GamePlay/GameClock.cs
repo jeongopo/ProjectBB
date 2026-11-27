@@ -147,13 +147,16 @@ namespace GamePlay
         private void AdvanceTime(float deltaSeconds)
         {
             float secondsPerHour = Mathf.Max(0.01f, _phases[_phaseIndex].RealSecondsPerGameHour);
-            float endMinutes = _dayEndHour * MinutesPerHour;
+            AdvanceTo(_totalMinutes + deltaSeconds * MinutesPerHour / secondsPerHour * _speedMultiplier);
+        }
 
-            _totalMinutes += deltaSeconds * MinutesPerHour / secondsPerHour * _speedMultiplier;
-            bool reachedEnd = _totalMinutes >= endMinutes;
+        private void AdvanceTo(float minutes)
+        {
+            float endMinutes = _dayEndHour * MinutesPerHour;
+            bool reachedEnd = minutes >= endMinutes;
+            _totalMinutes = Mathf.Min(minutes, endMinutes);
             if (reachedEnd)
             {
-                _totalMinutes = endMinutes;
                 _isDayEnded = true;
             }
 
@@ -229,14 +232,24 @@ namespace GamePlay
             {
                 _speedMultiplier = Mathf.Approximately(_speedMultiplier, 1f) ? _debugFastForwardMultiplier : 1f;
             }
-            if (keyboard != null && keyboard.f2Key.wasPressedThisFrame && IsRunning && Time.timeScale > 0f &&
-                (_inputManager == null || _inputManager.CurrentInputState == InputState.Default))
+            if (keyboard != null && keyboard.f2Key.wasPressedThisFrame && CanAdvanceDebugTime())
             {
-                float remaining = _dayEndHour * MinutesPerHour - _totalMinutes;
-                _totalMinutes += Mathf.Max(0f, remaining);
-                AdvanceTime(0f);
+                AdvanceTo(_dayEndHour * MinutesPerHour);
             }
 #endif
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        internal void AdvanceOneHourForTesting()
+        {
+            if (CanAdvanceDebugTime())
+            {
+                AdvanceTo(_totalMinutes + MinutesPerHour);
+            }
+        }
+
+        private bool CanAdvanceDebugTime() => isActiveAndEnabled && IsRunning && Time.timeScale > 0f &&
+            (_inputManager == null || _inputManager.CurrentInputState == InputState.Default);
+#endif
     }
 }

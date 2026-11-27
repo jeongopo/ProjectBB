@@ -8,6 +8,7 @@ using GamePlay;
 
 public class InventoryManager : MonoBehaviour
 {
+    internal event Action<string> OnQuantityChanged;
     private const int MaxSlots = 40;
     private const string ToggleActionName = "Inventory";
 
@@ -297,6 +298,7 @@ public class InventoryManager : MonoBehaviour
         if (inventoryPanel != null && inventoryPanel.activeSelf)
             RefreshSlots();
 
+        OnQuantityChanged?.Invoke(itemID);
         return true;
     }
 
@@ -331,6 +333,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         RefreshSlots();
+        OnQuantityChanged?.Invoke(null);
     }
 
     internal bool TryConvertOne(string inputId, int inputGrade, string outputId, int outputGrade)
@@ -367,6 +370,11 @@ public class InventoryManager : MonoBehaviour
         if (inventoryPanel != null && inventoryPanel.activeSelf)
         {
             RefreshSlots();
+        }
+        OnQuantityChanged?.Invoke(inputId);
+        if (outputId != inputId)
+        {
+            OnQuantityChanged?.Invoke(outputId);
         }
         return true;
     }
@@ -460,6 +468,7 @@ public class InventoryManager : MonoBehaviour
 
         if (inventoryPanel != null && inventoryPanel.activeSelf)
             RefreshSlots();
+        OnQuantityChanged?.Invoke(itemID);
         return true;
     }
 

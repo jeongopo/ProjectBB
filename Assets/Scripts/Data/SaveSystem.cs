@@ -12,6 +12,12 @@ public static class SaveSystem
 
     public static bool Save(SaveData data)
     {
+#if UNITY_EDITOR
+        if (GamePlay.EventRunner.IsWorkbenchPlaySession)
+        {
+            return true;
+        }
+#endif
         return FileManager.WriteSave(SaveFilename, data.ToJson());
     }
 

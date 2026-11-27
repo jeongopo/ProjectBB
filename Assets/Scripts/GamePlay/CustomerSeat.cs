@@ -8,7 +8,9 @@ namespace GamePlay
     public class CustomerSeat : MonoBehaviour
     {
         [SerializeField] private Transform _sitPoint = default;
+        [SerializeField] private bool _reservedForRegulars;
 
+        public bool ReservedForRegulars => _reservedForRegulars;
         public CustomerController Occupant { get; private set; }
         public bool IsOccupied => Occupant != null;
         public Vector3 SitPosition => _sitPoint != null ? _sitPoint.position : transform.position;

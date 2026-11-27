@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using GamePlay;
 using UnityEngine;
@@ -18,6 +19,7 @@ namespace Interaction
         private DataStorage _data;
         private GameClock _clock;
         private int _stockDay;
+        internal event Action SuppliesReceived;
 
         public override bool CanInteract => base.CanInteract && _inventory != null && _data?.Recipe_CombineData != null;
         public override string PromptKey => "STR_SupplyShelf_Prompt";
@@ -62,6 +64,7 @@ namespace Interaction
 
             if (received > 0)
             {
+                SuppliesReceived?.Invoke();
                 SystemMessageUI.Show(string.Format(_data.GetBBStringText("STR_SupplyShelf_Received"), received));
                 GameAudio.Play(SoundCue.Select);
             }
