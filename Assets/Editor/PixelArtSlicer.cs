@@ -13,73 +13,13 @@ using UnityEngine;
 /// </summary>
 public static class PixelArtSlicer
 {
-    // ---------------------------------------------------------------- 메뉴
-
-    [MenuItem("Tools/Pixel Art/2. Slice PP Interiors Pack")]
-    public static void SlicePack()
-    {
-        var guids = AssetDatabase.FindAssets("t:Texture2D", new[] { PixelArtImportSettings.Root });
-        if (guids.Length == 0)
-        {
-            Debug.LogWarning("[PixelArt] " + PixelArtImportSettings.Root + " 에서 텍스처를 찾지 못했습니다.");
-            return;
-        }
-
-        int totalSprites = 0;
-        int slicedFiles = 0;
-        var skipped = new List<string>();
-
-        try
-        {
-            AssetDatabase.StartAssetEditing();
-
-            for (int i = 0; i < guids.Length; i++)
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guids[i]);
-                string file = Path.GetFileNameWithoutExtension(path);
-
-                EditorUtility.DisplayProgressBar(
-                    "Slicing sprite sheets", file, (float)i / guids.Length);
-
-                // Torch 1/2 는 16x32 스프라이트 8프레임 애니메이션이다.
-                // Torch Light 는 68x34 라 격자에 안 맞으므로 Single 로 둔다.
-                int cellW = 16;
-                int cellH = 16;
-                if (file.StartsWith("Torch ") && !file.StartsWith("Torch Light"))
-                    cellH = 32;
-
-                int n = Slice(path, cellW, cellH);
-                if (n > 0)
-                {
-                    totalSprites += n;
-                    slicedFiles++;
-                }
-                else
-                {
-                    skipped.Add(file);
-                }
-            }
-        }
-        finally
-        {
-            EditorUtility.ClearProgressBar();
-            AssetDatabase.StopAssetEditing();
-            AssetDatabase.Refresh();
-        }
-
-        Debug.Log(string.Format(
-            "[PixelArt] 슬라이스 완료 — 파일 {0}개, 스프라이트 {1}개 생성. 건너뜀: {2}",
-            slicedFiles, totalSprites,
-            skipped.Count == 0 ? "없음" : string.Join(", ", skipped.ToArray())));
-    }
-
-    [MenuItem("Tools/Pixel Art/Slice Selected (16x16)")]
+    [MenuItem("Tools/Pixel Art/Slice Selected/16x16")]
     public static void SliceSelected16() { SliceSelection(16, 16); }
 
-    [MenuItem("Tools/Pixel Art/Slice Selected (16x32)")]
+    [MenuItem("Tools/Pixel Art/Slice Selected/16x32")]
     public static void SliceSelected16x32() { SliceSelection(16, 32); }
 
-    [MenuItem("Tools/Pixel Art/Slice Selected (32x32)")]
+    [MenuItem("Tools/Pixel Art/Slice Selected/32x32")]
     public static void SliceSelected32() { SliceSelection(32, 32); }
 
     static void SliceSelection(int cw, int ch)

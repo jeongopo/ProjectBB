@@ -26,7 +26,7 @@ public static class PixelArtTileBuilder
     // PixelArtSlicer가 만든 이름 규칙: <시트이름>_<행>_<열>
     static readonly Regex NamePattern = new Regex(@"_(\d+)_(\d+)$", RegexOptions.Compiled);
 
-    [MenuItem("Tools/Pixel Art/3. Create Tiles + Palette From Selection")]
+    [MenuItem("Tools/Pixel Art/Create Tiles + Palette From Selection")]
     public static void Build()
     {
         var textures = Selection.GetFiltered<Texture2D>(SelectionMode.DeepAssets);
