@@ -12,6 +12,7 @@ public abstract class CookingComponent : MonoBehaviour
 
     [SerializeField] protected CookingManager cookingManager;
     [SerializeField] protected Button CookingStartButton;
+    [SerializeField] private Image _ingredientImage;
 
     protected bool isPlaying = false;
     protected InputManager inputManager;
@@ -34,6 +35,7 @@ public abstract class CookingComponent : MonoBehaviour
     //처음 요리 UI 열리자마자 생기는 이벤트
     public virtual void InitCooking()
     {
+        SetIngredientSprite(null);
         inputManager = FindFirstObjectByType<InputManager>();
         if (inputManager != null)
         {
@@ -42,6 +44,15 @@ public abstract class CookingComponent : MonoBehaviour
 
         SetupMoveAction();
         SetupInteractAction();
+    }
+
+    internal void SetIngredientSprite(Sprite sprite)
+    {
+        if (_ingredientImage != null)
+        {
+            _ingredientImage.sprite = sprite;
+            _ingredientImage.enabled = sprite != null;
+        }
     }
 
     public virtual void InitMiniGameData()
@@ -179,6 +190,7 @@ public abstract class CookingComponent : MonoBehaviour
     public virtual void OnCookingEnd()
     {
         isPlaying = false;
+        SetIngredientSprite(null);
         if (CookingStartButton != null)
         {
             CookingStartButton.gameObject.SetActive(true);

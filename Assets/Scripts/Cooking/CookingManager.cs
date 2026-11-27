@@ -196,7 +196,14 @@ public class CookingManager : MonoBehaviour
     private void OnIngredientChanged(SavedItemStack? item)
     {
         _ingredient = item;
-        currentComponent?.SetIngredientReady(!_requiresSelection || item.HasValue);
+        if (currentComponent != null)
+        {
+            currentComponent.SetIngredientReady(!_requiresSelection || item.HasValue);
+            Sprite ingredient = item.HasValue
+                ? ItemIcon.ResolveIcon(_dataManager != null ? _dataManager.dataStorage : null, item.Value.ItemId)
+                : null;
+            currentComponent.SetIngredientSprite(ingredient);
+        }
     }
 
     internal bool TryBeginPreparation()
