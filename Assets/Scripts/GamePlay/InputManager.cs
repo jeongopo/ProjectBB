@@ -13,6 +13,7 @@ namespace GamePlay
 
         public InputState CurrentInputState => currentInputState;
         public event System.Action<InputState> OnInputStateChanged;
+        public bool CanOpenGameplayPanel => currentInputState == InputState.Default;
 
         // 이동이 허용되는 상태: Popup(인벤토리 등)은 열려 있어도 플레이어가 계속 움직일 수 있어야 함
         public bool CanCharacterMove => currentInputState == InputState.Default || currentInputState == InputState.Popup;
@@ -67,6 +68,7 @@ namespace GamePlay
             InputState.Default => "Default",
             InputState.Minigame => "Minigame",
             InputState.UI => "UI",
+            InputState.Dialogue => "UI",
             InputState.Popup => "UI",
             _ => "Default"
         };

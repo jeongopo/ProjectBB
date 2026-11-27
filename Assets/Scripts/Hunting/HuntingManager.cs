@@ -65,6 +65,11 @@ public class HuntingManager : MonoBehaviour
 
     public void OpenHunting()
     {
+        if (inputManager != null && !inputManager.CanOpenGameplayPanel)
+        {
+            return;
+        }
+
         StopBattlePhase();
         ShowSelectPanel();
 

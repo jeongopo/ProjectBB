@@ -82,9 +82,12 @@ public class CookingManager : MonoBehaviour
     }
 
     //1회 판정마다 짧게 보여주는 이미지
-    public void ShowRoundResult(ENUMGRADE grade)
+    public void ShowRoundResult(ENUMGRADE grade, bool playSound = true)
     {
-        GameAudio.Play(grade >= ENUMGRADE.GOOD ? SoundCue.CookingSuccess : SoundCue.CookingMiss, 0.45f);
+        if (playSound)
+        {
+            GameAudio.Play(grade >= ENUMGRADE.GOOD ? SoundCue.CookingSuccess : SoundCue.CookingMiss, 0.45f);
+        }
         int spriteIndex = (int)grade - 1;
         Sprite sprite = (roundResultSprites != null && spriteIndex >= 0 && spriteIndex < roundResultSprites.Length)
             ? roundResultSprites[spriteIndex]
@@ -152,6 +155,11 @@ public class CookingManager : MonoBehaviour
 
     public void OpenCooking(CookingType type)
     {
+        if (inputManager != null && !inputManager.CanOpenGameplayPanel)
+        {
+            return;
+        }
+
         _openType = type;
         currentComponent = GetCookingComponent(type);
         if (currentComponent == null)
@@ -208,6 +216,11 @@ public class CookingManager : MonoBehaviour
 
     internal bool TryBeginPreparation()
     {
+        if (inputManager != null && inputManager.CurrentInputState == InputState.Dialogue)
+        {
+            return false;
+        }
+
         if (!_requiresSelection)
         {
             return true;

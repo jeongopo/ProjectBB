@@ -13,6 +13,7 @@ public abstract class CookingComponent : MonoBehaviour
     [SerializeField] protected CookingManager cookingManager;
     [SerializeField] protected Button CookingStartButton;
     [SerializeField] private Image _ingredientImage;
+    protected Image IngredientPreview => _ingredientImage;
 
     protected bool isPlaying = false;
     protected InputManager inputManager;

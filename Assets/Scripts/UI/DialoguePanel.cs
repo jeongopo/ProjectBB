@@ -42,7 +42,7 @@ public sealed class DialoguePanel : MonoBehaviour
     {
         _input = FindFirstObjectByType<GamePlay.InputManager>();
         _data = FindFirstObjectByType<DataManager>();
-        InputActionMap map = _input != null ? _input.GetActionMap(InputState.UI) : null;
+        InputActionMap map = _input != null ? _input.GetActionMap(InputState.Dialogue) : null;
         _submit = map?.FindAction("Submit");
         _cancel = map?.FindAction("Cancel");
         _navigate = map?.FindAction("Navigate");
@@ -56,7 +56,11 @@ public sealed class DialoguePanel : MonoBehaviour
 
     internal bool Open(string speakerKey, Action<int> advance, Action closed)
     {
-        if (IsOpen)
+        if (_input == null)
+        {
+            _input = FindFirstObjectByType<GamePlay.InputManager>();
+        }
+        if (IsOpen || (_input != null && !_input.CanOpenGameplayPanel))
         {
             return false;
         }
@@ -68,7 +72,7 @@ public sealed class DialoguePanel : MonoBehaviour
         if (_input != null)
         {
             _previousState = _input.CurrentInputState;
-            _input.SwitchInputState(InputState.UI);
+            _input.SwitchInputState(InputState.Dialogue);
         }
 
         EventSystem.current?.SetSelectedGameObject(null);
@@ -147,7 +151,7 @@ public sealed class DialoguePanel : MonoBehaviour
         }
         if (_input != null)
         {
-            _input.SwitchInputState(InputState.UI);
+            _input.SwitchInputState(InputState.Dialogue);
         }
     }
 
@@ -273,7 +277,7 @@ public sealed class DialoguePanel : MonoBehaviour
         Action closed = _closed;
         _closed = null;
         closed?.Invoke();
-        if (_input != null && _input.CurrentInputState == InputState.UI && gameObject.scene.isLoaded)
+        if (_input != null && _input.CurrentInputState == InputState.Dialogue && gameObject.scene.isLoaded)
         {
             _input.SwitchInputState(_previousState);
         }

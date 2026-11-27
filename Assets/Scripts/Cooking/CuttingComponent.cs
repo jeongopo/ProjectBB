@@ -1,11 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using System.Linq;
 using GamePlay;
 using System;
-using Unity.VisualScripting;
-using System.Data.Common;
 using DataEnumDefines;
 
 public class CuttingComponent : CookingComponent
@@ -30,6 +26,7 @@ public class CuttingComponent : CookingComponent
     DataStorage.Minigame_Cutting currentCuttingData;
 
     private int[] results;
+    private CuttingFeedback _feedback;
     int totalAttempts = 0;
     
     
@@ -42,6 +39,11 @@ public class CuttingComponent : CookingComponent
         baseWidth = componentRect.rect.width;
         baseValue = baseWidth / 100;
 
+        if (IngredientPreview != null)
+        {
+            _feedback = gameObject.AddComponent<CuttingFeedback>();
+            _feedback.Initialize(IngredientPreview);
+        }
         base.Start();
     }
 
@@ -110,18 +112,24 @@ public class CuttingComponent : CookingComponent
                 results[i]++;
                 totalAttempts++;
 
-                if (cookingManager != null)
-                {
-                    ENUMGRADE roundGrade = (ENUMGRADE)(cuttingParams.Length - i);
-                    cookingManager.ShowRoundResult(roundGrade);
-                }
+                ENUMGRADE roundGrade = (ENUMGRADE)(cuttingParams.Length - i);
+                PlayFeedback(roundGrade, true);
+                cookingManager?.ShowRoundResult(roundGrade, playSound: false);
 
                 // 바 초기 위치로 리셋
                 barRect.localPosition = new Vector3(-baseWidth / 2, barRect.localPosition.y, barRect.localPosition.z);
                 movingRight = false;
-                break;
+                return;
             }
         }
+        PlayFeedback(ENUMGRADE.NORMAL, false);
+    }
+
+    private void PlayFeedback(ENUMGRADE grade, bool hit)
+    {
+        float gain = grade == ENUMGRADE.GREAT ? 0.85f : grade == ENUMGRADE.GOOD ? 0.65f : 0.44f;
+        GameAudio.Play(SoundCue.BoardChop, hit ? gain : 0.3f);
+        _feedback?.Play(grade, hit);
     }
 
     protected override void Update()

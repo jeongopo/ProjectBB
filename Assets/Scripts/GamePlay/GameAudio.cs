@@ -23,6 +23,7 @@ namespace GamePlay
         PanelOpen,
         PanelClose,
         Select,
+        BoardChop,
     }
 
     public sealed class GameAudio : MonoBehaviour

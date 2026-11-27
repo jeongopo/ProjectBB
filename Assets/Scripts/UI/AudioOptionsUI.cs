@@ -90,7 +90,7 @@ public sealed class AudioOptionsUI : MonoBehaviour
 
     private void UpdateOpenButton()
     {
-        bool canOpen = !_isOpen && (_input == null || _input.CurrentInputState == InputState.Default);
+        bool canOpen = !_isOpen && (_input == null || _input.CanOpenGameplayPanel);
         if (_openButton.gameObject.activeSelf != canOpen)
         {
             _openButton.gameObject.SetActive(canOpen);
@@ -99,7 +99,7 @@ public sealed class AudioOptionsUI : MonoBehaviour
 
     private void Open()
     {
-        if (_isOpen || (_input != null && _input.CurrentInputState != InputState.Default))
+        if (_isOpen || (_input != null && !_input.CanOpenGameplayPanel))
         {
             return;
         }
